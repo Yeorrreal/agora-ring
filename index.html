@@ -100,8 +100,61 @@ canvas#scene.act{cursor:pointer}
 .kwbtn.got:hover{background:#bfb7a2}
 .kwbtn .n{font-weight:400;font-size:10.5px;color:#6f6656;font-variant-numeric:tabular-nums}
 
+/* tutorial coach marks */
+.tut{position:fixed;z-index:13;width:min(300px,calc(100vw - 32px));background:var(--parch);color:var(--dark);padding:12px 14px 10px;font-size:13px;line-height:1.55;
+  box-shadow:0 0 0 2px var(--dark),5px 5px 0 2px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.tut .tk{font-size:10.5px;font-weight:700;color:#8a6a1c;letter-spacing:.08em}
+.tut .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tut .btn{pointer-events:auto;font-size:12px;padding:5px 12px}
+.tut::before,.tut::after{content:"";position:absolute;left:var(--ax,50%);transform:translateX(-50%);border:solid transparent}
+.tut.down::before{top:calc(100% + 2px);border-width:9px 9px 0;border-top-color:var(--dark)}
+.tut.down::after{top:100%;border-width:7px 7px 0;border-top-color:var(--parch)}
+.tut.up::before{bottom:calc(100% + 2px);border-width:0 9px 9px;border-bottom-color:var(--dark)}
+.tut.up::after{bottom:100%;border-width:0 7px 7px;border-bottom-color:var(--parch)}
+.hl{position:fixed;z-index:12;pointer-events:none;border:2px dashed var(--gold);box-shadow:0 0 0 2px rgba(26,20,24,.6);animation:hlpulse 1s steps(2) infinite}
+.hl.round{border-radius:50%}
+@keyframes hlpulse{50%{border-color:#fff3c0}}
+/* the Pythia's oracle: a dark, billowing cloud */
+.obub{position:fixed;z-index:12;transform:translate(-50%,-100%);pointer-events:none;
+  filter:drop-shadow(2px 0 0 var(--dark)) drop-shadow(-2px 0 0 var(--dark)) drop-shadow(0 2px 0 var(--dark)) drop-shadow(0 -2px 0 var(--dark)) drop-shadow(4px 4px 0 rgba(0,0,0,.3))}
+.obub .cl{position:relative;background:#39343f;color:#ece6f4;border-radius:18px;padding:10px 14px;width:max-content;max-width:230px;font-size:12px;line-height:1.5;margin-bottom:26px}
+.obub .cl b{display:block;font-size:10.5px;color:#b9aecb;margin-bottom:2px}
+.obub i{position:absolute;background:#39343f;border-radius:50%;z-index:-1} /* puffs sit behind the body so they never cover the text */
+.obub.on .cl{animation:billow .55s steps(5) both}
+.obub.on i{animation:billow .55s steps(5) both}
+@keyframes billow{0%{transform:scale(.35);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.obub.on .cl,.obub.on i,.hl{animation:none}}
+
+/* collected philosophers, beside the stele */
+.collbox{position:fixed;right:calc(var(--gr) + 260px);bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);z-index:6;width:190px;padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+.collbox .head{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.collbox .title{font:inherit;font-size:11px;color:var(--muted);letter-spacing:.05em;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.collbox .title b{color:var(--ink);margin-left:4px}
+.collbox .title:hover{color:var(--ink)}
+.collgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.collbox.closed .collgrid{display:none}
+.pc{font:inherit;border:0;padding:3px 2px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:#e8c35a;color:#2a1f0e;box-shadow:0 0 0 2px var(--dark),inset 0 0 0 1px #fff0b0,inset 0 0 0 3px #b98f2c}
+.pc img{display:block;image-rendering:pixelated;image-rendering:crisp-edges;width:32px;height:40px}
+.pc .nm{font-size:10.5px;font-weight:700;white-space:nowrap}
+.pc.unk{background:#8d8894;color:#3c3842;box-shadow:0 0 0 2px var(--dark),inset 0 0 0 1px #a9a4b0,inset 0 0 0 3px #6e6976}
+.pc .ph{position:relative;display:block}
+.pc.unk .ph::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:15px;color:#d9d5df}
+.pc:hover{filter:brightness(1.08)}
+.pc:focus-visible{outline:2px solid var(--water);outline-offset:3px}
+.collbox .pc .nm{display:none}
+.gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.gallery .pc{padding:8px 4px 6px;gap:6px}
+.gallery .pc img{width:48px;height:60px}
+.gallery .pc.unk .ph::after{font-size:22px}
+.plist{list-style:none;padding:0;display:flex;flex-direction:column;gap:5px;font-size:12px}
+.plist li{background:var(--panel2);padding:6px 10px}
+.plist li b{color:var(--gold)}
+.plist li.unk{color:var(--muted);background:transparent;box-shadow:inset 0 0 0 1px var(--hi)}
+.card h3{font-size:12px;color:var(--muted);letter-spacing:.06em;font-weight:700}
+
 /* narration, bottom-left */
-.narr{position:fixed;left:var(--gl);bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);z-index:6;max-width:min(520px,calc(100vw - 290px));padding:8px 12px;font-size:12.5px;min-height:38px}
+.narr{position:fixed;left:var(--gl);bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);z-index:6;max-width:min(520px,calc(100vw - 490px));padding:8px 12px;font-size:12.5px;min-height:38px}
 .narr::before{content:"▶ ";color:var(--gold)}
 
 .bubble{position:absolute;transform:translate(var(--tx,-50%),-100%);background:var(--parch);color:var(--dark);padding:5px 8px 6px;font-size:12px;line-height:1.45;
@@ -134,6 +187,7 @@ canvas#scene.act{cursor:pointer}
   .hdr .bar{gap:10px;padding:6px 8px}
   .stelebox{width:200px}
   .narr{max-width:calc(100vw - 236px);font-size:11.5px}
+  .collbox{right:var(--gr);bottom:calc(env(safe-area-inset-bottom, 0px) + 200px);width:200px}
   .ringpanel ul{grid-template-columns:1fr}
   .ringpanel ul{min-height:0}
 }
@@ -147,7 +201,7 @@ canvas#scene.act{cursor:pointer}
   <div class="bar panel">
     <h1>아고라 링 · 1장 근원</h1>
     <span class="sep"></span>
-    <div class="klep">
+    <div class="klep" id="klepbox">
       <canvas id="klep" width="32" height="48" aria-hidden="true"></canvas>
       <div class="v"><span class="lbl">클렙시드라</span><span class="big" id="waterv">100</span><span class="tiny" id="dayv">1일째 · 해가 높아요</span></div>
     </div>
@@ -182,12 +236,23 @@ canvas#scene.act{cursor:pointer}
   <button class="bell" id="fightbtn" type="button" aria-label="싸움 붙이기"></button>
 </section>
 
+<section class="collbox panel" id="collbox" aria-label="모은 철학자">
+  <div class="head"><button class="title" id="collopen" type="button">모은 철학자<b id="collcount">2 / 8</b></button><button class="mini" id="colltog" type="button" aria-expanded="true">접기</button></div>
+  <div class="collgrid" id="collgrid"></div>
+</section>
+
 <section class="stelebox panel" id="stelebox">
   <div class="head"><span class="lbl">비문 · 새겨진 키워드</span><span id="kwcount" style="font-weight:700">0 / 8</span></div>
   <ol class="stele" id="stele"></ol>
 </section>
 
 <p class="narr panel" id="narr" aria-live="polite"></p>
+<div class="hl" id="hl" hidden></div>
+<div class="tut" id="tut" hidden role="status"><span class="tk" id="tutk">처음 오셨군요</span><p id="tutt"></p><div class="row"><span class="tiny" id="tutn"></span><button class="btn" id="tutbtn" type="button" hidden>다음</button></div></div>
+<div class="obub" id="obub" hidden><div class="cl"><b>피티아의 신탁</b><span id="obubt"></span>
+  <i style="left:6%;top:-9px;width:24px;height:24px"></i><i style="left:30%;top:-12px;width:30px;height:30px"></i><i style="left:58%;top:-10px;width:26px;height:26px"></i><i style="left:80%;top:-6px;width:18px;height:18px"></i>
+  <i style="left:14%;bottom:-8px;width:20px;height:20px"></i><i style="left:46%;bottom:-10px;width:24px;height:24px"></i><i style="left:74%;bottom:-7px;width:18px;height:18px"></i>
+  <i style="left:calc(50% - 6px);bottom:-22px;width:12px;height:12px"></i><i style="left:calc(50% - 2px);bottom:-32px;width:7px;height:7px"></i></div></div>
 
 <div class="modal" id="modal" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="mtitle"><div id="mbody" style="display:flex;flex-direction:column;gap:12px"></div><div class="acts" id="macts"></div></div></div>
 
@@ -460,7 +525,7 @@ function computeScale(){
   return Math.max(1,s);
 }
 function uiRects(){
-  return ['stelebox','narr','ringpanel','hdr'].map(id=>{const r=$(id).getBoundingClientRect();return {x0:r.left/SCALE-8,x1:r.right/SCALE+8,y0:r.top/SCALE-4,y1:r.bottom/SCALE+24};});
+  return ['stelebox','collbox','narr','ringpanel','hdr'].map(id=>{const r=$(id).getBoundingClientRect();return {x0:r.left/SCALE-8,x1:r.right/SCALE+8,y0:r.top/SCALE-4,y1:r.bottom/SCALE+24};});
 }
 function underUI(x,y){return uiRects().some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1);}
 function layout(){
@@ -506,6 +571,7 @@ function layout(){
   add(COL_STUMP,cx0,cBase-COL_STUMP.height+1,[0,19,16,26],{shadow:[8,25,8,2]});add(COL_DRUM,cx0+15,cBase-COL_DRUM.height+3,[0,3,22,12]);
   paintBG();
   buildWalk();
+  if(typeof placeTut==='function')placeTut();
   npcs.forEach(n=>{
     if(n.state==='ring'){n.x=SLOT[n.slot][0];n.y=SLOT[n.slot][1];}
     else if(n.pid==='parmenides'){n.x=RING.cx;n.y=Math.round(RING.y1+(H-RING.y1)/2);}
@@ -553,6 +619,7 @@ function paintBG(){
 /* ---------------- state ---------------- */
 let npcs=[],ring=[null,null,null,null],stage=0,water=100,day=1,obols=2,got=new Set(),interps={},solved=new Set(),fieldCard=false,born=false;
 let ending=0,endT=0,endFrom=0,skyT=0,endModal=false,dayOver=false,modalOpen=false,fighting=null,particles=[],texts=[],drag=null,heard=new Set(),hover=null;
+let heardLines=new Set(); // every line the player has seen in a bubble
 let owl={state:'perch',turnUntil:0,nextTurn:0,ft:0};
 let now=performance.now();
 const CORNERS=['홍코너','청코너','백코너','황코너'];
@@ -628,7 +695,7 @@ const ACT_TIP={oracle:'델포이의 신녀 · 신탁 2 오볼',shop:'물장수 �
 function setTip(t,x,y){const d=$('ptip');if(!t){d.hidden=true;return;}d.hidden=false;if(d.textContent!==t)d.textContent=t;d.style.left=(x*SCALE)+'px';d.style.top=(y*SCALE)+'px';}
 const inRing=p=>p.x>=RING.x0-6&&p.x<=RING.x1+6&&p.y>=RING.y0-10&&p.y<=RING.y1+14;
 function hideOtherBubbles(n){npcs.forEach(m=>{if(m!==n&&m.state!=='ring'&&m.pid!=='parmenides')m.bubbleUntil=0;});}
-function showLine(n,line,ms=6500){n.shown=line;n.bubbleUntil=now+ms;if(n.state==='wander')n.pauseUntil=n.bubbleUntil;hideOtherBubbles(n);}
+function showLine(n,line,ms=6500){n.shown=line;heardLines.add(line.id);n.bubbleUntil=now+ms;if(n.state==='wander')n.pauseUntil=n.bubbleUntil;hideOtherBubbles(n);}
 
 function onClick(n){
   if(fighting)return;
@@ -642,7 +709,7 @@ function onClick(n){
   updateRingUI();
 }
 cv.addEventListener('pointerdown',e=>{
-  if(modalOpen)return;const p=toScene(e);const n=hit(p);
+  if(modalOpen||tourStep>=0)return;const p=toScene(e);const n=hit(p);
   if(!n){const q=propAt(p);if(q){setTip(null);doAct(q.act);}return;}
   cv.setPointerCapture(e.pointerId);
   drag={n,sx:p.x,sy:p.y,ox:n.x-p.x,oy:n.y-p.y,moved:false};
@@ -760,7 +827,7 @@ function applyRule(rule){
     ${unl.length?`<div class="unl">${unl.map(u=>`<p>${u}</p>`).join('')}</div>`:''}`;
   narrate(`비문에 '${rule.kw}'가 새겨졌어요.`);
   openModal(html,[{label:'도감 보기',fn:()=>setTimeout(()=>openCodex(rule.kw),0)},{label:'계속',primary:true}],()=>{
-    if(interps['근원']&&interps['근원'].size>=7&&ending===0)startEnding();else checkDay();
+    if(interps['근원']&&interps['근원'].size>=7&&ending===0)startEnding();else if(!tutDone&&stage>=1)startTour();else checkDay();
   });
 }
 function checkDay(){if(water<=0&&ending===0&&!dayOver&&!modalOpen)dayEnd();}
@@ -795,9 +862,9 @@ function openModal(html,acts,onClose){
   modalOpen=true;onCloseFn=onClose||null;$('mbody').innerHTML=html;const box=$('macts');box.innerHTML='';
   acts.forEach(a=>{const b=document.createElement('button');b.type='button';b.className='btn'+(a.primary?'':' ghost');b.textContent=a.label;if(a.disabled)b.disabled=true;
     b.addEventListener('click',()=>{closeModal();if(a.fn)a.fn();});box.appendChild(b);});
-  $('modal').hidden=false;const pb=box.querySelector('.btn:not(.ghost)')||box.querySelector('.btn');if(pb)pb.focus();
+  tutStage0();$('modal').hidden=false;const pb=box.querySelector('.btn:not(.ghost)')||box.querySelector('.btn');if(pb)pb.focus();
 }
-function closeModal(){$('modal').hidden=true;modalOpen=false;const f=onCloseFn;onCloseFn=null;if(f)f();}
+function closeModal(){$('modal').hidden=true;modalOpen=false;tutStage0();const f=onCloseFn;onCloseFn=null;if(f)f();}
 function openCodex(k){
   const info=KWINFO[k];const have=interps[k]||new Set();
   const rows=info.slots.map(([pid,label,t])=>have.has(pid)
@@ -807,17 +874,127 @@ function openCodex(k){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalOpen&&!dayOver&&ending!==1)closeModal();});
 
+/* ---------------- tutorial ---------------- */
+// Stage 0 (Thales vs Heraclitus) is taught entirely in popups in front of the ring.
+// After R1 a short tour points at the klepsydra, the Pythia, the bean plot and the water seller.
+let tutDone=false,tourStep=-1,tutCur=null;
+const TOUR=[
+  {k:'새 손님',t:'아낙시만드로스와 아낙시메네스가 아고라에 들어왔어요. 여기서부터가 본격적인 논쟁이에요.',a:'ringfront'},
+  {k:'클렙시드라',t:'이제부터 물시계의 물이 흘러요. 가만히 있어도 줄고, 싸움을 붙여도 줄어요. 물이 다 떨어지면 하루가 끝나요.',a:'#klepbox',hl:'#klepbox'},
+  {k:'델포이의 신녀',t:'막혔을 땐 신녀를 눌러 보세요. 2 오볼을 바치면 신탁으로 힌트를 내려 줘요.',a:'oracle',hl:'oracle'},
+  {k:'콩밭',t:'철학자를 콩밭에 끌어다 놓으면 잠깐 일해서 오볼을 벌어요. 한 사람당 하루 한 번이에요.',a:'garden',hl:'garden'},
+  {k:'물장수',t:'물장수를 누르면 3 오볼에 물시계를 채워 줘요. 이제 맞서는 사람들을 찾아 링에 올려 보세요.',a:'shop',hl:'shop'}
+];
+function tutRect(t){
+  if(!t)return null;
+  if(t==='ringfront')return {x:RING.cx*SCALE,y:(RING.y1+22)*SCALE,w:0,h:0};
+  if(t==='ring'){const b=ringBox();return {x:(RING.x0-8)*SCALE,y:(RING.y0-12)*SCALE,w:(RING.x1-RING.x0+16)*SCALE,h:(RING.y1-RING.y0+26)*SCALE};}
+  if(t[0]==='#'){const r=$(t.slice(1)).getBoundingClientRect();return {x:r.left,y:r.top,w:r.width,h:r.height};}
+  if(t==='garden')return {x:(BEANS.x-4)*SCALE,y:(BEANS.y-10)*SCALE,w:(BEANS.w+8)*SCALE,h:(BEANS.h+14)*SCALE};
+  const q=PROPS.find(p=>t==='oracle'?p.oracle:p.img===SHOP);return q?{x:q.x*SCALE,y:q.y*SCALE,w:q.img.width*SCALE,h:q.img.height*SCALE}:null;
+}
+function placeTut(){
+  const c=tutCur,el=$('tut'),hl=$('hl');
+  if(!c){el.hidden=true;hl.hidden=true;return;}
+  $('tutk').textContent=c.k;$('tutt').textContent=c.t;$('tutn').textContent=c.n||'';
+  const b=$('tutbtn');b.hidden=!c.btn;if(c.btn)b.textContent=c.btn;
+  el.hidden=false;
+  const r=tutRect(c.a),w=el.offsetWidth,h=el.offsetHeight,cx=r.x+r.w/2;
+  const below=c.a==='ringfront'||r.y+r.h/2<innerHeight/2;
+  let left=Math.max(12,Math.min(innerWidth-12-w,cx-w/2));
+  let top=below?r.y+r.h+14:r.y-h-14;top=Math.max(8,Math.min(innerHeight-h-8,top));
+  el.style.left=left+'px';el.style.top=top+'px';el.className='tut '+(below?'up':'down');
+  el.style.setProperty('--ax',Math.max(16,Math.min(w-16,cx-left))+'px');
+  const hr=tutRect(c.hl);
+  if(hr){hl.hidden=false;const pad=6;hl.style.left=(hr.x-pad)+'px';hl.style.top=(hr.y-pad)+'px';hl.style.width=(hr.w+pad*2)+'px';hl.style.height=(hr.h+pad*2)+'px';hl.classList.toggle('round',c.hl==='#fightbtn');}
+  else hl.hidden=true;
+}
+function setTut(c){const k=c?c.k+c.t+(c.hl||''):'',o=tutCur?tutCur.k+tutCur.t+(tutCur.hl||''):'';tutCur=c;if(k!==o||!c)placeTut();}
+function tutStage0(){ // derives the current step from the game state
+  if(tourStep>=0)return;
+  if(stage!==0||solved.size||ending||fighting||modalOpen){setTut(null);return;}
+  const inR=ring.filter(Boolean).length,both=heard.has('thales')&&heard.has('heraclitus');
+  if(inR>=2)setTut({k:'싸움 붙이기',t:'준비됐어요! 오른쪽 위의 둥근 종을 쳐서 싸움을 붙이세요.',a:'ringfront',hl:'#fightbtn',n:'3 / 3'});
+  else if(both)setTut({k:'링에 올리기',t:'두 사람이 서로 반대되는 말을 하는 것 같아요. 두 사람을 차례로 끌어다 링 위에 놓아 보세요.',a:'ringfront',hl:'ring',n:'2 / 3'});
+  else if(heard.size)setTut({k:'말 듣기',t:'좋아요. 다른 한 사람도 눌러서 무슨 말을 하는지 들어 보세요.',a:'ringfront',n:'1 / 3'});
+  else setTut({k:'처음 오셨군요',t:'아고라에 두 사람이 서성이고 있어요. 사람을 눌러서 무슨 말을 하는지 들어 보세요.',a:'ringfront',n:'1 / 3'});
+}
+function startTour(){tourStep=0;showTour();}
+function showTour(){const s=TOUR[tourStep];setTut({...s,n:`${tourStep+1} / ${TOUR.length}`,btn:tourStep===TOUR.length-1?'시작하기':'다음'});}
+$('tutbtn').addEventListener('click',()=>{
+  if(tourStep<0)return;
+  if(++tourStep>=TOUR.length){tourStep=-1;tutDone=true;setTut(null);narrate(`${day}일째. 물시계가 흐르기 시작했어요.`);updateAll();}
+  else showTour();
+});
+
+/* ---------------- oracle cloud ---------------- */
+let obubT=0;
+function showOracle(text){
+  const o=PROPS.find(q=>q.oracle),d=$('obub');if(!o)return;
+  $('obubt').textContent=text;d.hidden=false;d.classList.remove('on');void d.offsetWidth;d.classList.add('on');
+  d.style.left=((o.x+o.img.width/2)*SCALE)+'px';d.style.top=((o.y+4)*SCALE)+'px';
+  const over=$('hdr').getBoundingClientRect().bottom+16-d.getBoundingClientRect().top; // keep the puffs clear of the header
+  if(over>0)d.style.top=((o.y+4)*SCALE+over)+'px';
+  clearTimeout(obubT);obubT=setTimeout(()=>{d.hidden=true;},9000);
+}
+
+/* ---------------- collected philosophers ---------------- */
+const ROSTER=['thales','heraclitus','anaximander','anaximenes','pythagoras','xenophanes','empedocles','parmenides'];
+const MET_STAGE={thales:0,heraclitus:0,anaximander:1,anaximenes:1,pythagoras:2,xenophanes:3};
+function collected(pid){
+  if(pid==='empedocles')return born;
+  if(pid==='parmenides')return ending===2||npcs.some(n=>n.pid==='parmenides');
+  return stage>=MET_STAGE[pid];
+}
+const PORTRAIT={},SILHOUETTE={};
+ROSTER.forEach(pid=>{
+  const src=SPR[pid][0];PORTRAIT[pid]=src.toDataURL();
+  SILHOUETTE[pid]=mk(src.width,src.height,(R,g)=>{g.drawImage(src,0,0);g.globalCompositeOperation='source-in';g.fillStyle='#4a4550';g.fillRect(0,0,src.width,src.height);}).toDataURL();
+});
+function cardHTML(pid){
+  const k=collected(pid);
+  return `<button class="pc${k?'':' unk'}" type="button" data-pid="${pid}" aria-label="${k?P[pid].name:'아직 모으지 못한 철학자'}"><span class="ph"><img src="${k?PORTRAIT[pid]:SILHOUETTE[pid]}" alt=""></span><span class="nm">${k?P[pid].name:'???'}</span></button>`;
+}
+function updateColl(){
+  $('collgrid').innerHTML=ROSTER.map(cardHTML).join('');
+  $('collcount').textContent=`${ROSTER.filter(collected).length} / ${ROSTER.length}`;
+}
+function openGallery(){
+  if(modalOpen)return;
+  openModal(`<p class="eyebrow">모은 철학자 · ${ROSTER.filter(collected).length} / ${ROSTER.length}</p><h2 id="mtitle">아고라의 사람들</h2><div class="gallery" id="gallery">${ROSTER.map(cardHTML).join('')}</div>`,[{label:'닫기',primary:true}]);
+  $('gallery').addEventListener('click',e=>{const b=e.target.closest('.pc');if(b){closeModal();setTimeout(()=>openPerson(b.dataset.pid),0);}});
+}
+function openPerson(pid){
+  if(!collected(pid)){
+    openModal(`<p class="eyebrow">모은 철학자</p><h2 id="mtitle">???</h2><p style="color:var(--muted)">아직 아고라에 나타나지 않은 사람이에요. 논쟁이 이어지면 언젠가 모습을 드러낼 거예요.</p>`,
+      [{label:'목록으로',fn:()=>setTimeout(openGallery,0)},{label:'닫기',primary:true}]);return;}
+  const kws=KW.filter(k=>KWINFO[k].slots.some(sl=>sl[0]===pid)).map(k=>{
+    const sl=KWINFO[k].slots.find(x=>x[0]===pid);
+    return interps[k]&&interps[k].has(pid)?`<li><b>${k}</b>${sl[1]?' · '+sl[1]:''}<br>${sl[2]}</li>`:'<li class="unk">???</li>';}).join('')||'<li class="unk">이 장에서는 맡은 키워드가 없어요.</li>';
+  const lines=P[pid].lines.map(l=>heardLines.has(l.id)?`<li>“${l.text}”</li>`:'<li class="unk">???</li>').join('');
+  openModal(`<p class="eyebrow">모은 철학자</p><h2 id="mtitle">${P[pid].name}</h2>
+    <div style="display:flex;gap:14px;align-items:flex-start"><span class="pc" style="pointer-events:none"><span class="ph"><img src="${PORTRAIT[pid]}" alt="" style="width:48px;height:60px"></span></span>
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0;flex:1"><h3>키워드</h3><ul class="plist">${kws}</ul><h3>한 말</h3><ul class="plist">${lines}</ul></div></div>`,
+    [{label:'목록으로',fn:()=>setTimeout(openGallery,0)},{label:'닫기',primary:true}]);
+}
+$('collopen').addEventListener('click',openGallery);
+$('collgrid').addEventListener('click',e=>{const b=e.target.closest('.pc');if(b&&!modalOpen)openPerson(b.dataset.pid);});
+function setCollOpen(open){$('collbox').classList.toggle('closed',!open);$('colltog').textContent=open?'접기':'펼치기';$('colltog').setAttribute('aria-expanded',String(open));
+  try{localStorage.setItem('agora-ring:coll',open?'1':'0');}catch(e){}}
+$('colltog').addEventListener('click',()=>{setCollOpen($('collbox').classList.contains('closed'));relayout();});
+try{setCollOpen(localStorage.getItem('agora-ring:coll')!=='0');}catch(e){setCollOpen(true);}
+
 /* ---------------- HUD ---------------- */
 // the Pythia under the red awning gives hints for an offering
 const ORACLE_COST=2;
 function askOracle(){
   if(modalOpen||fighting)return;
-  if(obols<ORACLE_COST){narrate('피티아: "신탁에는 공물이 필요하오." 오볼로스가 모자라요. 콩밭에서 조금 벌 수 있어요.');return;}
+  if(obols<ORACLE_COST){showOracle('신탁에는 공물이 필요하오.');narrate('오볼로스가 모자라요. 콩밭에서 조금 벌 수 있어요.');return;}
   const avail=id=>({R5:stage>=2,R6:stage>=2,R8:born}[id]??true);
   const r=HINT_ORDER.map(id=>RULES.find(x=>x.id===id)).find(r=>!solved.has(r.id)&&avail(r.id));
-  if(!r){narrate('피티아: "그대 자신을 알라(γνῶθι σεαυτόν)." 더 내릴 신탁이 없어요.');return;}
+  if(!r){showOracle('그대 자신을 알라. (γνῶθι σεαυτόν)');narrate('신녀는 더 내릴 신탁이 없대요.');return;}
   obols-=ORACLE_COST;const o=PROPS.find(q=>q.oracle);if(o)floatText(`-${ORACLE_COST} 오볼`,o.x+21,o.y+12,GOLD);
-  narrate('피티아가 연기 속에서 중얼거려요. "'+r.hint+'"');updateAll();
+  showOracle(r.hint);narrate('피티아가 연기 속에서 신탁을 중얼거려요.');updateAll();
 }
 // the water seller refills the klepsydra
 const SHOP_COST=3,SHOP_WATER=25;
@@ -861,6 +1038,7 @@ function updateRingUI(){
        :`<li class="empty"><span class="corner c${i}">${CORNERS[i]}</span><span class="rw">비어 있음</span><span></span></li>`;}
   $('ringlist').innerHTML=h;
   $('fightbtn').disabled=cnt<2||!!fighting||ending===1||(water<=0&&ending!==2);
+  tutStage0();
 }
 function updateStele(){
   $('stele').innerHTML=KW.map(k=>{
@@ -879,7 +1057,7 @@ function updateSide(){
   $('obolv').textContent=`${obols} 오볼`;
   const f=$('fieldv');f.textContent=fieldCard?'자연 · 퓌시스':'분야카드 없음';f.className='chip'+(fieldCard?' on':'');
 }
-function updateAll(){updateRingUI();updateStele();updateSide();saveGame();}
+function updateAll(){updateRingUI();updateStele();updateSide();updateColl();saveGame();}
 
 /* ---------------- drawing ---------------- */
 const R=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,w,h);};
@@ -892,11 +1070,18 @@ function drawNPC(n,ox=0,oy=0){
   const x=Math.round(n.x+ox),y=Math.round(n.y+oy);
   ctx.globalAlpha=n.alpha==null?1:n.alpha;
   ctx.fillStyle='rgba(30,18,10,.3)';ctx.fillRect(x-5,y-1,10,2);ctx.fillRect(x-4,y+1,8,1);
-  const idle=n.frame===0&&((now+n.blink)%3600)<140;
-  const spr=SPR[n.pid][idle?2:n.frame];
-  const lift=n.state==='held'?-4:0;const bob=n.frame===1?-1:0;
+  const held=n.state==='held';
+  const idle=!held&&n.frame===0&&((now+n.blink)%3600)<140;
+  // held: legs kick (fast walk frames), body jerks side to side, little flail marks
+  const spr=SPR[n.pid][held?Math.floor(now/70)%2:idle?2:n.frame];
+  const jx=held?Math.round(Math.sin(now/38)*1.6):0,jy=held?(Math.floor(now/95)%2?-1:0):0;
+  const lift=held?-4+jy:0;const bob=!held&&n.frame===1?-1:0;
+  if(held){const k=Math.floor(now/120)%2;R(x-11+jx,y-18+k*3,2,1,'#fff');R(x-12+jx,y-14+k*3,1,1,'#fff');R(x+10+jx,y-15-k*3,2,1,'#fff');R(x+11+jx,y-19-k*3,1,1,'#fff');}
+  if(held)n.flip=Math.floor(now/260)%2===1; // twists left and right
+  ctx.save();ctx.translate(jx,0);
   if(n.flip){ctx.save();ctx.translate(x+8,0);ctx.scale(-1,1);ctx.drawImage(spr,0,y-20+lift+bob);ctx.restore();}
   else ctx.drawImage(spr,x-8,y-20+lift+bob);
+  ctx.restore();
   if(n.isNew&&n.state!=='ring'){const b=Math.round(Math.sin(now/180));R(x-1,y-31+b,3,7,OUT);R(x,y-30+b,1,4,GOLD);R(x-1,y-23+b,3,3,OUT);R(x,y-22+b,1,1,GOLD);}
   if(hover===n&&!drag){R(x-6,y+3,12,1,'rgba(255,255,255,.55)');}
   ctx.globalAlpha=1;
@@ -967,8 +1152,8 @@ function draw(){
 
 /* ---------------- update ---------------- */
 function update(dt){
-  const paused=modalOpen||dayOver;
-  if(!paused&&ending===0&&!fighting&&water>0){water-=dt*100/300;if(water<=0){water=0;updateRingUI();checkDay();}}
+  const paused=modalOpen||dayOver||tourStep>=0;
+  if(!paused&&ending===0&&!fighting&&water>0&&tutDone){water-=dt*100/300;if(water<=0){water=0;updateRingUI();checkDay();}}
   if(fighting&&!modalOpen){
     fighting.t+=dt;fighting.next-=dt;
     if(fighting.dud){if(fighting.t>DUD_T)resolveFight();}
@@ -1049,9 +1234,9 @@ function drawKlep(){
 
 /* ---------------- resize ---------------- */
 let rt=0;
-function relayout(){clearTimeout(rt);rt=setTimeout(layout,90);}
+function relayout(){clearTimeout(rt);rt=setTimeout(()=>{layout();placeTut();},90);}
 window.addEventListener('resize',relayout);
-if(window.ResizeObserver){const ro=new ResizeObserver(relayout);ro.observe($('hdr'));ro.observe($('ringpanel'));}
+if(window.ResizeObserver){const ro=new ResizeObserver(relayout);ro.observe($('hdr'));ro.observe($('ringpanel'));ro.observe($('collbox'));}
 document.addEventListener('click',e=>{const h=$('help');if(h.open&&!h.contains(e.target))h.open=false;});
 
 /* ---------------- save (localStorage) ---------------- */
@@ -1063,14 +1248,14 @@ function saveGame(){
   if(loading||ending===1)return;
   const sets=o=>Object.fromEntries(Object.entries(o).map(([k,s])=>[k,[...s]]));
   const data={v:1,stage,water:Math.round(water*10)/10,day,obols,got:[...got],solved:[...solved],interps:sets(interps),
-    fieldCard,born,heard:[...heard],farmed:[...farmed],ending,seen:Object.fromEntries(npcs.map(n=>[n.pid,n.seen]))};
+    fieldCard,born,heard:[...heard],heardLines:[...heardLines],farmed:[...farmed],tutDone,ending,seen:Object.fromEntries(npcs.map(n=>[n.pid,n.seen]))};
   try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));}catch(e){}
 }
 function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');return s&&s.v===1?s:null;}catch(e){return null;}}
 function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
 function restore(s){
   stage=s.stage|0;water=Math.max(0,Math.min(100,+s.water||0));day=s.day|0||1;obols=s.obols|0;
-  got=new Set(s.got);solved=new Set(s.solved);heard=new Set(s.heard);farmed=new Set(s.farmed);fieldCard=!!s.fieldCard;born=!!s.born;
+  got=new Set(s.got);solved=new Set(s.solved);heard=new Set(s.heard);farmed=new Set(s.farmed);heardLines=new Set(s.heardLines);tutDone=!!s.tutDone;fieldCard=!!s.fieldCard;born=!!s.born;
   interps={};for(const [k,a] of Object.entries(s.interps||{}))interps[k]=new Set(a);
   const pids=['thales','heraclitus'];
   if(stage>=1)pids.push('anaximander','anaximenes');if(stage>=2)pids.push('pythagoras');if(stage>=3)pids.push('xenophanes');if(born)pids.push('empedocles');
@@ -1098,19 +1283,21 @@ function init(fresh){
   if(fresh)clearSave();
   const saved=fresh?null:loadSave();loading=true;
   npcs=[];ring=[null,null,null,null];stage=0;water=100;day=1;obols=2;got=new Set();interps={};solved=new Set();fieldCard=false;born=false;
-  ending=0;endT=0;skyT=0;endModal=false;dayOver=false;fighting=null;particles=[];texts=[];dust=[];heard=new Set();farmed=new Set();setTip(null);
-  owl={state:'perch',turnUntil:0,nextTurn:performance.now()+6000,ft:0};
+  ending=0;endT=0;skyT=0;endModal=false;dayOver=false;fighting=null;particles=[];texts=[];dust=[];heard=new Set();heardLines=new Set();farmed=new Set();tutDone=false;setTip(null);
+  owl={state:'perch',turnUntil:0,nextTurn:performance.now()+6000,ft:0};tourStep=-1;tutCur=null;
   updateAll();layout();
   let ok=false;
   if(saved){try{restore(saved);ok=true;}catch(e){npcs=[];}}
   if(!ok){
     stage=0;water=100;day=1;obols=2;got=new Set();interps={};solved=new Set();fieldCard=false;born=false;heard=new Set();ending=0;skyT=0;endModal=false;owl.state='perch';
     const a=spawn('thales'),b=spawn('heraclitus');
-    a.x=RING.cx-46;a.y=RING.y1+44;b.x=RING.cx+46;b.y=RING.y1+58;pickTarget(a);pickTarget(b);
+    a.x=RING.cx-78;a.y=RING.y1+40;b.x=RING.cx+78;b.y=RING.y1+52;snap(a);snap(b);a.pauseUntil=b.pauseUntil=now+5000;pickTarget(a);pickTarget(b); // either side of the tutorial card
     narrate('아고라에 두 사람이 서성이고 있어요. 눌러서 무슨 말을 하는지 들어 보세요.');
   }
   loading=false;lastWater=-1;lastPhase='';updateAll();
-  if(ending===0&&interps['근원']&&interps['근원'].size>=7)startEnding();else checkDay();
+  if(saved&&saved.tutDone===undefined&&stage>=1)tutDone=true; // saves from before the tutorial existed
+  if(ending===0&&interps['근원']&&interps['근원'].size>=7)startEnding();else if(!tutDone&&stage>=1&&ending===0)startTour();else checkDay();
+  tutStage0();
 }
 init();
 if(document.fonts&&document.fonts.load)document.fonts.load('11px Galmuri11').then(()=>layout()).catch(()=>{});
