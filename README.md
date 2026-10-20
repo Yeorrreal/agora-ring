@@ -15,6 +15,8 @@ npm install galmuri@2.39.3
 python3 build.py
 ```
 
-`agora-ring.src.html`이 소스이고, `build.py`가 Galmuri11 폰트를 넣어서 `index.html`을 만든다.
+`agora-ring.src.html`이 소스이고, `build.py`가 Galmuri11 폰트와 효과음을 넣어서 `index.html`을 만든다.
 
 폰트: [Galmuri](https://github.com/quiple/galmuri) (SIL Open Font License 1.1, [FONT-LICENSE.md](FONT-LICENSE.md))
+
+효과음: 종소리와 펀치 소리는 Pixabay의 효과음("opening bell" #421471, "punch" #95294)을 잘라 `index.html` 안에 넣었다. 원본 파일(`sounds/`)은 저장소에 올리지 않으므로, 직접 빌드하려면 같은 파일을 `sounds/bell.mp3`, `sounds/punches.wav`로 두어야 한다. 나머지 소리(군중, 발소리, 부엉이)는 Web Audio로 합성한다.
