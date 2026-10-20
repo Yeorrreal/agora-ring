@@ -1,0 +1,1118 @@
+<title>아고라 링</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+@font-face{font-family:"Galmuri11";src:url(data:font/woff2;base64,__FONT_REG__) format("woff2");font-weight:400;font-display:block}
+@font-face{font-family:"Galmuri11";src:url(data:font/woff2;base64,__FONT_BOLD__) format("woff2");font-weight:700;font-display:block}
+/* Layout: the agora fills the whole window. HUD floats over it: a fixed header (klepsydra, obols, hint, help), the ring roster pinned just above the ring, the stele at bottom-right, narration at bottom-left. Single dark look by choice. */
+:root{
+  color-scheme:dark;
+  --bg:#16121b; --panel:rgba(30,23,37,.92); --panel2:#2e2537; --edge:#0b090e; --hi:#4b3e59;
+  --ink:#f2ead9; --muted:#a89cb3; --gold:#e8c35a; --water:#5fb3e0;
+  --red:#e0563b; --blue:#4d7fd6; --white:#e9e6df; --parch:#fbf5e6; --dark:#1a1418;
+  --pix:"Galmuri11","DungGeunMo","Apple SD Gothic Neo","Malgun Gothic",monospace;
+  --gl:max(12px, env(safe-area-inset-left, 0px)); --gr:max(12px, env(safe-area-inset-right, 0px));
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--pix);font-size:12.5px;line-height:1.5;margin:0;overflow:hidden;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0;
+  -webkit-font-smoothing:none}
+p,ol,ul,h1,h2{margin:0}
+[hidden]{display:none!important}
+
+.screen{position:fixed;inset:0;overflow:hidden;background:#b9a27b}
+canvas#scene{position:absolute;left:0;top:0;display:block;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none;cursor:pointer}
+canvas#scene.grab{cursor:grab}
+canvas#scene.grabbing{cursor:grabbing}
+canvas#scene.act{cursor:pointer}
+.ptip{position:fixed;transform:translate(-50%,calc(-100% - 8px));background:var(--parch);color:var(--dark);font-size:12px;font-weight:700;padding:4px 8px 5px;white-space:nowrap;
+  box-shadow:0 0 0 2px var(--dark),3px 3px 0 2px rgba(0,0,0,.35);pointer-events:none;z-index:12}
+
+.panel{background:var(--panel);box-shadow:0 0 0 2px var(--edge),inset 0 0 0 2px var(--hi),4px 4px 0 2px rgba(0,0,0,.3)}
+.lbl{font-size:11px;color:var(--muted);letter-spacing:.05em}
+.tiny{font-size:11px;color:var(--muted)}
+
+/* header */
+.hdr{position:fixed;left:0;right:0;top:0;z-index:10;padding:calc(env(safe-area-inset-top, 0px) + 8px) var(--gr) 0 var(--gl);pointer-events:none}
+.hdr .bar{pointer-events:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:6px 12px}
+.hdr h1{font-size:14px;font-weight:700;color:var(--gold);white-space:nowrap}
+.sep{width:2px;align-self:stretch;background:var(--hi)}
+.klep{display:flex;align-items:center;gap:8px}
+.klep canvas{width:32px;height:48px;image-rendering:pixelated;image-rendering:crisp-edges}
+.klep .v{display:flex;flex-direction:column;line-height:1.25}
+.big{font-size:20px;font-weight:700;color:var(--water);font-variant-numeric:tabular-nums}
+.big small{font-size:11px;color:var(--muted);font-weight:400;margin-left:3px}
+.coin{color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.coin::before{content:"● "}
+.chip{font-size:11px;padding:1px 6px;box-shadow:inset 0 0 0 1px var(--hi);color:var(--muted);white-space:nowrap}
+.chip.on{color:var(--dark);background:#9ccc84;box-shadow:none;font-weight:700}
+.grow{flex:1}
+.help{position:relative}
+.help summary{cursor:pointer;list-style:none;font-weight:700;font-size:12.5px;padding:6px 12px;background:var(--panel2);color:var(--ink);box-shadow:0 0 0 2px var(--dark)}
+.help summary::-webkit-details-marker{display:none}
+.help summary::after{content:" ▾";color:var(--muted)}
+.help[open] summary::after{content:" ▴"}
+.help .drop{position:absolute;right:0;top:calc(100% + 10px);width:min(340px,calc(100vw - 32px));padding:12px 14px}
+.help ol{padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:12px}
+.help .savenote{margin-top:10px;padding-top:8px;border-top:1px solid var(--hi);display:flex;justify-content:space-between;align-items:center;gap:8px}
+
+.btn{font:inherit;font-weight:700;font-size:12.5px;border:0;cursor:pointer;padding:7px 12px;background:var(--gold);color:var(--dark);white-space:nowrap;
+  box-shadow:0 0 0 2px var(--dark),inset -2px -3px 0 rgba(0,0,0,.25),inset 2px 2px 0 rgba(255,255,255,.35)}
+.btn:active{transform:translate(1px,1px)}
+.btn:focus-visible,.kwbtn:focus-visible,.mini:focus-visible,summary:focus-visible{outline:2px solid var(--water);outline-offset:3px}
+.btn[disabled]{background:#4a4150;color:#8b8094;cursor:not-allowed}
+.btn.ghost{background:var(--panel2);color:var(--ink)}
+.mini{font:inherit;font-size:10.5px;background:transparent;border:0;color:var(--muted);cursor:pointer;padding:2px 4px;box-shadow:0 0 0 1px var(--hi)}
+.mini:hover{color:var(--ink)}
+
+/* ring roster, pinned above the ring by script */
+.ringpanel{position:fixed;z-index:6;background:#1e1725;transform:translate(-50%,-100%);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:8px;align-items:stretch}
+.ringpanel ul{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:40px;gap:4px;min-height:84px}
+.ringpanel li{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:6px;align-items:center;background:var(--panel2);padding:4px 6px;min-width:0}
+.ringpanel li.empty .rw{color:var(--muted)}
+.ringpanel .side{display:flex;flex-direction:column;justify-content:center;gap:6px;align-items:stretch}
+/* boxing bell, stuck to the outside right of the roster */
+.bell{position:absolute;left:calc(100% + 14px);top:50%;width:66px;height:66px;margin-top:-33px;padding:0;border:0;border-radius:50%;cursor:pointer;
+  background:transparent center/100% 100% no-repeat;image-rendering:pixelated;image-rendering:crisp-edges;
+  filter:drop-shadow(4px 4px 0 rgba(0,0,0,.3))}
+.bell::before,.bell::after{position:absolute;left:50%;pointer-events:none;opacity:0;transition:opacity .12s}
+.bell::after{content:attr(aria-label);top:calc(100% + 19px);transform:translateX(-50%);background:var(--parch);color:var(--dark);font:inherit;font-size:12px;font-weight:700;
+  padding:4px 8px 5px;white-space:nowrap;box-shadow:0 0 0 2px var(--dark),3px 3px 0 2px rgba(0,0,0,.35)}
+.bell::before{content:"";top:calc(100% + 8px);transform:translateX(-50%);border:6px solid transparent;border-bottom:7px solid var(--dark);border-top:0}
+.bell:hover::before,.bell:hover::after,.bell:focus-visible::before,.bell:focus-visible::after{opacity:1}
+.bell:focus-visible{outline:2px solid var(--water);outline-offset:9px}
+.bell:active:not([disabled]){transform:translate(1px,1px)}
+.bell.ding{animation:ding .45s steps(6)}
+@keyframes ding{0%,100%{rotate:0deg}20%{rotate:-14deg}40%{rotate:11deg}60%{rotate:-7deg}80%{rotate:4deg}}
+.bell[disabled]{cursor:not-allowed;filter:saturate(.25) brightness(.7) drop-shadow(4px 4px 0 rgba(0,0,0,.3))}
+.corner{font-size:10.5px;font-weight:700;text-align:center;color:var(--dark)}
+.c0{background:var(--red)}.c1{background:var(--blue);color:#fff}.c2{background:var(--white)}.c3{background:var(--gold)}
+.rw{min-width:0;font-size:11.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rw b{color:var(--gold);margin-right:5px;font-weight:700}
+
+/* stele, bottom-right */
+.stelebox{position:fixed;right:var(--gr);bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);z-index:6;width:250px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.stelebox .head{display:flex;justify-content:space-between;align-items:center}
+.stele{list-style:none;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:2px 6px;background:#cfc7b4;box-shadow:inset 0 0 0 2px #a59d89,inset 0 0 0 4px #ded7c6}
+.kwbtn{font:inherit;font-size:11.5px;width:100%;display:flex;justify-content:space-between;gap:4px;border:0;background:transparent;padding:3px 4px;color:#6f6656;text-align:left;cursor:default;white-space:nowrap}
+.kwbtn.got{color:#2a2117;cursor:pointer;font-weight:700}
+.kwbtn.got:hover{background:#bfb7a2}
+.kwbtn .n{font-weight:400;font-size:10.5px;color:#6f6656;font-variant-numeric:tabular-nums}
+
+/* narration, bottom-left */
+.narr{position:fixed;left:var(--gl);bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);z-index:6;max-width:min(520px,calc(100vw - 290px));padding:8px 12px;font-size:12.5px;min-height:38px}
+.narr::before{content:"▶ ";color:var(--gold)}
+
+.bubble{position:absolute;transform:translate(var(--tx,-50%),-100%);background:var(--parch);color:var(--dark);padding:5px 8px 6px;font-size:12px;line-height:1.45;
+  max-width:230px;width:max-content;box-shadow:0 0 0 2px var(--dark),4px 4px 0 2px rgba(0,0,0,.35);pointer-events:none;z-index:3;margin-top:-10px}
+.bubble .who{display:block;font-size:10.5px;color:#7d6a85;font-weight:700}
+.bubble .cnt{display:block;text-align:right;font-size:10px;line-height:1.2;color:#9a8aa0;margin-top:2px;font-variant-numeric:tabular-nums}
+.bubble::before{content:"";position:absolute;left:var(--tail,50%);top:calc(100% + 2px);transform:translateX(-50%);border:6px solid transparent;border-top:7px solid var(--dark)}
+.bubble::after{content:"";position:absolute;left:var(--tail,50%);top:100%;transform:translateX(-50%);border:4px solid transparent;border-top:5px solid var(--parch)}
+.bubble.still{background:#e6e2f5}.bubble.still::after{border-top-color:#e6e2f5}
+
+.modal{position:fixed;inset:0;background:rgba(10,7,14,.72);display:flex;align-items:center;justify-content:center;z-index:20;
+  padding:max(16px, env(safe-area-inset-top, 0px)) var(--gr) max(16px, env(safe-area-inset-bottom, 0px)) var(--gl)}
+.card{background:#231c2a;box-shadow:0 0 0 3px var(--edge),inset 0 0 0 3px var(--hi),8px 8px 0 3px rgba(0,0,0,.4);padding:20px 20px 16px;width:min(460px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.card h2{font-size:21px;color:var(--gold);font-weight:700;text-wrap:balance}
+.card .gr{color:var(--muted);font-size:12.5px}
+.card .eyebrow{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.card .dlg{display:flex;flex-direction:column;gap:6px;background:var(--panel2);padding:10px 12px}
+.card .dlg p b{color:var(--gold);font-weight:700}
+.card .unl{display:flex;flex-direction:column;gap:4px;font-size:12px}
+.card .unl p::before{content:"+ ";color:var(--water)}
+.card .acts{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:4px}
+.slots{display:flex;flex-direction:column;gap:6px}
+.slot{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:7px 10px;background:var(--panel2);font-size:12px}
+.slot b{color:var(--gold);font-weight:700}
+.slot.empty{color:var(--muted)}
+.slot.lock{color:#6f6578;background:transparent;box-shadow:inset 0 0 0 1px var(--hi)}
+
+@media (max-width:700px){
+  .hdr h1,.hdr .sep,.hdr .hide-s{display:none}
+  .hdr .bar{gap:10px;padding:6px 8px}
+  .stelebox{width:200px}
+  .narr{max-width:calc(100vw - 236px);font-size:11.5px}
+  .ringpanel ul{grid-template-columns:1fr}
+  .ringpanel ul{min-height:0}
+}
+@media (prefers-reduced-motion:reduce){.btn:active{transform:none}}
+</style>
+
+<div class="screen" id="screen"><canvas id="scene" width="384" height="240" aria-label="위에서 내려다본 아고라와 링"></canvas></div>
+<div class="ptip" id="ptip" hidden></div>
+
+<header class="hdr" id="hdr">
+  <div class="bar panel">
+    <h1>아고라 링 · 1장 근원</h1>
+    <span class="sep"></span>
+    <div class="klep">
+      <canvas id="klep" width="32" height="48" aria-hidden="true"></canvas>
+      <div class="v"><span class="lbl">클렙시드라</span><span class="big" id="waterv">100</span><span class="tiny" id="dayv">1일째 · 해가 높아요</span></div>
+    </div>
+    <span class="sep"></span>
+    <span class="coin" id="obolv">2 오볼</span>
+    <span class="chip hide-s" id="fieldv">분야카드 없음</span>
+    <span class="grow"></span>
+    <details class="help" id="help">
+      <summary>하는 법</summary>
+      <div class="drop panel">
+        <ol>
+          <li>아고라의 사람을 누르면 말풍선이 떠요. 계속 누르면 다른 말을 해요.</li>
+          <li>서로 맞서는 말을 하는 사람들을 링으로 끌어다 놓아요. 링에 올라간 순간의 말로 판정해요.</li>
+          <li>종을 쳐서 싸움을 붙이면 물시계의 물이 줄어요. 결판 −8, 동문서답 −15. 가만히 있어도 조금씩 새요.</li>
+          <li>머리 위에 <span style="color:var(--gold)">!</span>가 뜬 사람은 새로 할 말이 생긴 사람이에요.</li>
+          <li>비문에 새겨진 키워드를 누르면 철학자별 해석을 볼 수 있어요.</li>
+          <li>빨간 차양 아래 델포이의 신녀를 누르면 2 오볼에 신탁(힌트)을 받아요.</li>
+          <li>철학자를 콩밭에 끌어다 놓으면 잠깐 일해서 오볼을 벌어요. 한 사람당 하루 한 번.</li>
+          <li>파란 차양의 물장수에게서 오볼로 물시계를 채울 수 있어요.</li>
+        </ol>
+        <p class="tiny savenote">진행도는 이 브라우저에 자동으로 저장돼요. <button class="mini" id="resetbtn" type="button">처음부터 다시</button></p>
+      </div>
+    </details>
+  </div>
+</header>
+
+<section class="ringpanel panel" id="ringpanel" aria-label="링 위의 말">
+  <ul id="ringlist"></ul>
+  <div class="side">
+    <span class="tiny" id="slotv" style="text-align:center">0 / 2명</span>
+  </div>
+  <button class="bell" id="fightbtn" type="button" aria-label="싸움 붙이기"></button>
+</section>
+
+<section class="stelebox panel" id="stelebox">
+  <div class="head"><span class="lbl">비문 · 새겨진 키워드</span><span id="kwcount" style="font-weight:700">0 / 8</span></div>
+  <ol class="stele" id="stele"></ol>
+</section>
+
+<p class="narr panel" id="narr" aria-live="polite"></p>
+
+<div class="modal" id="modal" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="mtitle"><div id="mbody" style="display:flex;flex-direction:column;gap:12px"></div><div class="acts" id="macts"></div></div></div>
+
+<script>
+(()=>{
+let W=384,H=240,SCALE=3;
+const cv=document.getElementById('scene'), ctx=cv.getContext('2d');
+const screenEl=document.getElementById('screen');
+const $=id=>document.getElementById(id);
+
+/* ---------------- data ---------------- */
+const SKIN='#d9a070', EYE='#2a1c18', SANDAL='#5a3c22', OUT='#1a1418', GOLD='#e8c35a';
+const P={
+  thales:{name:'탈레스',bald:true,trim:'#d9e6f2',hair:'#ece8de',beard:'#ece8de',cloth:'#3b7bb8',dark:'#285887',lines:[
+    {id:'t_water',kw:'근원',text:'세상의 근원은 물이다.',from:0},
+    {id:'t_water_v',canon:'t_water',kw:'근원',text:'땅은 물 위에 떠 있다.',from:1},
+    {id:'t_gods',kw:'영혼',text:'만물은 신들로 가득 차 있다.',from:2},
+    {id:'t_gods_v',canon:'t_gods',kw:'영혼',text:'자석은 쇠를 움직이니, 영혼을 가진 것이다.',from:2}]},
+  // Raphael: mauve smock and tall leather boots (Michelangelo as Heraclitus)
+  heraclitus:{name:'헤라클레이토스',messy:true,trim:'#c9a3b4',hair:'#3a2a22',beard:'#3a2a22',cloth:'#a9788f',dark:'#7a5168',sandal:'#9a5a30',lines:[
+    {id:'h_fire',kw:'근원',text:'세상의 근원은 불이다.',from:0},
+    {id:'h_fire_v',canon:'h_fire',kw:'근원',text:'이 세계는 영원히 살아 있는 불이다.',from:1},
+    {id:'h_harmony',kw:'조화',text:'보이지 않는 조화가 보이는 조화보다 낫다.',from:2},
+    {id:'h_war',kw:'투쟁',text:'전쟁은 만물의 아버지다.',from:3}]},
+  // Raphael: bald, long grey beard, ochre mantle over a violet tunic
+  anaximander:{name:'아낙시만드로스',bald:true,trim:'#5e4474',hair:'#b9b2a6',beard:'#cfc8bb',cloth:'#d49a34',dark:'#a8731f',lines:[
+    {id:'am_apeiron',kw:'근원',text:'근원은 정해지지 않은 무한한 것이다.',from:1},
+    {id:'am_apeiron_v',canon:'am_apeiron',kw:'근원',text:'물이 근원이라면, 불은 어디서 왔겠는가?',from:1},
+    {id:'am_justice',kw:'정의',text:'사물들은 시간의 질서에 따라 서로에게 불의의 대가를 치른다.',from:1}]},
+  anaximenes:{name:'아낙시메네스',trim:'#7f95a5',hair:'#2b2b30',beard:'#2b2b30',cloth:'#d7e0e6',dark:'#a7b6c0',lines:[
+    {id:'an_air',kw:'근원',text:'세상의 근원은 공기다.',from:1},
+    {id:'an_dense',canon:'an_air',kw:'근원',text:'공기가 엷어지면 불이 되고, 짙어지면 구름과 물과 흙이 된다.',from:1},
+    {id:'an_soul',kw:'영혼',text:'공기인 우리 영혼이 우리를 묶듯, 숨이 온 세계를 감싼다.',from:2}]},
+  // Raphael: balding, brown-grey beard, rose tunic with a white mantle over the lap
+  pythagoras:{name:'피타고라스',bald:true,trim:'#f4efe4',hair:'#8c7a64',beard:'#8a6e56',cloth:'#d9785e',dark:'#a9503e',mantle:'#f1ece0',mantleDark:'#c9c2b2',lines:[
+    {id:'p_number',kw:'근원',text:'만물은 수이다.',from:2},
+    {id:'p_number_v',canon:'p_number',kw:'근원',text:'현의 길이를 반으로 줄이면 한 옥타브가 오른다.',from:2},
+    {id:'p_harmony',kw:'조화',text:'우주는 수의 비율로 조율된 조화다.',from:2},
+    {id:'p_soul',kw:'영혼',text:'영혼은 죽지 않고 다른 몸으로 옮겨 간다.',from:2}]},
+  xenophanes:{name:'크세노파네스',trim:'#efe2c2',hair:'#9a9a9a',beard:'#9a9a9a',cloth:'#9a7a3c',dark:'#6e5527',lines:[
+    {id:'x_earth',kw:'근원',text:'모든 것은 흙에서 나와 흙으로 돌아간다.',from:3},
+    {id:'x_earth_v',canon:'x_earth',kw:'근원',text:'우리는 모두 흙과 물에서 생겨났다.',from:3},
+    {id:'x_gods',kw:'신',text:'소에게 손이 있다면 신을 소의 모습으로 그렸을 것이다.',from:3}]},
+  // Diogenes Laertius: purple robe, golden crown, bronze sandals
+  empedocles:{name:'엠페도클레스',trim:'#e8c35a',hair:'#c99a3e',beard:'#c99a3e',cloth:'#7a2f6a',dark:'#561f4a',sandal:'#b07a2a',crown:true,lines:[
+    {id:'e_roots',kw:'근원',text:'물, 불, 공기, 흙. 네 뿌리가 섞이고 갈라진다.',from:0},
+    {id:'e_love',kw:'사랑과 미움',text:'사랑은 원소를 묶고, 미움은 원소를 떼어 놓는다.',from:0}]},
+  // Raphael: dark curls, saffron tunic, red mantle with a gold hem
+  parmenides:{name:'파르메니데스',trim:'#e8c35a',hair:'#3e3028',beard:'#3e3028',cloth:'#e3ad3a',dark:'#b5821f',mantle:'#c2492f',mantleDark:'#8e3220',lines:[
+    {id:'pa_being',kw:'존재',text:'있는 것은 있고, 없는 것은 없다.',from:0},
+    {id:'pa_still',kw:'운동',text:'움직임은 환상이다. 나를 옮길 수는 없소.',from:0}]}
+};
+const LINE={}; Object.values(P).forEach(p=>p.lines.forEach(l=>LINE[l.id]=l));
+const canon=l=>l.canon||l.id;
+
+const RULES=[
+  {id:'R1',keys:[['t_water','h_fire']],kw:'근원',interp:{'근원':['thales','heraclitus']},
+    dlg:[['thales','모든 것은 젖어 있소. 씨앗도, 양분도!'],['heraclitus','모든 것은 타오르고 있소. 멈추는 것은 없지!']],
+    hint:'물과 불. 두 사람 다 세상이 무엇에서 시작됐는지를 말하고 있소.'},
+  {id:'R2',keys:[['t_water','am_apeiron']],kw:'아페이론',interp:{'근원':['anaximander'],'아페이론':['anaximander']},
+    dlg:[['anaximander','선생님, 물이 근원이라면 불은 어디서 왔습니까?'],['thales','…음.']],
+    hint:'탈레스의 제자는 스승의 답이 너무 "정해져" 있다고 생각했지.'},
+  {id:'R3',keys:[['am_apeiron','an_air']],kw:'하나와 여럿',interp:{'근원':['anaximenes'],'하나와 여럿':['anaximander','anaximenes']},
+    dlg:[['anaximander','근원을 하나로 정해 버리면, 그 반대의 것은 어디서 나오겠느냐?'],['anaximenes','선생님, 공기 하나로도 됩니다. 짙어지면 물과 흙이, 엷어지면 불이 되니까요.']],
+    hint:'근원은 정할 수 없다는 스승, 공기 하나면 충분하다는 제자. 하나에서 어떻게 여럿이 나오는지를 두고 맞서고 있소.'},
+  {id:'R4',keys:[['h_fire','an_air','p_number']],kw:'수',interp:{'근원':['pythagoras'],'수':['pythagoras']},
+    dlg:[['pythagoras','불이든 공기든 재료일 뿐이오. 그것을 짜는 것은 수요.'],['heraclitus','많이 아는 것이 지혜는 아니오, 피타고라스.']],
+    hint:'불과 공기는 둘 다 재료요. 재료가 아닌 근원을 말하는 자에게 둘이 함께 덤비면?'},
+  {id:'R5',keys:[['h_harmony','p_harmony']],kw:'조화',interp:{'조화':['heraclitus','pythagoras']},
+    dlg:[['heraclitus','활과 리라처럼, 서로 당기는 힘끼리의 조화요.'],['pythagoras','아니, 현의 길이가 이루는 비율의 조화요.']],
+    hint:'헤라클레이토스와 피타고라스. 둘 다 "조화"를 말하지만 뜻이 다르다오.'},
+  {id:'R6',keys:[['t_gods','an_soul','p_soul']],kw:'영혼',hidden:true,interp:{'영혼':['thales','anaximenes','pythagoras']},
+    dlg:[['thales','자석에도 영혼이 있소.'],['anaximenes','영혼은 숨이오.'],['pythagoras','영혼은 몸을 옮겨 다니오.']],
+    hint:'신들, 숨, 다시 태어남. 세 사람이 같은 것을 다르게 부르고 있소.'},
+  {id:'R7',keys:[['t_water','h_fire','an_air','x_earth']],kw:'4원소',birth:'empedocles',interp:{'근원':['xenophanes','empedocles'],'4원소':['empedocles']},
+    dlg:[['','넷이 뒤엉킨 먼지 속에서 한 사람이 걸어 나왔어요.'],['empedocles','다들 옳소. 근원은 하나가 아니라 넷이오.']],
+    hint:'물, 불, 공기… 흙만 있으면 넷이 다 모이겠군.'},
+  {id:'R8',keys:[['e_love','h_war']],kw:'사랑과 미움',interp:{'사랑과 미움':['empedocles','heraclitus']},
+    dlg:[['empedocles','미움만으로는 아무것도 생기지 않소.'],['heraclitus','투쟁이 곧 정의요.']],
+    hint:'사랑과 미움. 그리고 "전쟁은 만물의 아버지"라던 자.'}
+];
+const RULEMAP={}; RULES.forEach(r=>r.keys.forEach(k=>RULEMAP[[...k].sort().join('+')]=r));
+const HINT_ORDER=['R1','R2','R3','R4','R7','R5','R6','R8'];
+
+const KW=['근원','아페이론','하나와 여럿','수','조화','영혼','4원소','사랑과 미움'];
+const KWINFO={
+  '근원':{gr:'ἀρχή · 아르케',slots:[['thales','물','모든 것을 적시고 살리는 것'],['heraclitus','불','멈추지 않고 타오르며 바뀌는 것'],['anaximander','아페이론','어느 것으로도 정해지지 않은 것'],['anaximenes','공기','짙어지고 엷어지며 모든 것이 되는 것'],['pythagoras','수','재료가 아니라 짜임새'],['xenophanes','흙','나와서 돌아가는 곳'],['empedocles','네 뿌리','하나가 아니라 넷의 섞임']],lock:'2장에서 열려요'},
+  '아페이론':{gr:'ἄπειρον · 무한정자',slots:[['anaximander','','끝도 경계도 성질도 정해지지 않은 것. 모든 대립하는 것들이 여기서 나온다']]},
+  '하나와 여럿':{gr:'ἓν καὶ πολλά · 헨 카이 폴라',slots:[['anaximander','','정해지지 않은 하나에서 뜨거움과 차가움 같은 대립자들이 갈라져 나온다'],['anaximenes','','공기 하나가 짙어지면 바람·구름·물·흙이, 엷어지면 불이 된다']]},
+  '수':{gr:'ἀριθμός · 아리트모스',slots:[['pythagoras','','현의 비율, 별의 운행. 모든 것의 짜임새는 수로 셀 수 있다']]},
+  '조화':{gr:'ἁρμονία · 하르모니아',slots:[['heraclitus','','활과 리라처럼 서로 당기는 힘들의 긴장'],['pythagoras','','수의 비율로 맞춰진 질서']]},
+  '영혼':{gr:'ψυχή · 프쉬케',slots:[['thales','','사물을 움직이는 힘. 자석에도 있다'],['anaximenes','','몸을 묶어 주는 숨'],['pythagoras','','죽지 않고 몸을 옮겨 다니는 것']]},
+  '4원소':{gr:'ῥιζώματα · 네 뿌리',slots:[['empedocles','','물, 불, 공기, 흙. 생겨남도 사라짐도 없이 섞이고 나뉠 뿐']]},
+  '사랑과 미움':{gr:'φιλότης · νεῖκος',slots:[['empedocles','','섞는 힘과 가르는 힘이 번갈아 우주를 다스린다'],['heraclitus','','투쟁이 만물의 아버지다. 대립이 곧 정의다']]}
+};
+const HIDDEN_KW=new Set(['영혼']);
+
+
+
+
+/* ---------------- sprites: 2-head chibi, front view ---------------- */
+const BLUSH='#f0a088';
+function tmpl(p,f){ // f: 0 walk A / stand, 1 walk B, 2 blink
+  const r=[];
+  if(p.crown){r.push('...g.gggg.g...','..hhhhhhhhhh..','.hhhhhhhhhhhh.');}
+  else if(p.bald){r.push('....ssssss....','..hssssssssh..','.hhsssssssshh.');}
+  else if(p.veil){r.push('...hhhhhhhh...','..hhhhhhhhhh..','.hwvwwvwwvwwh.');}
+  else if(p.messy){r.push('...h.hhhh.h...','..hhhhhhhhhh..','.hhhhhhhhhhhh.');}
+  else r.push('....hhhhhh....','..hhhhhhhhhh..','.hhhhhhhhhhhh.');
+  r.push('.hhsssssssshh.','.hssssssssssh.');
+  if(f===2)r.push('.hssssssssssh.','.hssessssessh.');else r.push('.hssessssessh.','.hssessssessh.');
+  r.push('.hpssssssssph.');
+  if(p.beard)r.push('..sbbbbbbbbs..','...bbbbbbbb...');else r.push('..ssssssssss..','...ssssssss...');
+  r.push(p.beard?'...cbbbbbbc...':'...cccccccc...','.sxcccccccccs.','.scccxcccccds.','..ccccccxccd..','..ccccccccxd..','...cccccccd...');
+  if(p.veil)r.splice(8,6,'.hhsssssssshu.','.hhhssssssuuu.','.hhhcccccchuu.','hhsxccccccccuu','hhcccxcccccduu','.hccccccxccdu.'); // veil falls past the chin onto the shoulders
+  if(p.mantle)for(let i=r.length-3;i<r.length;i++)r[i]=r[i].replace(/c/g,'m').replace(/d/g,'n');
+  if(f===1)r.push('...ll....ll...','...ll....ll...');else r.push('....ll..ll....','....ll..ll....');
+  return r;
+}
+function bake(rows,cmap,w,h){
+  const c=document.createElement('canvas');c.width=w+2;c.height=h+2;const g=c.getContext('2d');
+  const filled=(x,y)=>y>=0&&y<h&&x>=0&&x<w&&rows[y][x]!=='.';
+  g.fillStyle=OUT;
+  for(let y=-1;y<=h;y++)for(let x=-1;x<=w;x++){if(filled(x,y))continue;if(filled(x-1,y)||filled(x+1,y)||filled(x,y-1)||filled(x,y+1))g.fillRect(x+1,y+1,1,1);}
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const ch=rows[y][x];if(ch==='.')continue;g.fillStyle=cmap[ch]||'#f0f';g.fillRect(x+1,y+1,1,1);}
+  return c;
+}
+const SPR={};
+for(const [pid,p] of Object.entries(P)){
+  const cmap={h:p.hair,s:SKIN,e:EYE,b:p.beard,c:p.cloth,d:p.dark,x:p.trim||'#f1e7cf',l:p.sandal||SANDAL,g:GOLD,p:BLUSH,m:p.mantle,n:p.mantleDark};
+  SPR[pid]=[0,1,2].map(f=>bake(tmpl(p,f),cmap,14,18));
+}
+const OWL_C={o:'#d9d5cb',b:'#fbfaf6',y:'#f0c040',k:'#1a1418',a:'#e08a2a',f:'#c99a3a'}; // white owl of Athena
+const OWL_FRONT=bake(['o.....o','ooooooo','oykoyko','oooaooo','obbbbbo','obbbbbo','.f...f.'],OWL_C,7,7);
+const OWL_BACK=bake(['o.....o','ooooooo','ooooooo','ooooooo','obbbbbo','obbbbbo','.f...f.'],OWL_C,7,7);
+const OWL_FLY=[
+  bake(['oo.......oo','.oo.o.o.oo.','..ooooooo..','...oykoyk..','...oooaoo..','....obbo...','...........'],OWL_C,11,7),
+  bake(['...........','....o.o....','...ooooo...','.ooooykokoo','oo.oooaoo.o','....obbo...','...........'],OWL_C,11,7)
+];
+
+/* ---------------- props: 16-bit set pieces, baked once ---------------- */
+const MB=['#fbf8f0','#ece6d8','#d6cebd','#b9b09b','#958b76']; // marble, light → dark
+const TERRA=['#e0905a','#c96f3d','#9e5230','#6e3520'],BLK='#231a16';
+function mk(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');
+  fn((x,y,w,h,col)=>{g.fillStyle=col;g.fillRect(x,y,w,h);},g);return c;}
+function outlined(src,col){ // 1px outline around opaque pixels; the canvas grows by 2
+  const w=src.width,h=src.height,d=src.getContext('2d').getImageData(0,0,w,h).data;
+  const op=(x,y)=>x>=0&&y>=0&&x<w&&y<h&&d[(y*w+x)*4+3]>40;
+  return mk(w+2,h+2,(R,g)=>{for(let y=-1;y<=h;y++)for(let x=-1;x<=w;x++)if(!op(x,y)&&(op(x-1,y)||op(x+1,y)||op(x,y-1)||op(x,y+1)))R(x+1,y+1,1,1,col);g.drawImage(src,1,1);});
+}
+const FAINT='rgba(70,52,36,.38)',NOLINE='rgba(0,0,0,0)'; // NOLINE keeps the +2 size but draws no outline // outline for props that are only scenery
+function seeded(s){return ()=>{s=(s*16807)%2147483647;return s/2147483647;};}
+function disc(R,cx,cy,rx,ry,col){for(let dy=-ry;dy<=ry;dy++){const w=Math.round(rx*Math.sqrt(Math.max(0,1-dy*dy/(ry*ry))));R(cx-w,cy+dy,w*2+1,1,col);}}
+
+// Athena Parthenos-style: crested helmet, aegis, peplos, spear, shield; the owl sits on her right palm
+const ATHENA=outlined(mk(40,92,R=>{
+  const [M0,M1,M2,M3,M4]=MB;
+  R(1,85,38,7,M2);R(1,85,38,1,M0);R(33,86,6,6,M3);R(1,91,38,1,M4);
+  R(5,69,30,16,M1);R(5,69,1,16,M0);R(30,69,5,16,M3);
+  R(8,72,19,10,M3);R(9,73,17,8,M1);for(let i=0;i<5;i++)R(10+i*3,76,2,3,M3);
+  R(3,65,34,4,M1);R(3,65,34,1,M0);R(31,65,6,4,M2);R(3,68,34,1,M3);
+  R(10,62,20,3,M2);R(10,62,20,1,M1);
+  R(8,5,2,57,M3);R(8,5,1,57,M2);R(7,2,4,3,M2);R(8,0,2,2,M1);
+  for(let y=38;y<62;y++){const w=12+Math.round((y-38)*6/24),x0=20-Math.floor(w/2);
+    R(x0,y,w,1,M1);R(x0,y,1,1,M0);R(x0+w-2,y,2,1,M3);for(let fx=x0+3;fx<x0+w-3;fx+=3)R(fx,y,1,1,M2);}
+  R(13,61,14,1,M3);
+  R(13,33,14,5,M1);R(13,33,1,5,M0);R(25,33,2,5,M3);for(let x=14;x<26;x+=2)R(x,37,1,1,M3);
+  R(15,22,10,11,M1);R(23,22,2,11,M2);for(let y=23;y<29;y++)for(let x=16+(y%2);x<23;x+=2)R(x,y,1,1,M2);
+  R(19,25,3,3,M3);R(20,26,1,1,M4);
+  R(11,23,4,3,M1);R(10,25,3,9,M2);R(9,33,3,3,M1);
+  R(25,23,8,3,M1);R(25,25,8,1,M3);R(32,21,4,3,M1);R(32,23,4,1,M2);
+  R(19,19,3,3,M2);R(17,13,7,7,M1);R(22,13,2,7,M2);R(18,16,1,1,M3);R(21,16,1,1,M3);R(19,18,2,1,M2);
+  R(16,10,9,4,M2);R(16,10,9,1,M1);R(15,12,2,5,M2);R(24,12,1,3,M3);
+  for(let i=0;i<11;i++){const x=14+i,y=7-Math.round(5*Math.sin(Math.PI*i/10));R(x,y,1,3,M1);R(x,y,1,1,M0);}
+  disc(R,12,51,7,7,M3);disc(R,12,51,6,6,M2);disc(R,11,50,4,4,M1);disc(R,12,51,2,2,M3);R(12,51,1,1,M4);
+}),'#6b604f');
+const OWL_AT={x:32,y:14}; // owl's top-left on the statue, in ATHENA pixels
+
+// garden things
+const MOUND=outlined(mk(18,13,R=>{
+  disc(R,9,9,8,3,'#6a4c30');disc(R,8,8,6,3,'#82603d');disc(R,7,7,3,2,'#9c7650');R(4,10,2,1,'#4f3824');R(12,10,1,1,'#4f3824');
+  R(12,0,1,7,'#8a6a44');R(11,0,3,1,'#6b4f33');R(11,6,3,3,'#9aa0a6');R(11,6,1,3,'#c9ced3');
+}),NOLINE);
+const BASKET=outlined(mk(10,8,R=>{R(0,2,10,6,'#b88a4a');for(let x=0;x<10;x+=2)R(x,3,1,5,'#94692f');R(0,5,10,1,'#94692f');R(0,2,10,1,'#d9ab68');
+  R(1,1,8,1,'#5d9440');R(2,0,2,1,'#8cc46a');R(6,0,2,1,'#8cc46a');R(4,1,1,1,'#a6d07e');}),NOLINE);
+const HYDRIA=outlined(mk(8,11,R=>{R(2,0,4,1,TERRA[2]);R(2,1,4,2,TERRA[1]);R(0,3,1,3,TERRA[2]);
+  for(let y=3;y<10;y++){const w=[6,8,8,8,7,6,4][y-3],x0=Math.floor((8-w)/2);R(x0,y,w,1,TERRA[1]);R(x0,y,1,1,TERRA[0]);R(x0+w-1,y,1,1,TERRA[2]);}
+  R(1,5,6,2,BLK);R(3,5,1,1,TERRA[1]);R(2,10,4,1,TERRA[2]);}),NOLINE);
+function fence(w){return outlined(mk(w,8,R=>{
+  for(let y=2;y<7;y+=2)for(let x=0;x<w;x++)R(x,y,1,1,((x>>2)+(y>>1))%2?'#8a6a44':'#a5845a');
+  for(let x=0;x<w;x+=9){R(x,0,2,8,'#6b4f33');R(x,0,1,8,'#9a7a54');}}),FAINT);}
+
+// pottery
+const AMPHORA=outlined(mk(9,16,R=>{
+  R(3,0,3,1,TERRA[2]);R(3,1,3,3,TERRA[1]);R(1,2,1,4,TERRA[2]);R(7,2,1,4,TERRA[2]);R(1,2,2,1,TERRA[2]);R(6,2,2,1,TERRA[2]);
+  for(let y=4;y<15;y++){const w=[5,7,9,9,9,9,8,7,5,4,3][y-4],x0=Math.floor((9-w)/2);R(x0,y,w,1,TERRA[1]);R(x0,y,1,1,TERRA[0]);R(x0+w-1,y,1,1,TERRA[2]);}
+  R(0,7,9,3,BLK);R(2,8,1,1,TERRA[1]);R(4,7,1,2,TERRA[1]);R(6,8,1,1,TERRA[1]);R(3,15,3,1,TERRA[2]);
+}),'#1c1410');
+const KRATER=outlined(mk(14,11,R=>{
+  R(0,0,14,2,TERRA[2]);R(0,0,14,1,TERRA[0]);
+  for(let y=2;y<8;y++){const w=[14,13,12,11,10,8][y-2],x0=Math.floor((14-w)/2);R(x0,y,w,1,TERRA[1]);R(x0,y,1,1,TERRA[0]);R(x0+w-1,y,1,1,TERRA[2]);}
+  R(1,3,12,3,BLK);R(3,3,1,3,TERRA[1]);R(6,4,2,2,TERRA[1]);R(10,3,1,3,TERRA[1]);R(5,3,1,1,TERRA[1]);
+  R(6,8,2,1,TERRA[2]);R(4,9,6,2,TERRA[2]);R(4,9,6,1,TERRA[1]);
+}),'#1c1410');
+const PITHOS=outlined(mk(13,17,R=>{
+  const C=['#d8b088','#b98a5e','#94673f'];R(3,0,7,2,C[1]);R(3,0,7,1,C[0]);
+  for(let y=2;y<17;y++){const w=[9,11,13,13,13,13,13,12,12,11,10,9,8,7,6][y-2],x0=Math.floor((13-w)/2);R(x0,y,w,1,C[1]);R(x0,y,2,1,C[0]);R(x0+w-2,y,2,1,C[2]);}
+  R(0,6,13,1,C[2]);R(1,10,11,1,C[2]);for(let x=1;x<12;x+=3)R(x,5,1,1,C[2]);
+}),'#1c1410');
+
+// ruins
+const COL_STUMP=outlined(mk(14,24,R=>{
+  const [M0,M1,M2,M3]=MB,top=[6,4,5,2,3,1,3,5,4,7];
+  R(0,20,14,4,M2);R(0,20,14,1,M0);R(11,21,3,3,M3);R(1,18,12,2,M1);R(1,18,12,1,M0);
+  for(let x=2;x<12;x++){R(x,top[x-2],1,18-top[x-2],(x%2)?M1:M2);R(x,top[x-2],1,1,M3);}
+  R(2,top[0]+1,1,17-top[0],M0);R(11,top[9]+1,1,17-top[9],M3);
+}),FAINT);
+const COL_DRUM=outlined(mk(21,10,R=>{
+  const [M0,M1,M2,M3]=MB;
+  for(let y=1;y<9;y++)R(0,y,16,1,y%2?M1:M2);R(0,1,16,1,M0);R(0,8,16,1,M3);
+  disc(R,16,5,4,4,M2);disc(R,16,5,3,3,M1);R(16,5,1,1,M3);for(let a=0;a<8;a++)R(16+Math.round(Math.cos(a*.785)*3),5+Math.round(Math.sin(a*.785)*3),1,1,M3);
+}),FAINT);
+
+// stall frame: poles, striped awning with a scalloped valance, shade; content drawn by fill()
+function stallFrame(c1,c2,h,fill,table){return outlined(mk(42,h,(R,g)=>{
+  R(1,8,2,h-10,'#6b4f33');R(39,8,2,h-10,'#6b4f33');R(1,8,1,h-10,'#9a7a54');R(39,8,1,h-10,'#9a7a54');
+  R(3,10,36,h-22,'#3e3530');R(3,10,36,1,'#2b2420');
+  for(let y=0;y<8;y++)for(let x=0;x<42;x++)R(x,y,1,1,(x>>2)%2?c2:c1);
+  for(let x=0;x<42;x+=4)disc(R,x+2,8,2,1,(x>>2)%2?c2:c1);
+  R(0,6,42,1,'#00000033');
+  if(table){R(3,h-10,36,3,'#9a7244');R(3,h-10,36,1,'#b88d58');R(4,h-7,2,5,'#6e4f2c');R(36,h-7,2,5,'#6e4f2c');}
+  fill(R,g);
+}),'#2a1f16');}
+// the Pythia of Delphi on her bronze tripod: veil, laurel wreath, laurel sprig and phiale (after the Themis kylix)
+const ORACLE=stallFrame('#b8452f','#efe4c8',44,R=>{
+  const BR=['#f0c45a','#c99a2e','#8a5a1e'];
+  R(13,29,16,3,BR[1]);R(13,29,16,1,BR[0]);R(14,32,14,1,BR[2]);
+  for(let y=33;y<42;y++){R(15-Math.floor((y-33)/3),y,1,1,BR[2]);R(21,y,1,1,BR[1]);R(27+Math.floor((y-33)/3),y,1,1,BR[2]);}
+  R(11,42,3,1,BR[2]);R(20,42,3,1,BR[2]);R(29,42,3,1,BR[2]);
+},false);
+const ORACLE_BOWL={x:22,y:29}; // tripod bowl top (ORACLE pixels)
+// the Pythia as a 2-head chibi like the philosophers: white veil, laurel wreath, white chiton, purple sash
+const PYTHIA_P={veil:true,hair:'#e6e0f0',cloth:'#f1ebdf',dark:'#cbc2b2',trim:'#7a3f86',sandal:'#b07a2a'};
+const PYTHIA=[0,2].map(f=>bake(tmpl(PYTHIA_P,f),{h:PYTHIA_P.hair,s:SKIN,e:EYE,c:PYTHIA_P.cloth,d:PYTHIA_P.dark,x:PYTHIA_P.trim,l:PYTHIA_P.sandal,p:BLUSH,w:'#4f8a3a',v:'#8cc46a',u:'#bdb3d2'},14,18));
+// water seller: same size as the oracle's stall; he stands behind his counter of water jars
+const SELLER_P={hair:'#4a3426',beard:'#4a3426',cloth:'#5f87a8',dark:'#41627e',trim:'#e9e2d0'};
+const SELLER=bake(tmpl(SELLER_P,0),{h:SELLER_P.hair,s:SKIN,e:EYE,b:SELLER_P.beard,c:SELLER_P.cloth,d:SELLER_P.dark,x:SELLER_P.trim,l:SANDAL,p:BLUSH},14,18);
+const SHOP=stallFrame('#3e6fa8','#efe4c8',44,(R,g)=>{
+  g.drawImage(SELLER,13,11);
+  R(3,29,36,4,'#9a7244');R(3,29,36,1,'#b88d58');R(3,32,36,1,'#6e4f2c');R(4,33,2,9,'#6e4f2c');R(36,33,2,9,'#6e4f2c');
+  for(const x of [5,30]){R(x+1,22,3,1,TERRA[2]);R(x,23,5,6,TERRA[1]);R(x,23,1,6,TERRA[0]);R(x,25,5,2,BLK);R(x+2,25,1,1,TERRA[1]);}
+  disc(R,21,28,5,1,'#8a6a44');R(17,27,9,1,'#5fb3e0');R(18,27,3,1,'#a6dcf5');
+},false);
+
+// round brass boxing bell on a round wooden plate (the 종)
+function bellURL(){return outlined(mk(20,20,R=>{
+  disc(R,10,10,9,9,'#4f3420');disc(R,10,10,8,8,'#7a5230');disc(R,9,9,6,6,'#8d6038');
+  for(const [x,y] of [[10,2],[17,10],[10,18],[3,10]])R(x,y,1,1,'#d8c08a');
+  disc(R,10,10,6,6,'#6b4a14');disc(R,10,10,5,5,'#c99a2e');disc(R,9,9,4,4,'#e3b444');disc(R,8,8,2,2,'#f6d670');R(7,7,1,1,'#fff6c8');R(13,13,1,1,'#8a6418');R(14,11,1,2,'#8a6418');
+  R(9,9,3,3,'#7a5626');R(10,9,1,1,'#b88d58');R(10,10,1,1,'#3a2614');
+}),'#1a1418').toDataURL();}
+
+/* ---------------- world layout (fills the window) ---------------- */
+const bg=document.createElement('canvas');
+let STATUE={x:0,y:0},RING={x0:0,x1:0,y0:0,y1:0,cx:0,cy:0},SLOT=[],BEANS={x:12,y:0,w:58,h:30},STOA=0,PROPS=[];
+function computeScale(){
+  const vw=innerWidth,vh=innerHeight;
+  let s=1.2*Math.max(220,vh-140)/240;
+  s=Math.min(s,vw/340);
+  return Math.max(1,s);
+}
+function uiRects(){
+  return ['stelebox','narr','ringpanel','hdr'].map(id=>{const r=$(id).getBoundingClientRect();return {x0:r.left/SCALE-8,x1:r.right/SCALE+8,y0:r.top/SCALE-4,y1:r.bottom/SCALE+24};});
+}
+function underUI(x,y){return uiRects().some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1);}
+function layout(){
+  if(!innerWidth||!innerHeight)return; // hidden/zero-size tab: wait for the resize
+  SCALE=computeScale();
+  W=Math.ceil(innerWidth/SCALE);H=Math.ceil(innerHeight/SCALE);
+  cv.width=W;cv.height=H;cv.style.width=(W*SCALE)+'px';cv.style.height=(H*SCALE)+'px';
+  ctx.imageSmoothingEnabled=false;
+  const rp=$('ringpanel');
+  const rw=120,rh=72;
+  const pw=Math.min(innerWidth-24-168,Math.max(rw*SCALE+40,520));
+  rp.style.width=pw+'px';
+  const hdrB=$('hdr').getBoundingClientRect().bottom;
+  STOA=Math.ceil(hdrB/SCALE)+3; // roof tiles start just below the header
+  const top=Math.max(Math.ceil((hdrB+rp.offsetHeight+16)/SCALE)+12,STOA+50);
+  RING={x0:Math.round(W/2-rw/2),x1:Math.round(W/2+rw/2),y0:top,y1:top+rh};
+  RING.cx=Math.round((RING.x0+RING.x1)/2);RING.cy=Math.round((RING.y0+RING.y1)/2);
+  SLOT=[[RING.x0+24,RING.y1-10],[RING.x1-24,RING.y1-10],[RING.x0+24,RING.y0+28],[RING.x1-24,RING.y0+28]];
+  rp.style.left=(RING.cx*SCALE)+'px';rp.style.top=((RING.y0-15)*SCALE)+'px';
+  // set pieces. Each prop is drawn in the y-sorted pass with the people; its foot rect blocks walking,
+  // so people pass in front of it or behind it (and get hidden), never over it.
+  PROPS=[];
+  const add=(img,x,y,foot,ex)=>{x=Math.round(x);y=Math.round(y);const p={img,x,y,base:y+img.height-1,...ex};if(foot)p.foot=[x+foot[0],y+foot[1],x+foot[2],y+foot[3]];PROPS.push(p);return p;};
+  const LZ1=RING.x0-14,RZ0=RING.x1+14;
+  const ax=Math.max(4,Math.min(LZ1-44,RING.x0-104)),aBase=RING.y1-2;
+  const st=add(ATHENA,ax,aBase-ATHENA.height+1,[0,ATHENA.height-9,ATHENA.width,ATHENA.height],{owl:true,shadow:[20,ATHENA.height-1,22,3]});
+  STATUE.x=st.x+OWL_AT.x;STATUE.y=st.y+OWL_AT.y;
+  // W ≥ 340 always (computeScale), so the oracle's stall always fits between Athena and the ring
+  const ox=Math.min(ax+ATHENA.width+3,LZ1-44);
+  add(ORACLE,ox,STOA+37,[1,30,43,45],{act:'oracle',oracle:true});
+  BEANS={x:10,y:Math.min(RING.y1+34,H-72),w:58,h:30};
+  add(fence(BEANS.w+6),BEANS.x-3,BEANS.y-9,null);
+  add(MOUND,BEANS.x+BEANS.w-1,BEANS.y+BEANS.h-12,[0,7,19,14],{shadow:[9,13,9,2]});
+  add(BASKET,BEANS.x+BEANS.w,BEANS.y+1,[0,3,11,9]);
+  add(HYDRIA,BEANS.x+BEANS.w+11,BEANS.y+2,[0,6,9,12]);
+  // water seller mirrors the oracle across the ring; his jars stand at the stall's lower right
+  const shx=W-ox-ORACLE.width;
+  add(SHOP,shx,STOA+37,[1,30,43,45],{act:'shop'});
+  const px=shx+SHOP.width-6,py=STOA+66;
+  add(PITHOS,px+17,py-1,[1,12,14,18],{act:'shop',shadow:[7,18,7,2]});add(AMPHORA,px,py+1,[1,11,10,17],{act:'shop'});add(AMPHORA,px+8,py+5,[1,11,10,17],{act:'shop'});add(KRATER,px+5,py+18,[0,7,15,12],{act:'shop'});
+  // broken column just in front of the ring, a little to the right of the steps
+  const cx0=RING.cx+20,cBase=RING.y1+26;
+  add(COL_STUMP,cx0,cBase-COL_STUMP.height+1,[0,19,16,26],{shadow:[8,25,8,2]});add(COL_DRUM,cx0+15,cBase-COL_DRUM.height+3,[0,3,22,12]);
+  paintBG();
+  buildWalk();
+  npcs.forEach(n=>{
+    if(n.state==='ring'){n.x=SLOT[n.slot][0];n.y=SLOT[n.slot][1];}
+    else if(n.pid==='parmenides'){n.x=RING.cx;n.y=Math.round(RING.y1+(H-RING.y1)/2);}
+    else if(n.state!=='leave'&&!walkable(n.x,n.y)){snap(n);pickTarget(n);}
+    else if(n.state==='wander')pickTarget(n);
+  });
+}
+function paintBG(){
+  bg.width=W;bg.height=H;
+  const g=bg.getContext('2d');let seed=11;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
+  const R=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(x,y,w,h);};
+  // flagstones (seen from above), starting where the stoa ends
+  const S=STOA,FL=S+40;
+  for(let row=0,y=FL;y<H;row++,y+=12){
+    const off=(row%2)*8;
+    for(let x=-off;x<W;x+=16){
+      const cs=['#c4ad86','#cbb58f','#bba37c','#c7b08a','#bfa880'];R(x,y,16,12,cs[Math.floor(rnd()*cs.length)]);
+      R(x,y,16,1,'#a08b65');R(x,y,1,12,'#a08b65');R(x+1,y+1,14,1,'rgba(255,248,230,.18)');
+      if(rnd()<.3)R(x+3+Math.floor(rnd()*9),y+3+Math.floor(rnd()*6),2,1,'#a8926b');
+    }
+  }
+  // stoa along the top: the roof runs up behind the header, the tiles show just below it
+  R(0,0,W,S,'#7a3a2a');for(let y=S-6;y>0;y-=6)R(0,y,W,1,'#6a3024');
+  R(0,S,W,13,'#a4513a');for(let y=S+1;y<S+13;y+=3)R(0,y,W,1,'#8a4030');for(let x=0;x<W;x+=6)R(x,S,2,13,'#b9603f');
+  R(0,S+13,W,2,'#6e3226');
+  R(0,S+15,W,5,'#e9e2d0');for(let x=2;x<W;x+=8)R(x,S+16,2,3,'#9a917b');R(0,S+19,W,1,'#b8af98');
+  R(0,S+20,W,16,'#5a4e47');R(0,S+31,W,5,'#4b4039');
+  for(let x=6;x<W;x+=20){R(x-1,S+20,8,2,'#f3eddf');R(x,S+22,6,13,'#ece6d6');R(x,S+22,1,13,'#fffaf0');R(x+4,S+22,2,13,'#c8bfa8');R(x-1,S+34,8,2,'#e2dbc9');}
+  R(0,S+36,W,2,'#d9d1bd');R(0,S+38,W,2,'#bdb39c');R(0,S+40,W,3,'rgba(60,40,30,.22)');
+  // ground shadows under the props
+  g.fillStyle='rgba(40,28,20,.25)';
+  for(const p of PROPS)if(p.shadow){const [cx,cy,rx,ry]=p.shadow;for(let dy=-ry;dy<=ry;dy++){const w=Math.round(rx*Math.sqrt(1-dy*dy/(ry*ry)));g.fillRect(p.x+cx-w,p.y+cy+dy,w*2+1,1);}}
+  // bean plot: plank edging, furrows, broad beans; a rake left in front
+  const b=BEANS;
+  R(b.x-2,b.y-2,b.w+4,b.h+4,'#7a5a3a');R(b.x-2,b.y-2,b.w+4,1,'#9a7a54');R(b.x-2,b.y+b.h+1,b.w+4,1,'#4f3824');
+  R(b.x,b.y,b.w,b.h,'#5f4429');
+  for(let y=b.y+3;y<b.y+b.h-3;y+=6){R(b.x+1,y,b.w-2,3,'#7d5a38');R(b.x+1,y,b.w-2,1,'#8f6a44');R(b.x+1,y+3,b.w-2,1,'#4a3422');
+    for(let x=b.x+3;x<b.x+b.w-3;x+=6){R(x,y-2,1,3,'#3f6b2c');R(x-1,y-2,3,2,'#5d9440');R(x,y-3,1,1,'#8cc46a');R(x+1,y-1,1,1,'#a6d07e');if(rnd()<.45)R(x+2,y,1,2,'#7aa84c');}}
+  const rx=b.x+8,ry=b.y+b.h+3;R(rx,ry,24,1,'#8a6a44');R(rx,ry+1,24,1,'#6b4f33');R(rx+24,ry-2,1,6,'#7d848a');for(let i=0;i<3;i++)R(rx+25,ry-2+i*2,2,1,'#7d848a');
+  R(b.x+b.w+3,b.y+b.h+2,5,1,'#6a4c30');R(b.x+b.w+6,b.y+b.h+3,3,1,'#6a4c30');
+  // pebbles and weeds in the joints
+  for(let i=0;i<40;i++){const x=Math.floor(rnd()*W),y=STOA+44+Math.floor(rnd()*(H-STOA-44));if(rnd()<.5)R(x,y,1,1,'#a8926b');else{R(x,y,1,2,'#7f8f4a');R(x+1,y+1,1,1,'#97a85c');}}
+}
+
+/* ---------------- state ---------------- */
+let npcs=[],ring=[null,null,null,null],stage=0,water=100,day=1,obols=2,got=new Set(),interps={},solved=new Set(),fieldCard=false,born=false;
+let ending=0,endT=0,endFrom=0,skyT=0,endModal=false,dayOver=false,modalOpen=false,fighting=null,particles=[],texts=[],drag=null,heard=new Set(),hover=null;
+let owl={state:'perch',turnUntil:0,nextTurn:0,ft:0};
+let now=performance.now();
+const CORNERS=['홍코너','청코너','백코너','황코너'];
+
+function slotsAvail(){return stage>=3?4:stage>=2?3:2;} // no 3-way fights while R1–R3 are open
+function unlocked(pid){return P[pid].lines.filter(l=>l.from<=stage);}
+// walk grid: 4px cells over the agora floor, minus the ring, the HUD and every prop's foot
+const CELL=4,DIRS=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+let GW=0,GH=0,WALK=new Uint8Array(0),WALKLIST=[];
+function buildWalk(){
+  GW=Math.ceil(W/CELL);GH=Math.ceil(H/CELL);WALK=new Uint8Array(GW*GH);WALKLIST=[];
+  const ui=uiRects(),rb=ringBox(),top=STOA+46,obs=PROPS.filter(p=>p.foot).map(p=>p.foot);
+  obs.push([BEANS.x-3,BEANS.y-9,BEANS.x+BEANS.w+3,BEANS.y+BEANS.h+2]);
+  for(let gy=0;gy<GH;gy++)for(let gx=0;gx<GW;gx++){
+    const x=gx*CELL+2,y=gy*CELL+2;
+    const ok=y>=top&&y<=H-6&&x>=6&&x<=W-6&&!(x>rb.x0&&x<rb.x1&&y>rb.y0&&y<rb.y1)
+      &&!ui.some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)&&!obs.some(o=>x>=o[0]-5&&x<=o[2]+5&&y>=o[1]-1&&y<=o[3]+2);
+    if(ok){WALK[gy*GW+gx]=1;WALKLIST.push(gy*GW+gx);}}
+}
+const cellOf=(x,y)=>Math.max(0,Math.min(GH-1,Math.floor(y/CELL)))*GW+Math.max(0,Math.min(GW-1,Math.floor(x/CELL)));
+const cellXY=c=>[(c%GW)*CELL+2,Math.floor(c/GW)*CELL+2];
+function walkable(x,y){return x>=0&&y>=0&&x<W&&y<H&&WALK[cellOf(x,y)]===1;}
+function nearestCell(x,y){
+  const s=cellOf(x,y);if(WALK[s])return s;
+  const seen=new Uint8Array(GW*GH),q=[s];seen[s]=1;
+  for(let h=0;h<q.length;h++){const c=q[h],cx=c%GW,cy=(c/GW)|0;
+    for(const [dx,dy] of DIRS){const nx=cx+dx,ny=cy+dy;if(nx<0||ny<0||nx>=GW||ny>=GH)continue;const ni=ny*GW+nx;if(seen[ni])continue;if(WALK[ni])return ni;seen[ni]=1;q.push(ni);}}
+  return -1;
+}
+function snap(n){const c=nearestCell(n.x,n.y);if(c>=0)[n.x,n.y]=cellXY(c);}
+function los(ax,ay,bx,by){const k=Math.max(1,Math.ceil(Math.hypot(bx-ax,by-ay)/2));for(let i=0;i<=k;i++){const t=i/k;if(!walkable(ax+(bx-ax)*t,ay+(by-ay)*t))return false;}return true;}
+function findPath(sx,sy,tx,ty){ // BFS on the grid, then pulled tight; null when unreachable
+  const s=nearestCell(sx,sy),t=cellOf(tx,ty);if(s<0||!WALK[t])return null;if(s===t)return [[tx,ty]];
+  const prev=new Int32Array(GW*GH).fill(-1);prev[s]=s;const q=[s];
+  for(let h=0;h<q.length&&prev[t]<0;h++){const c=q[h],cx=c%GW,cy=(c/GW)|0;
+    for(const [dx,dy] of DIRS){const nx=cx+dx,ny=cy+dy;if(nx<0||ny<0||nx>=GW||ny>=GH)continue;const ni=ny*GW+nx;
+      if(!WALK[ni]||prev[ni]>=0||(dx&&dy&&(!WALK[cy*GW+nx]||!WALK[ny*GW+cx])))continue;prev[ni]=c;q.push(ni);}}
+  if(prev[t]<0)return null;
+  const pts=[];for(let c=t;c!==s;c=prev[c])pts.push(cellXY(c));pts.reverse();pts[pts.length-1]=[tx,ty];
+  const out=[];let [ax,ay]=walkable(sx,sy)?[sx,sy]:cellXY(s),i=0;if(!walkable(sx,sy))out.push([ax,ay]);
+  while(i<pts.length){let k=pts.length-1;while(k>i&&!los(ax,ay,pts[k][0],pts[k][1]))k--;out.push(pts[k]);[ax,ay]=pts[k];i=k+1;}
+  return out;
+}
+function randPoint(){if(!WALKLIST.length)return [W/2,H-20];const [x,y]=cellXY(WALKLIST[Math.floor(Math.random()*WALKLIST.length)]);return [x+Math.random()*2-1,y+Math.random()*2-1];}
+function pickTarget(n){
+  for(let t=0;t<8;t++){const p=randPoint(),path=findPath(n.x,n.y,p[0],p[1]);if(path){n.tx=p[0];n.ty=p[1];n.path=path;return;}}
+  n.tx=n.x;n.ty=n.y;n.path=[];n.pauseUntil=now+1500;
+}
+function ringBox(){return {x0:RING.x0-12,x1:RING.x1+12,y0:RING.y0-16,y1:RING.y1+24};}
+function exitPath(n){ // walk to the nearest open edge cell, then off screen
+  const left=n.x<W/2;let best=-1,bs=1e9;
+  for(const c of WALKLIST){const [x,y]=cellXY(c),sc=(left?x:W-x)*3+Math.abs(y-n.y);if(sc<bs){bs=sc;best=c;}}
+  if(best<0)return [[left?-24:W+24,n.y]];
+  const [ex,ey]=cellXY(best),p=findPath(n.x,n.y,ex,ey)||[[ex,ey]];p.push([left?-24:W+24,ey]);return p;
+}
+function placeRandom(n){[n.x,n.y]=randPoint();}
+function spawn(pid,from){
+  const n={pid,x:0,y:0,tx:0,ty:0,li:0,shown:null,bubbleUntil:0,pauseUntil:0,frame:0,ft:0,flip:false,state:'wander',slot:-1,isNew:false,seen:0,hidden:false,blink:Math.random()*4000};
+  placeRandom(n);
+  if(from==='edge'){const c=nearestCell(n.x<W/2?0:W-1,n.y);if(c>=0)[n.x,n.y]=cellXY(c);n.x+=n.x<W/2?-14:14;}
+  n.seen=pid==='parmenides'?0:unlocked(pid).length;pickTarget(n);npcs.push(n);return n;
+}
+function narrate(t){$('narr').textContent=t;}
+
+/* ---------------- interaction ---------------- */
+function toScene(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};}
+function hit(p){
+  const list=npcs.filter(n=>!n.hidden&&n.state!=='leave').sort((a,b)=>b.y-a.y);
+  return list.find(n=>p.x>=n.x-9&&p.x<=n.x+9&&p.y>=n.y-21&&p.y<=n.y+2)||null;
+}
+function propAt(p){for(let i=PROPS.length-1;i>=0;i--){const q=PROPS[i];if(q.act&&p.x>=q.x&&p.x<q.x+q.img.width&&p.y>=q.y&&p.y<q.y+q.img.height)return q;}return null;}
+const ACT_TIP={oracle:'델포이의 신녀 · 신탁 2 오볼',shop:'물장수 · 물 +25에 3 오볼',garden:'콩밭 · 철학자를 끌어다 놓으면 일해요'};
+function setTip(t,x,y){const d=$('ptip');if(!t){d.hidden=true;return;}d.hidden=false;if(d.textContent!==t)d.textContent=t;d.style.left=(x*SCALE)+'px';d.style.top=(y*SCALE)+'px';}
+const inRing=p=>p.x>=RING.x0-6&&p.x<=RING.x1+6&&p.y>=RING.y0-10&&p.y<=RING.y1+14;
+function hideOtherBubbles(n){npcs.forEach(m=>{if(m!==n&&m.state!=='ring'&&m.pid!=='parmenides')m.bubbleUntil=0;});}
+function showLine(n,line,ms=6500){n.shown=line;n.bubbleUntil=now+ms;if(n.state==='wander')n.pauseUntil=n.bubbleUntil;hideOtherBubbles(n);}
+
+function onClick(n){
+  if(fighting)return;
+  if(n.pid==='parmenides'){showLine(n,P.parmenides.lines[0]);return;}
+  const lines=unlocked(n.pid);
+  if(n.shown&&(n.state==='ring'||now<n.bubbleUntil))n.li=(n.li+1)%lines.length;
+  showLine(n,lines[n.li%lines.length]);
+  n.isNew=false;n.seen=lines.length;heard.add(n.pid);
+  if(stage===0&&heard.has('thales')&&heard.has('heraclitus')&&!ring.some(Boolean))narrate('두 사람이 서로 반대되는 말을 하는 것 같아요. 둘 다 위쪽 링으로 끌어다 놓아 보세요.');
+  else if(stage===0&&!ring.some(Boolean))narrate('다른 사람도 눌러 보세요.');
+  updateRingUI();
+}
+cv.addEventListener('pointerdown',e=>{
+  if(modalOpen)return;const p=toScene(e);const n=hit(p);
+  if(!n){const q=propAt(p);if(q){setTip(null);doAct(q.act);}return;}
+  cv.setPointerCapture(e.pointerId);
+  drag={n,sx:p.x,sy:p.y,ox:n.x-p.x,oy:n.y-p.y,moved:false};
+});
+cv.addEventListener('pointermove',e=>{
+  const p=toScene(e);
+  if(!drag){hover=hit(p);const q=hover?null:propAt(p),gd=!hover&&!q&&inGarden(p);cv.className=hover?'grab':(q||gd)?'act':'';
+    setTip(q?ACT_TIP[q.act]:gd?ACT_TIP.garden:null,q?q.x+q.img.width/2:BEANS.x+BEANS.w/2,q?q.y:BEANS.y-10);return;}
+  const n=drag.n;
+  if(!drag.moved&&Math.hypot(p.x-drag.sx,p.y-drag.sy)>3){
+    if(fighting)return;
+    if(n.pid==='parmenides'){showLine(n,P.parmenides.lines[1]);drag=null;narrate('파르메니데스는 꿈쩍도 하지 않아요.');return;}
+    drag.moved=true;
+    if(n.state==='ring'){ring[n.slot]=null;n.slot=-1;updateRingUI();}
+    if(n.state==='farm'&&n.paid>0)farmed.add(n.pid); // pulled off the plot early: no second shift today
+    setTip(null);
+    n.state='held';if(!n.shown){const l=unlocked(n.pid);n.shown=l[n.li%l.length];}
+    hideOtherBubbles(n);cv.className='grabbing';
+  }
+  if(drag&&drag.moved){n.x=Math.max(8,Math.min(W-8,p.x+drag.ox));n.y=Math.max(20,Math.min(H-2,p.y+drag.oy));n.bubbleUntil=now+6500;}
+});
+function endDrag(e){
+  if(!drag)return;const {n,moved}=drag;drag=null;cv.className='';
+  if(!moved){onClick(n);return;}
+  const p=toScene(e);
+  if(inRing(p)&&!fighting&&ending!==1)placeInRing(n);else if(inGarden(p)&&ending!==1)startFarm(n);else toAgora(n,false);
+}
+cv.addEventListener('pointerup',endDrag);
+cv.addEventListener('pointerleave',()=>{if(!drag)setTip(null);});
+cv.addEventListener('pointercancel',()=>{if(drag&&drag.moved)toAgora(drag.n,false);drag=null;cv.className='';});
+
+function placeInRing(n){
+  const max=slotsAvail();const idx=ring.findIndex((s,i)=>i<max&&!s);
+  if(idx<0){narrate(`링이 꽉 찼어요. 지금은 ${max}명까지 올릴 수 있어요.`);toAgora(n,true);return;}
+  ring[idx]=n;n.slot=idx;n.state='ring';n.x=SLOT[idx][0];n.y=SLOT[idx][1];n.flip=idx%2===1;n.bubbleUntil=now+2500;
+  if(stage===0&&ring.filter(Boolean).length>=2&&!solved.size)narrate('준비됐어요. 링 위의 종을 쳐서 싸움을 붙이세요.');
+  updateRingUI();
+}
+function toAgora(n,fromRing){
+  n.state='wander';n.slot=-1;
+  if(fromRing){n.x=RING.cx-12+Math.random()*24;n.y=RING.y1+28;}
+  if(!walkable(n.x,n.y))snap(n);
+  n.pauseUntil=now+700;pickTarget(n);
+}
+
+/* ---------------- fights ---------------- */
+function spend(v){if(ending===2)return;water=Math.max(0,water-v);}
+function startFight(){
+  const occ=ring.filter(Boolean);
+  if(fighting||ending===1||modalOpen)return;
+  if(occ.length<2){narrate('혼자서는 싸울 수 없어요. 두 사람 이상 올려 주세요.');return;}
+  if(water<=0&&ending!==2)return;
+  const fb=$('fightbtn');fb.classList.remove('ding');void fb.offsetWidth;fb.classList.add('ding');
+  const rule=RULEMAP[occ.map(n=>canon(n.shown)).sort().join('+')];
+  const dud=!(rule&&!solved.has(rule.id)); // nothing new to win: no brawl, it just fizzles
+  fighting={t:0,occ,next:0,dud};
+  if(dud){floatText('음 그렇군…',RING.cx,RING.y0+28,'#e9e2d0');narrate('음 그렇군…');}
+  else{npcs.forEach(m=>m.bubbleUntil=0);puff(RING.cx,RING.cy+12,10,9);narrate('땡! 논쟁이 시작됐어요.');}
+  updateRingUI();
+}
+$('fightbtn').addEventListener('click',startFight);
+$('fightbtn').style.backgroundImage=`url(${bellURL()})`;
+function kwLabel(k){return HIDDEN_KW.has(k)&&!got.has(k)?'???':k;}
+function missMsg(occ){
+  const ids=occ.map(n=>canon(n.shown));
+  if(occ.some(n=>n.pid==='parmenides'))return '파르메니데스는 꿈쩍도 하지 않아요. 싸움이 되지 않아요.';
+  const kws=[...new Set(occ.map(n=>n.shown.kw))];
+  if(kws.length===1)return `모두 '${kwLabel(kws[0])}'에 대해 말하지만 결판이 나지 않아요. 누군가 빠졌거나, 필요 없는 사람이 끼어 있어요.`;
+  return `서로 다른 이야기를 하고 있어요 (${kws.map(kwLabel).join(' / ')}). 동문서답 끝에 흩어졌어요.`;
+}
+function floatText(t,x=RING.cx,y=RING.y0+24,c='#fff'){texts.push({t,x,y,life:1.4,c});}
+const FIGHT_T=.96,DUD_T=1.1; // brawl length (60% of the old 1.6s), fizzle pause
+let dust=[];
+function puff(x,y,n,spread){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,d=Math.random()*spread;
+  dust.push({x:x+Math.cos(a)*d,y:y+Math.sin(a)*d*.6,vx:Math.cos(a)*(14+Math.random()*18),vy:Math.sin(a)*8-6-Math.random()*8,r:2+Math.random()*2,vr:7+Math.random()*6,life:0,max:.5+Math.random()*.45});}}
+function burst(x,y,n,cols){for(let i=0;i<n;i++)particles.push({x,y,vx:(Math.random()-.5)*80,vy:-Math.random()*50-10,life:.6+Math.random()*.6,c:cols[i%cols.length]});}
+
+function resolveFight(){
+  const occ=fighting.occ;fighting=null;
+  const key=occ.map(n=>canon(n.shown)).sort().join('+');const rule=RULEMAP[key];
+  ring.fill(null);occ.forEach(n=>toAgora(n,true));
+  if(rule&&!solved.has(rule.id)){spend(8);obols+=3;applyRule(rule);}
+  else if(rule){spend(4);narrate('음 그렇군… 이미 결판난 싸움이에요. 구경꾼들이 하품을 해요.');checkDay();}
+  else{spend(15);narrate('음 그렇군… '+missMsg(occ));checkDay();}
+  updateAll();
+}
+function stageUp(prev){
+  const msgs=[];
+  if(prev<1&&stage>=1){spawn('anaximander','edge');spawn('anaximenes','edge');msgs.push('아낙시만드로스와 아낙시메네스가 아고라에 들어왔어요.','탈레스와 헤라클레이토스에게 새로 할 말이 생겼어요.');}
+  if(prev<2&&stage>=2){spawn('pythagoras','edge');msgs.push('피타고라스가 아고라에 들어왔어요. 콩밭은 피해서 걸어요.','이제 링에 3명까지 올릴 수 있어요.','몇몇 사람에게 새로 할 말이 생겼어요.');}
+  if(prev<3&&stage>=3){spawn('xenophanes','edge');msgs.push('크세노파네스가 아고라에 들어왔어요.','이제 링에 4명까지 올릴 수 있어요.');}
+  npcs.forEach(n=>{if(n.pid==='parmenides')return;const c=unlocked(n.pid).length;if(n.seen&&c>n.seen)n.isNew=true;});
+  return msgs;
+}
+function applyRule(rule){
+  solved.add(rule.id);got.add(rule.kw);
+  const filled=[];
+  for(const [k,pids] of Object.entries(rule.interp)){interps[k]=interps[k]||new Set();pids.forEach(p=>{if(!interps[k].has(p)){interps[k].add(p);filled.push([k,p]);}});}
+  const unl=[];
+  if(rule.id==='R1'&&!fieldCard){fieldCard=true;unl.push('분야카드 "자연(퓌시스)"를 얻었어요. 링 바닥에 깔렸어요.');}
+  if(rule.birth&&!born){born=true;const e=spawn('empedocles');e.x=RING.cx;e.y=RING.y1+26;e.pauseUntil=now+4000;e.seen=2;burst(RING.cx,RING.y1+10,30,['#e8c35a','#fff','#c8452c','#5fb3e0']);setTimeout(()=>showLine(e,P.empedocles.lines[0],5000),400);unl.push('엠페도클레스가 태어났어요. 싸움의 결과로 등장한 첫 철학자예요.');}
+  const prev=stage;
+  if(rule.id==='R1')stage=Math.max(stage,1);
+  if(solved.has('R2')&&solved.has('R3'))stage=Math.max(stage,2);
+  if(rule.id==='R4')stage=Math.max(stage,3);
+  if(stage>prev)unl.push(...stageUp(prev));
+  burst(RING.cx,RING.cy,26,['#e8c35a','#fff','#f2ead9']);floatText('결판!',RING.cx,RING.y0+24,'#e8c35a');
+  const info=KWINFO[rule.kw];
+  const dlg=rule.dlg.map(([pid,t])=>pid?`<p><b>${P[pid].name}</b> ${t}</p>`:`<p class="muted">${t}</p>`).join('');
+  const fil=filled.map(([k,p])=>`${k} · ${P[p].name}`).join(', ');
+  const html=`<p class="eyebrow">${rule.hidden?'숨은 키워드 발견':'키워드 획득'} · 오볼로스 +3</p>
+    <h2 id="mtitle">${rule.kw}</h2><p class="gr">${info.gr}</p>
+    <div class="dlg">${dlg}</div>
+    <p class="tiny">도감에 채워진 해석: ${fil}</p>
+    ${unl.length?`<div class="unl">${unl.map(u=>`<p>${u}</p>`).join('')}</div>`:''}`;
+  narrate(`비문에 '${rule.kw}'가 새겨졌어요.`);
+  openModal(html,[{label:'도감 보기',fn:()=>setTimeout(()=>openCodex(rule.kw),0)},{label:'계속',primary:true}],()=>{
+    if(interps['근원']&&interps['근원'].size>=7&&ending===0)startEnding();else checkDay();
+  });
+}
+function checkDay(){if(water<=0&&ending===0&&!dayOver&&!modalOpen)dayEnd();}
+function dayEnd(){
+  dayOver=true;
+  openModal(`<p class="eyebrow">${day}일째 · 해가 졌어요</p><h2 id="mtitle">물시계가 다 비었어요</h2><p>오늘의 논쟁은 여기까지예요. 아고라 사람들도 집으로 돌아가요. 비문에 새긴 키워드와 도감은 그대로 남아 있어요.</p>`,
+    [{label:'다음 날 아침',primary:true}],()=>{day++;water=100;dayOver=false;farmed.clear();narrate(`${day}일째 아침이에요. 물시계를 다시 채웠어요.`);updateAll();});
+}
+
+/* ---------------- ending ---------------- */
+function startEnding(){
+  ending=1;endT=0;endFrom=1-water/100;endModal=false;ring.fill(null);
+  npcs.forEach(n=>{n.state='leave';n.slot=-1;n.bubbleUntil=0;n.path=exitPath(n);[n.tx,n.ty]=n.path[n.path.length-1];});
+  narrate('해가 기울어요. 사람들이 하나둘 각자의 도시로 돌아가요.');updateAll();
+}
+function endingModal(){
+  endModal=true;
+  openModal(`<p class="eyebrow">1장 끝</p><h2 id="mtitle">첫 번째 석양</h2>
+    <p>미네르바의 부엉이는 황혼이 저물어야 날개를 편다고 했지요.</p>
+    <p>텅 빈 아고라 한가운데, 내내 보이지 않던 한 사람이 서 있어요. 그는 움직이지 않아요.</p>
+    <p class="tiny">새겨진 키워드 ${got.size} / 8 · ${day}일 동안</p>`,
+    [{label:'처음부터',fn:()=>setTimeout(()=>init(true),0)},{label:'밤의 아고라에 남기',primary:true}],()=>{
+      if(ending!==1)return;ending=2;
+      npcs.forEach(n=>{if(n.pid==='parmenides')return;n.hidden=false;n.state='wander';placeRandom(n);pickTarget(n);});
+      narrate('밤의 아고라. 물시계는 멈췄고, 못다 한 싸움을 마저 붙일 수 있어요. 파르메니데스에게도 말을 걸어 보세요.');updateAll();
+    });
+}
+
+/* ---------------- modal ---------------- */
+let onCloseFn=null;
+function openModal(html,acts,onClose){
+  modalOpen=true;onCloseFn=onClose||null;$('mbody').innerHTML=html;const box=$('macts');box.innerHTML='';
+  acts.forEach(a=>{const b=document.createElement('button');b.type='button';b.className='btn'+(a.primary?'':' ghost');b.textContent=a.label;if(a.disabled)b.disabled=true;
+    b.addEventListener('click',()=>{closeModal();if(a.fn)a.fn();});box.appendChild(b);});
+  $('modal').hidden=false;const pb=box.querySelector('.btn:not(.ghost)')||box.querySelector('.btn');if(pb)pb.focus();
+}
+function closeModal(){$('modal').hidden=true;modalOpen=false;const f=onCloseFn;onCloseFn=null;if(f)f();}
+function openCodex(k){
+  const info=KWINFO[k];const have=interps[k]||new Set();
+  const rows=info.slots.map(([pid,label,t])=>have.has(pid)
+    ?`<div class="slot"><b>${P[pid].name}${label?' · '+label:''}</b><span>${t}</span></div>`
+    :`<div class="slot empty"><span>???</span><span>아직 링 위에서 듣지 못한 해석</span></div>`).join('')+(info.lock?`<div class="slot lock"><span>???</span><span>${info.lock}</span></div>`:'');
+  openModal(`<p class="eyebrow">도감 · 해석 ${have.size} / ${info.slots.length}</p><h2 id="mtitle">${k}</h2><p class="gr">${info.gr}</p><div class="slots">${rows}</div>`,[{label:'닫기',primary:true}]);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalOpen&&!dayOver&&ending!==1)closeModal();});
+
+/* ---------------- HUD ---------------- */
+// the Pythia under the red awning gives hints for an offering
+const ORACLE_COST=2;
+function askOracle(){
+  if(modalOpen||fighting)return;
+  if(obols<ORACLE_COST){narrate('피티아: "신탁에는 공물이 필요하오." 오볼로스가 모자라요. 콩밭에서 조금 벌 수 있어요.');return;}
+  const avail=id=>({R5:stage>=2,R6:stage>=2,R8:born}[id]??true);
+  const r=HINT_ORDER.map(id=>RULES.find(x=>x.id===id)).find(r=>!solved.has(r.id)&&avail(r.id));
+  if(!r){narrate('피티아: "그대 자신을 알라(γνῶθι σεαυτόν)." 더 내릴 신탁이 없어요.');return;}
+  obols-=ORACLE_COST;const o=PROPS.find(q=>q.oracle);if(o)floatText(`-${ORACLE_COST} 오볼`,o.x+21,o.y+12,GOLD);
+  narrate('피티아가 연기 속에서 중얼거려요. "'+r.hint+'"');updateAll();
+}
+// the water seller refills the klepsydra
+const SHOP_COST=3,SHOP_WATER=25;
+function openShop(){
+  if(modalOpen||fighting||ending===1)return;
+  if(ending===2){narrate('물장수: "밤엔 물시계가 멈춰 있소. 물은 필요 없겠구려."');return;}
+  const full=water>=100-.5;
+  openModal(`<p class="eyebrow">물장수의 노점</p><h2 id="mtitle">물 한 동이</h2><p>클렙시드라에 물을 부으면 오늘 말할 시간이 늘어나요.</p><p class="tiny">지금 물 ${Math.ceil(water)} / 100 · 가진 돈 ${obols} 오볼${full?' · 물시계가 가득 찼어요':''}</p>`,
+    [{label:'그만두기'},{label:`물 +${SHOP_WATER} · ${SHOP_COST} 오볼`,primary:true,disabled:obols<SHOP_COST||full,fn:()=>{
+      obols-=SHOP_COST;water=Math.min(100,water+SHOP_WATER);narrate(`물장수가 클렙시드라에 물을 부었어요. 물 +${SHOP_WATER}.`);updateAll();}}]);
+}
+// bean plot: a philosopher dropped here hoes for a while and earns a few obols, once a day each
+const FARM_T=4,FARM_PAY=3;
+let farmed=new Set();
+const ga=w=>{const c=w.charCodeAt(w.length-1)-0xac00;return w+(c>=0&&c<11172&&c%28?'이':'가');};
+function inGarden(p){return p.x>=BEANS.x-4&&p.x<=BEANS.x+BEANS.w+4&&p.y>=BEANS.y-10&&p.y<=BEANS.y+BEANS.h+4;}
+function startFarm(n){
+  const name=P[n.pid].name;
+  if(n.pid==='pythagoras'){floatText('콩은 안 되오!',n.x,n.y-26,'#fff');narrate('피타고라스는 콩을 질색해요. 콩밭엔 다른 사람을 보내 보세요.');toAgora(n,false);return;}
+  if(farmed.has(n.pid)){floatText('오늘은 그만…',n.x,n.y-26,'#e9e2d0');narrate(`${ga(name)} 오늘은 이미 밭일을 했어요. 내일 다시 부탁해 보세요.`);toAgora(n,false);return;}
+  if(npcs.some(m=>m.state==='farm')){narrate('콩밭엔 한 사람만 들어갈 수 있어요.');toAgora(n,false);return;}
+  n.state='farm';n.farmT=0;n.paid=0;n.bubbleUntil=0;n.path=[];
+  n.x=Math.max(BEANS.x+8,Math.min(BEANS.x+BEANS.w-8,n.x));n.y=Math.max(BEANS.y+12,Math.min(BEANS.y+BEANS.h-2,n.y));
+  narrate(`${ga(name)} 콩밭을 매기 시작했어요. 잠깐 일하면 오볼을 조금 벌어요.`);
+}
+function farmTick(n,dt){
+  n.farmT+=dt;n.ft+=dt;if(n.ft>.35){n.ft=0;n.frame^=1;}
+  if(n.farmT>=(n.paid+1)*FARM_T){n.paid++;obols++;floatText('+1 오볼',n.x,n.y-24,GOLD);updateAll();}
+  if(n.paid>=FARM_PAY){farmed.add(n.pid);n.state='wander';n.frame=0;toAgora(n,false);narrate(`${ga(P[n.pid].name)} 밭일을 마쳤어요. 오볼 +${FARM_PAY}.`);updateAll();}
+}
+function doAct(a){if(a==='oracle')askOracle();else if(a==='shop')openShop();}
+$('stele').addEventListener('click',e=>{const b=e.target.closest('.kwbtn.got');if(b&&!modalOpen)openCodex(b.dataset.k);});
+$('ringlist').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b||fighting)return;const n=ring[+b.dataset.i];if(!n)return;ring[n.slot]=null;toAgora(n,true);updateRingUI();});
+
+function updateRingUI(){
+  const max=slotsAvail();const cnt=ring.filter(Boolean).length;
+  $('slotv').textContent=`${cnt} / ${max}명`;
+  let h='';
+  for(let i=0;i<max;i++){const n=ring[i];
+    h+=n?`<li><span class="corner c${i}">${CORNERS[i]}</span><span class="rw"><b>${P[n.pid].name}</b>${n.shown.text}</span><button class="mini" type="button" data-i="${i}">내리기</button></li>`
+       :`<li class="empty"><span class="corner c${i}">${CORNERS[i]}</span><span class="rw">비어 있음</span><span></span></li>`;}
+  $('ringlist').innerHTML=h;
+  $('fightbtn').disabled=cnt<2||!!fighting||ending===1||(water<=0&&ending!==2);
+}
+function updateStele(){
+  $('stele').innerHTML=KW.map(k=>{
+    if(got.has(k)){const s=(interps[k]||new Set()).size,t=KWINFO[k].slots.length;return `<li><button class="kwbtn got" type="button" data-k="${k}">${k}<span class="n">${s}/${t}</span></button></li>`;}
+    if(HIDDEN_KW.has(k))return `<li><span class="kwbtn">? ? ?<span class="n">숨은</span></span></li>`;
+    return `<li><span class="kwbtn">${'▒'.repeat(Math.min(4,k.length+1))}</span></li>`;
+  }).join('');
+  $('kwcount').textContent=`${got.size} / ${KW.length}`;
+}
+let lastWater=-1,lastPhase='';
+function updateSide(){
+  const w=Math.ceil(water);
+  if(w!==lastWater){lastWater=w;$('waterv').innerHTML=ending===2?'—<small>멈춤</small>':`${w}<small>/ 100</small>`;}
+  const t=dayT();const phase=ending===2?'밤':t<.4?'해가 높아요':t<.7?'오후예요':t<.9?'해가 기울어요':'곧 해가 져요';
+  const ph=`${day}일째 · ${phase}`;if(ph!==lastPhase){lastPhase=ph;$('dayv').textContent=ph;}
+  $('obolv').textContent=`${obols} 오볼`;
+  const f=$('fieldv');f.textContent=fieldCard?'자연 · 퓌시스':'분야카드 없음';f.className='chip'+(fieldCard?' on':'');
+}
+function updateAll(){updateRingUI();updateStele();updateSide();saveGame();}
+
+/* ---------------- drawing ---------------- */
+const R=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,w,h);};
+function line(x0,y0,x1,y1,c){x0|=0;y0|=0;x1|=0;y1|=0;const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy;ctx.fillStyle=c;for(;;){ctx.fillRect(x0,y0,1,1);if(x0===x1&&y0===y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx;}if(e2<=dx){e+=dx;y0+=sy;}}}
+function ptext(t,x,y,c){ctx.font='700 11px Galmuri11, monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';x=Math.round(x);y=Math.round(y);
+  ctx.fillStyle=OUT;for(const [ox,oy] of [[-1,0],[1,0],[0,-1],[0,1]])ctx.fillText(t,x+ox,y+oy);ctx.fillStyle=c;ctx.fillText(t,x,y);}
+function dayT(){return ending>=1?(ending===2?1:skyT):1-water/100;}
+
+function drawNPC(n,ox=0,oy=0){
+  const x=Math.round(n.x+ox),y=Math.round(n.y+oy);
+  ctx.globalAlpha=n.alpha==null?1:n.alpha;
+  ctx.fillStyle='rgba(30,18,10,.3)';ctx.fillRect(x-5,y-1,10,2);ctx.fillRect(x-4,y+1,8,1);
+  const idle=n.frame===0&&((now+n.blink)%3600)<140;
+  const spr=SPR[n.pid][idle?2:n.frame];
+  const lift=n.state==='held'?-4:0;const bob=n.frame===1?-1:0;
+  if(n.flip){ctx.save();ctx.translate(x+8,0);ctx.scale(-1,1);ctx.drawImage(spr,0,y-20+lift+bob);ctx.restore();}
+  else ctx.drawImage(spr,x-8,y-20+lift+bob);
+  if(n.isNew&&n.state!=='ring'){const b=Math.round(Math.sin(now/180));R(x-1,y-31+b,3,7,OUT);R(x,y-30+b,1,4,GOLD);R(x-1,y-23+b,3,3,OUT);R(x,y-22+b,1,1,GOLD);}
+  if(hover===n&&!drag){R(x-6,y+3,12,1,'rgba(255,255,255,.55)');}
+  ctx.globalAlpha=1;
+}
+const RC=['#d84a3a','#f4f4f4','#3b6fd6'],RH=[3,6,9];
+const POST=[['#ece9e2','#b9b6ad'],['#ebc85e','#b9952e'],['#d23a2a','#922318'],['#2f5fc8','#1e3f8c']]; // TL white, TR gold, BL red, BR blue
+function post(x,y,c){R(x-2,y-11,5,12,OUT);R(x-1,y-10,3,10,c[0]);R(x+1,y-10,1,10,c[1]);R(x-1,y-12,3,2,c[1]);R(x-2,y+1,5,1,'rgba(0,0,0,.25)');}
+function drawRingBack(){
+  const {x0,x1,y0,y1}=RING;
+  R(x0-2,y0-2,x1-x0+4,y1-y0+4,OUT);
+  R(x0,y0,x1-x0,y1-y0,'#f1f1ee');
+  R(x0+4,y0+4,x1-x0-8,y1-y0-8,'#dfe4ea');
+  for(let y=y0+8;y<y1-4;y+=8)R(x0+4,y,x1-x0-8,1,'#d6dce3');
+  const cx=(x0+x1)/2,cy=(y0+y1)/2;
+  for(let a=0;a<80;a++){const t=a/80*Math.PI*2;R(Math.round(cx+Math.cos(t)*24),Math.round(cy+Math.sin(t)*18),1,1,fieldCard?'#7fae6a':'#c7ced6');}
+  if(fieldCard){for(let i=-4;i<=4;i++){const yy=Math.round(cy+18-Math.abs(i)*.6);R(cx+i*5-1,yy-2,2,1,'#7fae6a');R(cx+i*5,yy-3,1,1,'#a8cf91');}
+    R(cx-1,cy-2,3,5,'#7fae6a');R(cx-3,cy,7,1,'#7fae6a');}
+  // front skirt and steps
+  R(x0-2,y1+2,x1-x0+4,10,OUT);R(x0,y1+2,x1-x0,8,'#2b3a75');R(x0,y1+8,x1-x0,2,'#1d2856');for(let x=x0+6;x<x1-6;x+=14)R(x,y1+4,7,1,'#3e4f92');
+  R(cx-14,y1+12,28,4,'#d4cab1');R(cx-14,y1+12,28,1,'#efe8d6');R(cx-16,y1+16,32,4,'#bfb59c');R(cx-16,y1+16,32,1,'#d9d1bd');
+  // back posts and back/side ropes
+  post(x0+2,y0+2,POST[0]);post(x1-2,y0+2,POST[1]);
+  for(let i=0;i<3;i++){const h=RH[i];line(x0+3,y0+2-h,x1-3,y0+2-h,RC[i]);line(x0+2,y0+3-h,x0+2,y1-2-h,RC[i]);line(x1-2,y0+3-h,x1-2,y1-2-h,RC[i]);}
+}
+function drawRingFront(){
+  const {x0,x1,y1}=RING;
+  for(let i=0;i<3;i++){const h=RH[i];line(x0+3,y1-2-h,x1-3,y1-2-h,RC[i]);R(x0+3,y1-1-h,x1-x0-6,1,'rgba(0,0,0,.18)');}
+  post(x0+2,y1-2,POST[2]);post(x1-2,y1-2,POST[3]);
+}
+function drawDust(){ // pixel puffs: light body, darker rim, fading out
+  for(const d of dust){const k=d.life/d.max,r=Math.round(d.r),cx=Math.round(d.x),cy=Math.round(d.y);
+    ctx.globalAlpha=k<.6?1:1-(k-.6)/.4;
+    for(let dy=-r;dy<=r;dy++){const w=Math.round(Math.sqrt(r*r-dy*dy));R(cx-w,cy+dy,w*2+1,1,'#b9ab8c');}
+    const ri=r-1;if(ri>0)for(let dy=-ri;dy<=ri;dy++){const w=Math.round(Math.sqrt(ri*ri-dy*dy));R(cx-w,cy+dy,w*2+1,1,dy<-ri/3?'#fbf6ea':'#ece3cf');}}
+  ctx.globalAlpha=1;
+}
+function drawOracle(p){ // the Pythia on her tripod, vapour curling up on both sides
+  const bx=p.x+1+ORACLE_BOWL.x,by=p.y+1+ORACLE_BOWL.y;
+  ctx.drawImage(PYTHIA[((now+900)%4200)<140?1:0],p.x+14,by-17); // centred on the awning and tripod
+  for(let i=0;i<4;i++){const ph=(now/1600+i/4)%1,side=i%2?-9:9,x=Math.round(bx+side+Math.sin(ph*7+i*1.7)*2),y=Math.round(by+1-ph*16);
+    ctx.globalAlpha=(1-ph)*.75;R(x,y,2,1,'#ece6f4');if(ph>.3)R(x+1,y-1,1,1,'#ffffff');}
+  ctx.globalAlpha=1;
+}
+function drawOwl(){
+  if(owl.state==='perch'){ctx.drawImage(now<owl.turnUntil?OWL_BACK:OWL_FRONT,STATUE.x,STATUE.y);}
+  else if(owl.state==='fly'){const f=owl.ft;const x=Math.round(STATUE.x+f*(W-STATUE.x+30)),y=Math.round(STATUE.y-f*40+Math.sin(f*10)*4);ctx.drawImage(OWL_FLY[Math.floor(f*10)%2],x-2,y);}
+}
+function draw(){
+  const t=dayT();
+  ctx.drawImage(bg,0,0);
+  drawRingBack();
+  const rocc=ring.filter(Boolean).sort((a,b)=>a.y-b.y);
+  rocc.forEach((n,i)=>{let ox=0,oy=0;if(fighting&&!fighting.dud){ox=Math.round(Math.sin(fighting.t*38+i*2.1)*2+(RING.cx-n.x)*.12*Math.sin(fighting.t*6)**2);oy=Math.round(Math.abs(Math.sin(fighting.t*22+i))*-2);}drawNPC(n,ox,oy);});
+  drawRingFront();
+  drawDust();
+  // props and people share one depth order by their feet, so walking behind a statue hides you
+  const items=PROPS.map(p=>({y:p.base,p})).concat(npcs.filter(n=>!n.hidden&&n.state!=='ring'&&n.state!=='held').map(n=>({y:n.y,n})));
+  items.sort((a,b)=>a.y-b.y).forEach(it=>{if(it.n)drawNPC(it.n);else{ctx.drawImage(it.p.img,it.p.x,it.p.y);if(it.p.owl&&owl.state==='perch')drawOwl();if(it.p.oracle)drawOracle(it.p);}});
+  particles.forEach(p=>R(Math.round(p.x),Math.round(p.y),2,2,p.c));
+  texts.forEach(x=>{ctx.globalAlpha=Math.min(1,x.life*2);ptext(x.t,x.x,x.y,x.c);ctx.globalAlpha=1;});
+  if(drag&&drag.moved){const max=slotsAvail(),free=ring.slice(0,max).some(s=>!s);ctx.strokeStyle=free?'#e8c35a':'#e0563b';ctx.lineWidth=1;ctx.setLineDash([3,2]);ctx.strokeRect(RING.x0-5.5,RING.y0-9.5,RING.x1-RING.x0+11,RING.y1-RING.y0+22);
+    ctx.strokeStyle='#9ccc84';ctx.strokeRect(BEANS.x-4.5,BEANS.y-10.5,BEANS.w+9,BEANS.h+15);ctx.setLineDash([]);}
+  npcs.filter(n=>n.state==='held').forEach(n=>drawNPC(n));
+  if(t>.4){ctx.fillStyle=`rgba(255,120,50,${Math.min(.22,(t-.4)/.45*.22)})`;ctx.fillRect(0,0,W,H);}
+  if(t>.8){ctx.fillStyle=`rgba(28,16,66,${(t-.8)/.2*.45})`;ctx.fillRect(0,0,W,H);}
+  if(owl.state==='fly')drawOwl();
+}
+
+/* ---------------- update ---------------- */
+function update(dt){
+  const paused=modalOpen||dayOver;
+  if(!paused&&ending===0&&!fighting&&water>0){water-=dt*100/300;if(water<=0){water=0;updateRingUI();checkDay();}}
+  if(fighting&&!modalOpen){
+    fighting.t+=dt;fighting.next-=dt;
+    if(fighting.dud){if(fighting.t>DUD_T)resolveFight();}
+    else{
+      if(fighting.next<=0){fighting.next=.19;const o=fighting.occ[Math.floor(Math.random()*fighting.occ.length)];
+        const WD=['반박!','아니오!','근거는?','틀렸소!','허튼소리!'];floatText(WD[Math.floor(Math.random()*WD.length)],o.x+(Math.random()-.5)*8,o.y-24,'#ffffff');
+        puff(RING.cx-14+Math.random()*28,RING.cy+8+Math.random()*10,3,6);}
+      if(fighting.t>FIGHT_T){puff(RING.cx,RING.cy+10,14,16);resolveFight();}
+    }
+  }
+  dust.forEach(d=>{d.life+=dt;d.x+=d.vx*dt;d.y+=d.vy*dt;d.vx*=1-2.5*dt;d.vy*=1-2.5*dt;d.r+=d.vr*dt;d.vr*=1-2*dt;});dust=dust.filter(d=>d.life<d.max);
+  for(const n of npcs){
+    if(n.state==='farm'){if(!paused)farmTick(n,dt);continue;}
+    if(n.hidden||n.state==='ring'||n.state==='held'||n.pid==='parmenides'){n.frame=0;continue;}
+    if(n.state==='wander'&&now<n.pauseUntil){n.frame=0;continue;}
+    const tg=(n.path&&n.path.length)?n.path[0]:[n.tx,n.ty];
+    const dx=tg[0]-n.x,dy=tg[1]-n.y,d=Math.hypot(dx,dy);
+    if(d<1&&n.path&&n.path.length>1){n.path.shift();continue;}
+    if(d<1){if(n.state==='leave'){n.hidden=true;continue;}n.pauseUntil=now+500+Math.random()*2200;pickTarget(n);n.frame=0;continue;}
+    const sp=(n.state==='leave'?42:13)*dt;n.x+=dx/d*Math.min(sp,d);n.y+=dy/d*Math.min(sp,d);
+    if(Math.abs(dx)>.3)n.flip=dx<0;
+    n.ft+=dt;if(n.ft>.22){n.ft=0;n.frame^=1;}
+    if(n.state==='leave'&&(n.x<-16||n.x>W+16))n.hidden=true;
+  }
+  particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=90*dt;p.life-=dt;});particles=particles.filter(p=>p.life>0);
+  texts.forEach(x=>{x.y-=10*dt;x.life-=dt;});texts=texts.filter(x=>x.life>0);
+  if(owl.state==='perch'&&ending===0&&now>owl.nextTurn){owl.turnUntil=now+700;owl.nextTurn=now+7000+Math.random()*9000;}
+  if(ending===1&&!modalOpen){
+    endT+=dt;skyT=endFrom+(1-endFrom)*Math.min(1,endT/3.5);
+    if(endT>3.6&&owl.state==='perch'){owl.state='fly';owl.ft=0;narrate('조각상의 부엉이가 날개를 펴요.');}
+    if(endT>7.2&&!npcs.some(n=>n.pid==='parmenides')){const pm=spawn('parmenides');pm.x=RING.cx;pm.y=Math.round(RING.y1+(H-RING.y1)/2);pm.alpha=0;pm.flip=false;narrate('텅 빈 아고라에 누군가 서 있어요.');}
+    const pm=npcs.find(n=>n.pid==='parmenides');if(pm&&pm.alpha<1)pm.alpha=Math.min(1,pm.alpha+dt*.7);
+    if(endT>9.6&&!endModal)endingModal();
+  }
+  if(owl.state==='fly'&&!modalOpen){owl.ft+=dt/3.2;if(owl.ft>1.1)owl.state='gone';}
+}
+
+/* ---------------- bubbles (DOM) ---------------- */
+const pool=[];
+function syncBubbles(){
+  const vis=npcs.filter(n=>!n.hidden&&n.shown&&(n.state==='held'||now<n.bubbleUntil)&&!(fighting&&n.state==='ring'));
+  while(pool.length<vis.length){const d=document.createElement('div');d.className='bubble';screenEl.appendChild(d);pool.push(d);}
+  pool.forEach((d,i)=>{const n=vis[i];if(!n){d.hidden=true;d._k='';return;}
+    d.hidden=false;
+    const ls=n.pid==='parmenides'?[]:unlocked(n.pid),li=ls.indexOf(n.shown); // "2/3": which of the lines they can say right now
+    const k=n.pid+'|'+n.shown.id+'|'+ls.length;
+    if(d._k!==k){d._k=k;d.innerHTML=`<span class="who">${P[n.pid].name}</span>${n.shown.text}${li>=0?`<span class="cnt">${li+1}/${ls.length}</span>`:''}`;d.classList.toggle('still',n.pid==='parmenides');}
+    const lift=n.state==='held'?4:0;const px=n.x*SCALE;
+    d.style.left=px+'px';d.style.top=((n.y-22-lift)*SCALE)+'px';
+    const tx=px<130?'-14%':px>innerWidth-130?'-86%':'-50%';const tail=px<130?'14%':px>innerWidth-130?'86%':'50%';
+    d.style.setProperty('--tx',tx);d.style.setProperty('--tail',tail);
+  });
+}
+
+/* ---------------- klepsydra ---------------- */
+const kc=$('klep').getContext('2d');kc.imageSmoothingEnabled=false;
+function drawKlep(){
+  const K=(x,y,w,h,c)=>{kc.fillStyle=c;kc.fillRect(x,y,w,h);};
+  kc.clearRect(0,0,32,48);
+  const frac=ending===2?0:Math.max(0,Math.min(1,water/100));
+  const jar=(top,bottom,neck,level)=>{
+    for(let y=top;y<=bottom;y++){
+      const w=y<top+2?neck:Math.round(10+12*Math.sin(Math.PI*Math.min(1,(y-top-1)/(bottom-top-1))));
+      const x0=16-Math.floor(w/2);
+      K(x0-1,y,w+2,1,'#1c1410');K(x0,y,w,1,'#c96f3d');K(x0,y,1,1,'#e0905a');K(x0+w-2,y,2,1,'#9e5230');
+      if(y>top+2&&y<bottom&&w>4&&y>=bottom-level)K(x0+2,y,w-4,1,(y===bottom-level)?'#a6dcf5':'#5fb3e0');
+    }
+    K(16-Math.floor(neck/2)-1,top-1,neck+2,1,'#1c1410');
+  };
+  jar(3,21,6,Math.round(frac*14));
+  K(15,22,2,3,'#1c1410');
+  if(frac>0&&ending!==2){const dy=Math.floor(now/90)%4;K(15,25+dy,1,1,'#5fb3e0');}
+  jar(29,46,8,Math.round((1-frac)*13));
+  for(let x=8;x<24;x+=3)K(x,11,2,1,'#1c1410');
+  for(let x=9;x<23;x+=3)K(x,38,2,1,'#1c1410');
+}
+
+
+/* ---------------- resize ---------------- */
+let rt=0;
+function relayout(){clearTimeout(rt);rt=setTimeout(layout,90);}
+window.addEventListener('resize',relayout);
+if(window.ResizeObserver){const ro=new ResizeObserver(relayout);ro.observe($('hdr'));ro.observe($('ringpanel'));}
+document.addEventListener('click',e=>{const h=$('help');if(h.open&&!h.contains(e.target))h.open=false;});
+
+/* ---------------- save (localStorage) ---------------- */
+// Progress only: who is in the ring, bubbles and positions are not kept. Mid-cutscene (ending 1) is not
+// saved, so a reload during the sunset falls back to the last save and the ending replays.
+const SAVE_KEY='agora-ring:v1';
+let saveT=0,loading=false;
+function saveGame(){
+  if(loading||ending===1)return;
+  const sets=o=>Object.fromEntries(Object.entries(o).map(([k,s])=>[k,[...s]]));
+  const data={v:1,stage,water:Math.round(water*10)/10,day,obols,got:[...got],solved:[...solved],interps:sets(interps),
+    fieldCard,born,heard:[...heard],farmed:[...farmed],ending,seen:Object.fromEntries(npcs.map(n=>[n.pid,n.seen]))};
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));}catch(e){}
+}
+function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');return s&&s.v===1?s:null;}catch(e){return null;}}
+function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
+function restore(s){
+  stage=s.stage|0;water=Math.max(0,Math.min(100,+s.water||0));day=s.day|0||1;obols=s.obols|0;
+  got=new Set(s.got);solved=new Set(s.solved);heard=new Set(s.heard);farmed=new Set(s.farmed);fieldCard=!!s.fieldCard;born=!!s.born;
+  interps={};for(const [k,a] of Object.entries(s.interps||{}))interps[k]=new Set(a);
+  const pids=['thales','heraclitus'];
+  if(stage>=1)pids.push('anaximander','anaximenes');if(stage>=2)pids.push('pythagoras');if(stage>=3)pids.push('xenophanes');if(born)pids.push('empedocles');
+  pids.forEach(pid=>{const n=spawn(pid);const sn=s.seen&&s.seen[pid];if(sn!=null){n.seen=sn;n.isNew=sn>0&&unlocked(pid).length>sn;}});
+  if(s.ending===2){
+    ending=2;skyT=1;endModal=true;owl.state='gone';
+    const pm=spawn('parmenides');pm.x=RING.cx;pm.y=Math.round(RING.y1+(H-RING.y1)/2);pm.alpha=1;pm.flip=false;
+    narrate('밤의 아고라로 돌아왔어요. 물시계는 멈춘 채예요.');
+  }else if(got.size)narrate(`${day}일째, 하던 데서 이어 가요. 비문에 새긴 키워드 ${got.size} / 8.`);
+  else narrate('아고라에 두 사람이 서성이고 있어요. 눌러서 무슨 말을 하는지 들어 보세요.');
+}
+$('resetbtn').addEventListener('click',()=>{
+  if(modalOpen||fighting||ending===1)return;$('help').open=false;
+  openModal(`<p class="eyebrow">처음부터 다시</p><h2 id="mtitle">비문을 지울까요?</h2><p>새긴 키워드, 도감의 해석, 오볼로스와 날짜가 모두 사라지고 1일째 아침으로 돌아가요.</p>`,
+    [{label:'지우고 처음부터',fn:()=>setTimeout(()=>init(true),0)},{label:'그만두기',primary:true}]);
+});
+window.addEventListener('pagehide',saveGame);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame();});
+
+/* ---------------- loop & init ---------------- */
+let last=performance.now();
+function loop(ts){requestAnimationFrame(loop);if(!bg.width)return;const dt=Math.min(.05,(ts-last)/1000);last=ts;now=ts;update(dt);draw();syncBubbles();drawKlep();updateSide();
+  if(ts-saveT>5000){saveT=ts;saveGame();}}
+function init(fresh){
+  if(fresh)clearSave();
+  const saved=fresh?null:loadSave();loading=true;
+  npcs=[];ring=[null,null,null,null];stage=0;water=100;day=1;obols=2;got=new Set();interps={};solved=new Set();fieldCard=false;born=false;
+  ending=0;endT=0;skyT=0;endModal=false;dayOver=false;fighting=null;particles=[];texts=[];dust=[];heard=new Set();farmed=new Set();setTip(null);
+  owl={state:'perch',turnUntil:0,nextTurn:performance.now()+6000,ft:0};
+  updateAll();layout();
+  let ok=false;
+  if(saved){try{restore(saved);ok=true;}catch(e){npcs=[];}}
+  if(!ok){
+    stage=0;water=100;day=1;obols=2;got=new Set();interps={};solved=new Set();fieldCard=false;born=false;heard=new Set();ending=0;skyT=0;endModal=false;owl.state='perch';
+    const a=spawn('thales'),b=spawn('heraclitus');
+    a.x=RING.cx-46;a.y=RING.y1+44;b.x=RING.cx+46;b.y=RING.y1+58;pickTarget(a);pickTarget(b);
+    narrate('아고라에 두 사람이 서성이고 있어요. 눌러서 무슨 말을 하는지 들어 보세요.');
+  }
+  loading=false;lastWater=-1;lastPhase='';updateAll();
+  if(ending===0&&interps['근원']&&interps['근원'].size>=7)startEnding();else checkDay();
+}
+init();
+if(document.fonts&&document.fonts.load)document.fonts.load('11px Galmuri11').then(()=>layout()).catch(()=>{});
+requestAnimationFrame(loop);
+})();
+</script>
