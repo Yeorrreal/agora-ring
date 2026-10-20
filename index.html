@@ -270,15 +270,15 @@ const SKIN='#d9a070', EYE='#2a1c18', SANDAL='#5a3c22', OUT='#1a1418', GOLD='#e8c
 const P={
   thales:{name:'탈레스',bald:true,trim:'#d9e6f2',hair:'#ece8de',beard:'#ece8de',cloth:'#3b7bb8',dark:'#285887',lines:[
     {id:'t_water',kw:'근원',text:'세상의 근원은 물이다.',from:0},
-    {id:'t_water_v',canon:'t_water',kw:'근원',text:'땅은 물 위에 떠 있다.',from:1},
-    {id:'t_gods',kw:'영혼',text:'만물은 신들로 가득 차 있다.',from:2},
+    {id:'t_water_v',canon:'t_water',kw:'근원',text:'땅은 물 위에 떠 있다. 모든 것의 근원이 물이니까.',from:1},
+    {id:'t_gods',kw:'영혼',text:'만물은 신들로, 곧 영혼으로 가득 차 있다.',from:2},
     {id:'t_gods_v',canon:'t_gods',kw:'영혼',text:'자석은 쇠를 움직이니, 영혼을 가진 것이다.',from:2}]},
   // Raphael: mauve smock and tall leather boots (Michelangelo as Heraclitus)
   heraclitus:{name:'헤라클레이토스',messy:true,trim:'#c9a3b4',hair:'#3a2a22',beard:'#3a2a22',cloth:'#a9788f',dark:'#7a5168',sandal:'#9a5a30',lines:[
     {id:'h_fire',kw:'근원',text:'세상의 근원은 불이다.',from:0},
-    {id:'h_fire_v',canon:'h_fire',kw:'근원',text:'이 세계는 영원히 살아 있는 불이다.',from:1},
+    {id:'h_fire_v',canon:'h_fire',kw:'근원',text:'이 세계는 영원히 살아 있는 불이다. 불이 곧 근원이다.',from:1},
     {id:'h_harmony',kw:'조화',text:'보이지 않는 조화가 보이는 조화보다 낫다.',from:2},
-    {id:'h_war',kw:'투쟁',text:'전쟁은 만물의 아버지다.',from:3}],
+    {id:'h_war',kw:'투쟁',text:'투쟁은 만물의 아버지다.',from:3}],
   lines2:[
     {id:'h_change',kw:'변화',text:'모든 것은 변한다. 같은 강물에 두 번 들어갈 수 없다.',from:0},
     {id:'h_change_v',canon:'h_change',kw:'변화',text:'강에 들어가면 늘 다른 물이 흘러온다. 모든 것은 변한다.',from:0},
@@ -293,17 +293,17 @@ const P={
   },
   anaximenes:{name:'아낙시메네스',trim:'#7f95a5',hair:'#2b2b30',beard:'#2b2b30',cloth:'#d7e0e6',dark:'#a7b6c0',lines:[
     {id:'an_air',kw:'근원',text:'세상의 근원은 공기다.',from:1},
-    {id:'an_dense',canon:'an_air',kw:'근원',text:'공기가 엷어지면 불이 되고, 짙어지면 구름과 물과 흙이 된다.',from:1},
+    {id:'an_dense',canon:'an_air',kw:'근원',text:'공기가 엷어지면 불이, 짙어지면 물과 흙이 된다. 근원은 공기다.',from:1},
     {id:'an_soul',kw:'영혼',text:'공기인 우리 영혼이 우리를 묶듯, 숨이 온 세계를 감싼다.',from:2}]},
   // Raphael: balding, brown-grey beard, rose tunic with a white mantle over the lap
   pythagoras:{name:'피타고라스',bald:true,trim:'#f4efe4',hair:'#8c7a64',beard:'#8a6e56',cloth:'#d9785e',dark:'#a9503e',mantle:'#f1ece0',mantleDark:'#c9c2b2',lines:[
-    {id:'p_number',kw:'근원',text:'만물은 수이다.',from:2},
-    {id:'p_number_v',canon:'p_number',kw:'근원',text:'현의 길이를 반으로 줄이면 한 옥타브가 오른다.',from:2},
+    {id:'p_number',kw:'근원',text:'만물의 근원은 수이다.',from:2},
+    {id:'p_number_v',canon:'p_number',kw:'근원',text:'현의 길이를 반으로 줄이면 한 옥타브가 오른다. 근원은 재료가 아니라 수다.',from:2},
     {id:'p_harmony',kw:'조화',text:'우주는 수의 비율로 조율된 조화다.',from:2},
     {id:'p_soul',kw:'영혼',text:'영혼은 죽지 않고 다른 몸으로 옮겨 간다.',from:2}]},
   xenophanes:{name:'크세노파네스',trim:'#efe2c2',hair:'#9a9a9a',beard:'#9a9a9a',cloth:'#9a7a3c',dark:'#6e5527',lines:[
-    {id:'x_earth',kw:'근원',text:'모든 것은 흙에서 나와 흙으로 돌아간다.',from:3},
-    {id:'x_earth_v',canon:'x_earth',kw:'근원',text:'우리는 모두 흙과 물에서 생겨났다.',from:3},
+    {id:'x_earth',kw:'근원',text:'세상의 근원은 흙이다. 모든 것은 흙에서 나와 흙으로 돌아간다.',from:3},
+    {id:'x_earth_v',canon:'x_earth',kw:'근원',text:'우리의 근원은 흙과 물이다. 우리는 모두 거기서 생겨났다.',from:3},
     {id:'x_gods',kw:'신',text:'소에게 손이 있다면 신을 소의 모습으로 그렸을 것이다.',from:3}],
   lines2:[
     {id:'x_still',kw:'하나',text:'하나의 신은 움직이지 않고, 늘 같은 곳에 머문다.',from:0},
@@ -311,10 +311,10 @@ const P={
   // Diogenes Laertius: purple robe, golden crown, bronze sandals
   empedocles:{name:'엠페도클레스',trim:'#e8c35a',hair:'#c99a3e',beard:'#c99a3e',cloth:'#7a2f6a',dark:'#561f4a',sandal:'#b07a2a',crown:true,lines:[
     {id:'e_roots',kw:'근원',text:'물, 불, 공기, 흙. 네 뿌리가 섞이고 갈라진다.',from:0},
-    {id:'e_love',kw:'사랑과 미움',text:'사랑은 원소를 묶고, 미움은 원소를 떼어 놓는다.',from:0}],
+    {id:'e_love',kw:'투쟁',text:'사랑은 원소를 묶고, 투쟁은 원소를 떼어 놓는다.',from:0}],
   lines2:[
     {id:'e_roots2',canon:'e_roots',kw:'근원',text:'물, 불, 공기, 흙. 네 뿌리가 섞이고 갈라진다.',from:0},
-    {id:'e_love2',canon:'e_love',kw:'사랑과 미움',text:'사랑은 원소를 묶고, 미움은 원소를 떼어 놓는다.',from:0},
+    {id:'e_love2',canon:'e_love',kw:'투쟁',text:'사랑은 원소를 묶고, 투쟁은 원소를 떼어 놓는다.',from:0},
     {id:'e_nobirth',kw:'생겨남',text:'죽을 것들은 생겨나지 않는다. 네 뿌리가 섞일 뿐이다.',from:2}]},
   // Raphael: dark curls, saffron tunic, red mantle with a gold hem
   parmenides:{name:'파르메니데스',trim:'#e8c35a',hair:'#3e3028',beard:'#3e3028',cloth:'#e3ad3a',dark:'#b5821f',mantle:'#c2492f',mantleDark:'#8e3220',lines:[
@@ -359,15 +359,18 @@ const RULES=[
   {id:'R1',keys:[['t_water','h_fire']],kw:'근원',interp:{'근원':['thales','heraclitus']},
     dlg:[['thales','모든 것은 젖어 있소. 씨앗도, 양분도!'],['heraclitus','모든 것은 타오르고 있소. 멈추는 것은 없지!']],
     hint:'물과 불. 두 사람 다 세상이 무엇에서 시작됐는지를 말하고 있소.'},
-  {id:'R2',keys:[['t_water','am_apeiron']],kw:'아페이론',interp:{'근원':['anaximander'],'아페이론':['anaximander']},
+  {id:'R2',keys:[['t_water','am_apeiron'],['h_fire','am_apeiron']],kw:'아페이론',interp:{'근원':['anaximander'],'아페이론':['anaximander']},
     dlg:[['anaximander','선생님, 물이 근원이라면 불은 어디서 왔습니까?'],['thales','…음.']],
-    hint:'탈레스의 제자는 스승의 답이 너무 "정해져" 있다고 생각했지.'},
+    // dialogue for the other answer, keyed by the sorted line ids on the ring
+    alt:{'am_apeiron+h_fire':[['anaximander','불이 근원이라면, 불을 끄는 물은 어디서 왔겠소? 근원은 어느 것으로도 정해지지 않은 것이오.'],['heraclitus','불은 물이 되고 흙이 되었다가 다시 불이 되오. 정해질 필요가 없지.']]},
+    hint:'물이든 불이든, 근원을 하나로 정해 버린 자에게 "정해지지 않은 것"을 말하는 자가 맞서면?'},
   {id:'R3',keys:[['am_apeiron','an_air']],kw:'하나와 여럿',interp:{'근원':['anaximenes'],'하나와 여럿':['anaximander','anaximenes']},
     dlg:[['anaximander','근원을 하나로 정해 버리면, 그 반대의 것은 어디서 나오겠느냐?'],['anaximenes','선생님, 공기 하나로도 됩니다. 짙어지면 물과 흙이, 엷어지면 불이 되니까요.']],
     hint:'근원은 정할 수 없다는 스승, 공기 하나면 충분하다는 제자. 하나에서 어떻게 여럿이 나오는지를 두고 맞서고 있소.'},
-  {id:'R4',keys:[['h_fire','an_air','p_number']],kw:'수',interp:{'근원':['pythagoras'],'수':['pythagoras']},
-    dlg:[['pythagoras','불이든 공기든 재료일 뿐이오. 그것을 짜는 것은 수요.'],['heraclitus','많이 아는 것이 지혜는 아니오, 피타고라스.']],
-    hint:'불과 공기는 둘 다 재료요. 재료가 아닌 근원을 말하는 자에게 둘이 함께 덤비면?'},
+  // any two material sources (water, fire, air) against number: matter vs structure
+  {id:'R4',keys:[['h_fire','an_air','p_number'],['t_water','h_fire','p_number'],['t_water','an_air','p_number']],kw:'수',interp:{'근원':['pythagoras'],'수':['pythagoras']},
+    dlg:[['pythagoras','물이든 불이든 공기든, 재료일 뿐이오. 그것을 짜는 것은 수요.'],['','재료를 근원으로 꼽던 두 사람이 한목소리로 반박했지만, 현의 비율 앞에서 말문이 막혔어요.']],
+    hint:'물, 불, 공기는 모두 재료요. 그중 둘이 재료가 아닌 근원을 말하는 자에게 함께 덤비면?'},
   {id:'R5',keys:[['h_harmony','p_harmony']],kw:'조화',interp:{'조화':['heraclitus','pythagoras']},
     dlg:[['heraclitus','활과 리라처럼, 서로 당기는 힘끼리의 조화요.'],['pythagoras','아니, 현의 길이가 이루는 비율의 조화요.']],
     hint:'헤라클레이토스와 피타고라스. 둘 다 "조화"를 말하지만 뜻이 다르다오.'},
@@ -377,14 +380,14 @@ const RULES=[
   {id:'R7',keys:[['t_water','h_fire','an_air','x_earth']],kw:'4원소',birth:'empedocles',interp:{'근원':['xenophanes','empedocles'],'4원소':['empedocles']},
     dlg:[['','넷이 뒤엉킨 먼지 속에서 한 사람이 걸어 나왔어요.'],['empedocles','다들 옳소. 근원은 하나가 아니라 넷이오.']],
     hint:'물, 불, 공기… 흙만 있으면 넷이 다 모이겠군.'},
-  {id:'R8',keys:[['e_love','h_war']],kw:'사랑과 미움',interp:{'사랑과 미움':['empedocles','heraclitus']},
-    dlg:[['empedocles','미움만으로는 아무것도 생기지 않소.'],['heraclitus','투쟁이 곧 정의요.']],
-    hint:'사랑과 미움. 그리고 "전쟁은 만물의 아버지"라던 자.'}
+  {id:'R8',keys:[['e_love','h_war']],kw:'사랑과 투쟁',interp:{'사랑과 투쟁':['empedocles','heraclitus']},
+    dlg:[['empedocles','투쟁만으로는 아무것도 생기지 않소. 사랑이 묶어야 하지.'],['heraclitus','투쟁이 곧 정의요.']],
+    hint:'"투쟁"을 말하는 자가 둘이오. 하나는 사랑과 함께, 하나는 만물의 아버지로.'}
 ];
 RULES.forEach(r=>r.ch=1);
 // chapter 2: every answer shares one word, said in opposite or competing ways
 RULES.push(
-  {ch:2,id:'C1',keys:[['h_change','pa_nochange']],kw:'변화',interp:{'변화':['heraclitus','parmenides']},
+  {ch:2,id:'C1',keys:[['h_change','pa_nochange'],['cr_change','pa_nochange']],kw:'변화',interp:{'변화':['heraclitus','parmenides']},
     dlg:[['heraclitus','그대가 선 그 물도 이미 흘러갔소.'],['parmenides','흐른다는 건 있던 것이 없어진다는 말이오. 없는 것은 없소.']],
     hint:"'변한다'는 말을 두 사람이 정반대로 쓰고 있소."},
   {ch:2,id:'C2',keys:[['h_one','pa_one']],kw:'하나',interp:{'하나':['heraclitus','parmenides']},
@@ -413,7 +416,7 @@ const RULEMAP={}; RULES.forEach(r=>r.keys.forEach(k=>RULEMAP[[...k].sort().join(
 function ruleFor(occ){const r=RULEMAP[occ.map(n=>canon(n.shown)).sort().join('+')];return r&&r.ch===chapter?r:null;} // only this chapter's fights count
 // per-chapter setup: stele keywords, the codex page that clears the chapter, oracle hint order, the ending guest
 const CHAP={
-  1:{title:'근원',kw:['근원','아페이론','하나와 여럿','수','조화','영혼','4원소','사랑과 미움'],central:'근원',need:7,guest:'parmenides',
+  1:{title:'근원',kw:['근원','아페이론','하나와 여럿','수','조화','영혼','4원소','사랑과 투쟁'],central:'근원',need:7,guest:'parmenides',
      hints:['R1','R2','R3','R4','R7','R5','R6','R8'],roster:['thales','heraclitus','anaximander','anaximenes','pythagoras','xenophanes','empedocles','parmenides']},
   2:{title:'변화',kw:['변화','하나','움직임','생겨남','정의','나눔','허공','감각'],central:'변화',need:7,guest:'socrates',
      hints:['C1','C2','C3','C4','C6','C7','C8','C5'],roster:['heraclitus','parmenides','zeno','cratylus','anaxagoras','melissus','democritus','socrates']}
@@ -426,7 +429,7 @@ const KWINFO={
   '조화':{gr:'ἁρμονία · 하르모니아',slots:[['heraclitus','','활과 리라처럼 서로 당기는 힘들의 긴장'],['pythagoras','','수의 비율로 맞춰진 질서']]},
   '영혼':{gr:'ψυχή · 프쉬케',slots:[['thales','','사물을 움직이는 힘. 자석에도 있다'],['anaximenes','','몸을 묶어 주는 숨'],['pythagoras','','죽지 않고 몸을 옮겨 다니는 것']]},
   '4원소':{gr:'ῥιζώματα · 네 뿌리',slots:[['empedocles','','물, 불, 공기, 흙. 생겨남도 사라짐도 없이 섞이고 나뉠 뿐']]},
-  '사랑과 미움':{gr:'φιλότης · νεῖκος',slots:[['empedocles','','섞는 힘과 가르는 힘이 번갈아 우주를 다스린다'],['heraclitus','','투쟁이 만물의 아버지다. 대립이 곧 정의다']]},
+  '사랑과 투쟁':{gr:'φιλότης · νεῖκος · 필로테스 · 네이코스',slots:[['empedocles','','섞는 힘과 가르는 힘이 번갈아 우주를 다스린다'],['heraclitus','','투쟁이 만물의 아버지다. 대립이 곧 정의다']]},
   '변화':{gr:'μεταβολή · 메타볼레',slots:[['heraclitus','흐름','멈추지 않고 흐르며 바뀌는 것'],['parmenides','불변','있는 것은 생겨나지도 사라지지도, 변하지도 않는다'],['zeno','역설','움직임과 변화는 모순을 낳으니 있을 수 없다'],['anaxagoras','섞임','변화란 이미 있던 것들이 섞이고 갈라지는 일'],['empedocles','네 뿌리','새로 생기는 건 없다. 네 뿌리가 섞이고 갈라질 뿐'],['democritus','원자','나눌 수 없는 원자들이 허공 속에서 자리를 바꾸는 일'],['melissus','무한한 하나','허공이 없으니 아무것도 움직이거나 변하지 않는다']],lock:'3장에서 열려요'},
   '하나':{gr:'ἕν · 헨',slots:[['heraclitus','','낮과 밤, 오르막과 내리막처럼 대립하는 것들이 이루는 하나'],['parmenides','','틈도 차이도 없이 빈틈없이 이어진 하나']]},
   '움직임':{gr:'κίνησις · 키네시스',slots:[['zeno','','매 순간 멈춰 있는 화살처럼, 모순이라 있을 수 없는 것'],['cratylus','','모든 것이 움직여서 말로 붙잡을 수조차 없는 것']]},
@@ -869,13 +872,43 @@ function startFight(){
 }
 $('fightbtn').addEventListener('click',startFight);
 $('fightbtn').style.backgroundImage=`url(${bellURL()})`;
-function kwLabel(k){return HIDDEN_KW.has(k)&&!got.has(k)?'???':k;}
+function kwLabel(k){return HIDDEN_KW.has(k)&&CHAP[chapter].kw.includes(k)&&!got.has(k)?'???':k;} // hidden only in its own chapter
+const LINE_OWNER={};Object.entries(P).forEach(([pid,p])=>[...p.lines,...(Array.isArray(p.lines2)?p.lines2:[])].forEach(l=>LINE_OWNER[l.id]=pid));
+const batchim=w=>{const c=w.charCodeAt(w.length-1)-0xac00;return c>=0&&c<11172&&c%28>0;};
+const names=ids=>{const ns=[...new Set(ids.map(id=>P[LINE_OWNER[id]].name))];return ns.slice(0,-1).map(n=>n+(batchim(n)?'과':'와')).join(' ')+(ns.length>1?' ':'')+ns[ns.length-1];};
+// Wrong group on one topic: compare with this chapter's answers and say what is actually off.
+function sameTopicHint(occ,kw){
+  const have=new Set(occ.map(n=>canon(n.shown))),out=[];
+  const cands=[];
+  for(const r of RULES)if(r.ch===chapter)for(const k of r.keys){
+    const ks=new Set(k),inter=[...have].filter(x=>ks.has(x)).length;if(!inter)continue;
+    const missing=k.filter(x=>!have.has(x)),extra=[...have].filter(x=>!ks.has(x));
+    const absent=missing.some(id=>{const o=LINE_OWNER[id],n=npcs.find(m=>m.pid===o&&!m.hidden);return !n||!unlocked(o).some(l=>canon(l)===id);});
+    cands.push({r,k,missing,extra,absent,tooBig:k.length>slotsAvail(),score:inter*2-missing.length-extra.length});
+  }
+  // a fight that's already over is hiding inside this group
+  const done=cands.find(c=>solved.has(c.r.id)&&!c.missing.length&&c.extra.length);
+  if(done)out.push(`${names(done.k)}의 '${kw}' 싸움은 이미 결판났어요.`);
+  const open=cands.filter(c=>!solved.has(c.r.id)).sort((a,b)=>b.score-a.score);
+  const say=c=>c.missing.length&&!c.extra.length?`${c.missing.length===1?'한 사람':c.missing.length+'명'}이 더 있어야 해요.`
+    :!c.missing.length?`${c.extra.length===1?'한 사람':c.extra.length+'명'}이 필요 없이 끼어 있어요.`
+    :`${c.extra.length===1?'한 사람':c.extra.length+'명'}을 다른 사람으로 바꿔 보세요.`;
+  const best=open[0],ready=open.find(c=>!c.absent&&!c.tooBig);
+  if(best&&(best.absent||best.tooBig)){
+    const m=best.missing.length,who=m===1?'한 사람':m+'명';
+    const need=best.extra.length?`${best.extra.length===1?'한 사람':best.extra.length+'명'}을 바꿔야 하는데`:`${who}이 더 있어야 하는데`;
+    out.push(best.absent?`${need}, ${m===1&&!best.extra.length?'그 사람은':'필요한 사람이'} 아직 아고라에 오지 않았어요.`:`${need}, 링이 아직 좁아요.`);
+    if(ready&&ready!==best)out.push('지금 할 수 있는 싸움은 따로 있어요. '+say(ready));
+    else out.push('다른 싸움을 먼저 풀어 보세요.');
+  }else if(best)out.push(say(best));
+  else out.push(`이 사람들이 '${kw}'를 두고 벌일 싸움은 이미 다 끝났어요. 다른 단어를 찾아보세요.`);
+  return out.join(' ');
+}
 function missMsg(occ){
-  const ids=occ.map(n=>canon(n.shown));
   if(occ.some(STILL))return '파르메니데스는 꿈쩍도 하지 않아요. 싸움이 되지 않아요.';
   const kws=[...new Set(occ.map(n=>n.shown.kw))];
-  if(kws.length===1)return `모두 '${kwLabel(kws[0])}'에 대해 말하지만 결판이 나지 않아요. 누군가 빠졌거나, 필요 없는 사람이 끼어 있어요.`;
-  return `서로 다른 이야기를 하고 있어요 (${kws.map(kwLabel).join(' / ')}). 동문서답 끝에 흩어졌어요.`;
+  if(kws.length===1)return `모두 '${kwLabel(kws[0])}'에 대해 말하지만 결판이 나지 않아요. `+sameTopicHint(occ,kwLabel(kws[0]));
+  return `서로 다른 단어로 말하고 있어요 (${kws.map(kwLabel).join(' / ')}). 동문서답 끝에 흩어졌어요. 같은 단어를 쓰는 사람끼리 올려 보세요.`;
 }
 function floatText(t,x=RING.cx,y=RING.y0+24,c='#fff'){texts.push({t,x,y,life:1.4,c});}
 const FIGHT_T=.96,DUD_T=1.1; // brawl length (60% of the old 1.6s), fizzle pause
@@ -888,7 +921,7 @@ function resolveFight(){
   const occ=fighting.occ;fighting=null;
   const rule=ruleFor(occ);
   ring.fill(null);occ.forEach(n=>toAgora(n,true));
-  if(rule&&!solved.has(rule.id)){spend(8);obols+=3;applyRule(rule);}
+  if(rule&&!solved.has(rule.id)){spend(8);obols+=3;applyRule(rule,occ);}
   else if(rule){spend(4);narrate('음 그렇군… 이미 결판난 싸움이에요. 구경꾼들이 하품을 해요.');checkDay();}
   else{spend(15);narrate('음 그렇군… '+missMsg(occ));checkDay();}
   updateAll();
@@ -907,7 +940,7 @@ function stageUp(prev){
   npcs.forEach(n=>{if(STILL(n))return;const c=unlocked(n.pid).length;if(n.seen&&c>n.seen)n.isNew=true;});
   return msgs;
 }
-function applyRule(rule){
+function applyRule(rule,occ){
   solved.add(rule.id);got.add(rule.kw);
   const filled=[];
   for(const [k,pids] of Object.entries(rule.interp)){interps[k]=interps[k]||new Set();pids.forEach(p=>{if(!interps[k].has(p)){interps[k].add(p);filled.push([k,p]);}});}
@@ -917,7 +950,7 @@ function applyRule(rule){
   if(rule.birth&&!met.has(rule.birth)){
     if(rule.birth==='empedocles')born=true;
     const e=spawn(rule.birth);e.x=RING.cx;e.y=RING.y1+26;e.pauseUntil=now+4000;burst(RING.cx,RING.y1+10,30,['#e8c35a','#fff','#c8452c','#5fb3e0']);
-    setTimeout(()=>showLine(e,unlocked(rule.birth)[0],5000),400);
+    setTimeout(()=>{if(e.state==='wander')showLine(e,unlocked(rule.birth)[0],5000);},400); // never swap the line of someone already in the ring
     unl.push(rule.birth==='empedocles'?'엠페도클레스가 태어났어요. 싸움의 결과로 등장한 첫 철학자예요.':'데모크리토스가 태어났어요. 근원 도감의 잠긴 칸이 열렸어요.');
   }
   const prev=stage;
@@ -933,7 +966,8 @@ function applyRule(rule){
   if(stage>prev)unl.push(...stageUp(prev));
   burst(RING.cx,RING.cy,26,['#e8c35a','#fff','#f2ead9']);floatText('결판!',RING.cx,RING.y0+24,'#e8c35a');
   const info=KWINFO[rule.kw];
-  const dlg=rule.dlg.map(([pid,t])=>pid?`<p><b>${P[pid].name}</b> ${t}</p>`:`<p class="muted">${t}</p>`).join('');
+  const okey=occ&&occ.map(n=>canon(n.shown)).sort().join('+'),lines=(rule.alt&&rule.alt[okey])||rule.dlg;
+  const dlg=lines.map(([pid,t])=>pid?`<p><b>${P[pid].name}</b> ${t}</p>`:`<p class="muted">${t}</p>`).join('');
   const fil=filled.map(([k,p])=>`${k} · ${P[p].name}`).join(', ');
   const html=`<p class="eyebrow">${rule.hidden?'숨은 키워드 발견':'키워드 획득'} · 오볼로스 +3</p>
     <h2 id="mtitle">${rule.kw}</h2><p class="gr">${info.gr}</p>
@@ -1394,7 +1428,8 @@ function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
 function restore(s){
   stage=s.stage|0;water=Math.max(0,Math.min(100,+s.water||0));day=s.day|0||1;obols=s.obols|0;
   got=new Set(s.got);solved=new Set(s.solved);heard=new Set(s.heard);farmed=new Set(s.farmed);heardLines=new Set(s.heardLines);tutDone=!!s.tutDone;fieldCard=!!s.fieldCard;born=!!s.born;
-  interps={};for(const [k,a] of Object.entries(s.interps||{}))interps[k]=new Set(a);
+  interps={};for(const [k,a] of Object.entries(s.interps||{}))interps[k==='사랑과 미움'?'사랑과 투쟁':k]=new Set(a); // renamed keyword
+  if(got.delete('사랑과 미움'))got.add('사랑과 투쟁');
   chapter=s.chapter===2?2:1;field2=!!s.field2;
   // met: older saves didn't store it, so rebuild it from chapter-1 progress
   met=new Set(s.met||['thales','heraclitus',...(stage>=1?['anaximander','anaximenes']:[]),...(stage>=2?['pythagoras']:[]),...(stage>=3?['xenophanes']:[]),...(born?['empedocles']:[]),...(s.ending===2?['parmenides']:[])]);
