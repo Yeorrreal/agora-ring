@@ -92,7 +92,9 @@ canvas#scene.act{cursor:pointer}
 
 /* stele, bottom-right */
 .stelebox{position:fixed;right:var(--gr);bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);z-index:6;width:250px;padding:10px;display:flex;flex-direction:column;gap:6px}
-.stelebox .head{display:flex;justify-content:space-between;align-items:center}
+.stelebox .head{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.stelebox .head .r{display:flex;align-items:center;gap:6px}
+.stelebox.closed .stele{display:none}
 .stele{list-style:none;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:2px 6px;background:#cfc7b4;box-shadow:inset 0 0 0 2px #a59d89,inset 0 0 0 4px #ded7c6}
 .kwbtn{font:inherit;font-size:11.5px;width:100%;display:flex;justify-content:space-between;gap:4px;border:0;background:transparent;padding:3px 4px;color:#6f6656;text-align:left;cursor:default;white-space:nowrap}
 .kwbtn.got{color:#2a2117;cursor:pointer;font-weight:700}
@@ -181,15 +183,34 @@ canvas#scene.act{cursor:pointer}
 .slot.empty{color:var(--muted)}
 .slot.lock{color:#6f6578;background:transparent;box-shadow:inset 0 0 0 1px var(--hi)}
 
+/* phones held sideways: too short for the agora, ask to turn the phone */
+.rotate{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:var(--bg);color:var(--ink);text-align:center;padding:24px;font-size:14px;line-height:1.6}
+.rotate b{display:block;color:var(--gold);font-size:16px;margin-bottom:6px}
+@media (orientation:landscape) and (max-height:500px) and (pointer:coarse){.rotate{display:grid}}
+/* phones: one-line header, corner window docked under it (stoa and stalls start below), bottom panels collapsed */
 @media (max-width:700px){
-  .hdr h1,.hdr .sep,.hdr .hide-s{display:none}
-  .hdr .bar{gap:10px;padding:6px 8px}
-  .stelebox{width:200px}
-  .narr{max-width:calc(100vw - 236px);font-size:11.5px}
-  .collbox{right:var(--gr);bottom:calc(env(safe-area-inset-bottom, 0px) + 200px);width:200px}
-  .ringpanel ul{grid-template-columns:1fr}
-  .ringpanel ul{min-height:0}
-}
+  .hdr{padding-top:calc(env(safe-area-inset-top, 0px) + 4px)}
+  .hdr h1,.hdr .sep,.hdr .hide-s,.klep .lbl,#dayv{display:none}
+  .hdr .bar{gap:8px;padding:4px 8px;flex-wrap:nowrap}
+  .klep{gap:4px}.klep canvas{width:16px;height:24px}
+  .big{font-size:15px;white-space:nowrap}.big small{display:none}
+  .coin{font-size:12px}
+  .hdr .btn,.help summary{font-size:11px;padding:4px 7px;white-space:nowrap}
+  .ringpanel{transform:translate(-50%,0);padding:6px 60px 6px 6px}
+  .ringpanel ul{grid-template-columns:1fr;grid-auto-rows:26px;min-height:0;gap:3px}
+  .ringpanel li{grid-template-columns:38px minmax(0,1fr) auto;padding:2px 4px}
+  .ringpanel .side{display:none}
+  .rw{-webkit-line-clamp:1;font-size:10.5px}
+  .bell{left:auto;right:8px;width:44px;height:44px;margin-top:-22px}
+  .narr{left:var(--gl);right:var(--gr);max-width:none;font-size:11px;min-height:0;padding:6px 10px;bottom:calc(env(safe-area-inset-bottom, 0px) + 8px)}
+  .stelebox,.collbox{width:calc(50% - 4px - var(--gl));padding:6px 8px;bottom:calc(env(safe-area-inset-bottom, 0px) + var(--narrh, 40px) + 14px)}
+  .collbox{right:auto;left:var(--gl)}
+  .stelebox{right:var(--gr)}
+  .stelebox:not(.closed),.collbox:not(.closed){left:var(--gl);right:var(--gr);width:auto;z-index:7}
+  .lbl .hide-s{display:none}
+  .collbox .title,.stelebox .head{white-space:nowrap}
+  .collbox .title{font-size:10.5px}
+}}
 @media (prefers-reduced-motion:reduce){.btn:active{transform:none}}
 </style>
 
@@ -245,7 +266,7 @@ canvas#scene.act{cursor:pointer}
 </section>
 
 <section class="stelebox panel" id="stelebox">
-  <div class="head"><span class="lbl">비문 · 새겨진 키워드</span><span id="kwcount" style="font-weight:700">0 / 8</span></div>
+  <div class="head"><span class="lbl">비문<span class="hide-s"> · 새겨진 키워드</span></span><span class="r"><span id="kwcount" style="font-weight:700">0 / 8</span><button class="mini" id="steletog" type="button" aria-expanded="true">접기</button></span></div>
   <ol class="stele" id="stele"></ol>
 </section>
 
@@ -257,6 +278,7 @@ canvas#scene.act{cursor:pointer}
   <i style="left:14%;bottom:-8px;width:20px;height:20px"></i><i style="left:46%;bottom:-10px;width:24px;height:24px"></i><i style="left:74%;bottom:-7px;width:18px;height:18px"></i>
   <i style="left:calc(50% - 6px);bottom:-22px;width:12px;height:12px"></i><i style="left:calc(50% - 2px);bottom:-32px;width:7px;height:7px"></i></div></div>
 
+<div class="rotate" role="alert"><p><b>폰을 세로로 돌려 주세요</b>아고라 링은 세로 화면에 맞춰져 있어요.</p></div>
 <div class="modal" id="modal" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="mtitle"><div id="mbody" style="display:flex;flex-direction:column;gap:12px"></div><div class="acts" id="macts"></div></div></div>
 
 <script>
@@ -633,6 +655,11 @@ function uiRects(){
   return ['stelebox','collbox','narr','ringpanel','hdr'].map(id=>{const r=$(id).getBoundingClientRect();return {x0:r.left/SCALE-8,x1:r.right/SCALE+8,y0:r.top/SCALE-4,y1:r.bottom/SCALE+24};});
 }
 function underUI(x,y){return uiRects().some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1);}
+const isMobile=()=>matchMedia('(max-width:700px)').matches;
+function compactLabels(){ // short button labels so the phone header fits on one line
+  const m=isMobile();$('resetbtn2').textContent=m?'처음':'처음으로';$('help').querySelector('summary').textContent=m?'도움':'하는 법';
+  $('soundbtn').textContent=SND.on?(m?'소리':'소리 켬'):(m?'무음':'소리 끔');
+}
 function layout(){
   if(!innerWidth||!innerHeight)return; // hidden/zero-size tab: wait for the resize
   SCALE=computeScale();
@@ -641,15 +668,18 @@ function layout(){
   ctx.imageSmoothingEnabled=false;
   const rp=$('ringpanel');
   const rw=120,rh=72;
-  const pw=Math.min(innerWidth-24-168,Math.max(rw*SCALE+40,520));
+  const mob=isMobile();compactLabels();
+  const pw=mob?innerWidth-16:Math.min(innerWidth-24-168,Math.max(rw*SCALE+40,520));
   rp.style.width=pw+'px';
   const hdrB=$('hdr').getBoundingClientRect().bottom;
-  STOA=Math.ceil(hdrB/SCALE)+3; // roof tiles start just below the header
-  const top=Math.max(Math.ceil((hdrB+rp.offsetHeight+16)/SCALE)+12,STOA+50);
+  // phones: the corner window sits right under the header and the stoa starts below it, so nothing covers the stalls
+  STOA=mob?Math.ceil((hdrB+6+rp.offsetHeight)/SCALE)+3:Math.ceil(hdrB/SCALE)+3; // roof tiles start just below the header
+  const top=mob?STOA+50:Math.max(Math.ceil((hdrB+rp.offsetHeight+16)/SCALE)+12,STOA+50);
   RING={x0:Math.round(W/2-rw/2),x1:Math.round(W/2+rw/2),y0:top,y1:top+rh};
   RING.cx=Math.round((RING.x0+RING.x1)/2);RING.cy=Math.round((RING.y0+RING.y1)/2);
   SLOT=[[RING.x0+24,RING.y1-10],[RING.x1-24,RING.y1-10],[RING.x0+24,RING.y0+28],[RING.x1-24,RING.y0+28]];
-  rp.style.left=(RING.cx*SCALE)+'px';rp.style.top=((RING.y0-15)*SCALE)+'px';
+  if(mob){rp.style.left=(innerWidth/2)+'px';rp.style.top=Math.round(hdrB+6)+'px';}
+  else{rp.style.left=(RING.cx*SCALE)+'px';rp.style.top=((RING.y0-15)*SCALE)+'px';}
   // set pieces. Each prop is drawn in the y-sorted pass with the people; its foot rect blocks walking,
   // so people pass in front of it or behind it (and get hidden), never over it.
   PROPS=[];
@@ -1092,7 +1122,7 @@ const live=()=>SND.ctx&&SND.ctx.state==='running';
 function noiseSrc(){const s=SND.ctx.createBufferSource();s.buffer=SND.noise;s.loop=true;return s;}
 function env(g,t,peak,att,dec){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+att);g.gain.exponentialRampToValueAtTime(.0001,t+att+dec);}
 function setSound(on){SND.on=on;if(SND.master)SND.master.gain.setTargetAtTime(on?.7:0,SND.ctx.currentTime,.05);
-  const b=$('soundbtn');b.textContent=on?'소리 켬':'소리 끔';b.setAttribute('aria-pressed',String(on));try{localStorage.setItem('agora-ring:sound',on?'1':'0');}catch(e){}}
+  const b=$('soundbtn');compactLabels();b.setAttribute('aria-pressed',String(on));try{localStorage.setItem('agora-ring:sound',on?'1':'0');}catch(e){}}
 // boxing bell: three rings of a brass bell (inharmonic partials), the last one left to ring out
 function sndBell(){if(!live())return;if(SND.buf.bell){playBuf(SND.buf.bell,0,undefined,.9);return;}const c=SND.ctx,t0=c.currentTime;
   for(let k=0;k<3;k++){const t=t0+k*.26,tail=k===2?1.8:.45;
@@ -1230,10 +1260,17 @@ function openPerson(pid){
 }
 $('collopen').addEventListener('click',openGallery);
 $('collgrid').addEventListener('click',e=>{const b=e.target.closest('.pc');if(b&&!modalOpen)openPerson(b.dataset.pid);});
-function setCollOpen(open){$('collbox').classList.toggle('closed',!open);$('colltog').textContent=open?'접기':'펼치기';$('colltog').setAttribute('aria-expanded',String(open));
-  try{localStorage.setItem('agora-ring:coll',open?'1':'0');}catch(e){}}
+function setCollOpen(open,save=true){$('collbox').classList.toggle('closed',!open);$('colltog').textContent=isMobile()?(open?'▼':'▲'):(open?'접기':'펼치기');$('colltog').setAttribute('aria-expanded',String(open));
+  if(save)try{localStorage.setItem('agora-ring:coll',open?'1':'0');}catch(e){}}
 $('colltog').addEventListener('click',()=>{setCollOpen($('collbox').classList.contains('closed'));relayout();});
-try{setCollOpen(localStorage.getItem('agora-ring:coll')!=='0');}catch(e){setCollOpen(true);}
+function setSteleOpen(open){$('stelebox').classList.toggle('closed',!open);$('steletog').textContent=isMobile()?(open?'▼':'▲'):(open?'접기':'펼치기');$('steletog').setAttribute('aria-expanded',String(open));}
+$('steletog').addEventListener('click',()=>{const open=$('stelebox').classList.contains('closed');setSteleOpen(open);if(open&&isMobile())setCollOpen(false,false);relayout();});
+$('colltog').addEventListener('click',()=>{if(isMobile()&&$('collbox').classList.contains('closed'))setSteleOpen(false);},true); // opening one folds the other
+if(isMobile()){setCollOpen(false,false);setSteleOpen(false);} // phones start with both folded (not remembered)
+else{try{setCollOpen(localStorage.getItem('agora-ring:coll')!=='0');}catch(e){setCollOpen(true);}setSteleOpen(true);}
+// keep the two bottom panels sitting just above the narration line
+const narrH=()=>document.documentElement.style.setProperty('--narrh',$('narr').offsetHeight+'px');narrH();
+if(window.ResizeObserver)new ResizeObserver(narrH).observe($('narr'));
 
 /* ---------------- HUD ---------------- */
 // the Pythia under the red awning gives hints for an offering
@@ -1307,7 +1344,7 @@ function updateSide(){
   const t=dayT();const phase=ending===2?'밤':t<.4?'해가 높아요':t<.7?'오후예요':t<.9?'해가 기울어요':'곧 해가 져요';
   const ph=`${day}일째 · ${phase}`;if(ph!==lastPhase){lastPhase=ph;$('dayv').textContent=ph;}
   $('obolv').textContent=`${obols} 오볼`;
-  const f=$('fieldv'),fc=chapter===2&&field2?'존재 · 토 온':fieldCard?'자연 · 퓌시스':'';f.textContent=fc||'분야카드 없음';f.className='chip'+(fc?' on':'');
+  const f=$('fieldv'),fc=chapter===2&&field2?'존재 · 토 온':fieldCard?'자연 · 퓌시스':'';f.textContent=fc||'분야카드 없음';f.className='chip hide-s'+(fc?' on':''); // hide-s: dropped from the phone header
   const tt=`아고라 링 · ${chapter}장 ${CHAP[chapter].title}`;if($('title').textContent!==tt)$('title').textContent=tt;
   $('ch2btn').hidden=!(chapter===1&&ending===2);
 }
