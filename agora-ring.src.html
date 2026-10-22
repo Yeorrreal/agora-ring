@@ -196,12 +196,14 @@ canvas#scene.act{cursor:pointer}
   .big{font-size:15px;white-space:nowrap}.big small{display:none}
   .coin{font-size:12px}
   .hdr .btn,.help summary{font-size:11px;padding:4px 7px;white-space:nowrap}
-  .ringpanel{transform:translate(-50%,0);padding:6px 60px 6px 6px}
-  .ringpanel ul{grid-template-columns:1fr;grid-auto-rows:26px;min-height:0;gap:3px}
-  .ringpanel li{grid-template-columns:38px minmax(0,1fr) auto;padding:2px 4px}
+  .ringpanel{transform:translate(-50%,0);padding:5px 56px 5px 5px}
+  .ringpanel ul{grid-template-columns:1fr;grid-auto-rows:22px;min-height:0;gap:2px}
+  .ringpanel li{grid-template-columns:36px minmax(0,1fr) auto;padding:1px 4px}
+  .ringpanel .corner{font-size:10px}
+  .ringpanel .mini{font-size:10px;padding:1px 3px}
   .ringpanel .side{display:none}
   .rw{-webkit-line-clamp:1;font-size:10.5px}
-  .bell{left:auto;right:8px;width:44px;height:44px;margin-top:-22px}
+  .bell{left:auto;right:7px;width:40px;height:40px;margin-top:-20px}
   .narr{left:var(--gl);right:var(--gr);max-width:none;font-size:11px;min-height:0;padding:6px 10px;bottom:calc(env(safe-area-inset-bottom, 0px) + 8px)}
   .stelebox,.collbox{width:calc(50% - 4px - var(--gl));padding:6px 8px;bottom:calc(env(safe-area-inset-bottom, 0px) + var(--narrh, 40px) + 14px)}
   .collbox{right:auto;left:var(--gl)}
@@ -238,7 +240,7 @@ canvas#scene.act{cursor:pointer}
         <ol>
           <li>아고라의 사람을 누르면 말풍선이 떠요. 계속 누르면 다른 말을 해요.</li>
           <li>서로 맞서는 말을 하는 사람들을 링으로 끌어다 놓아요. 링에 올라간 순간의 말로 판정해요.</li>
-          <li>종을 쳐서 싸움을 붙이면 물시계의 물이 줄어요. 결판 −8, 동문서답 −15. 가만히 있어도 조금씩 새요.</li>
+          <li>종을 쳐서 싸움을 붙이면 물시계의 물이 줄어요. 결판 −8, 동문서답 −15. 가만히 있어도 조금씩 새요(가득 찬 물시계는 7분). 다 비면 그 단계를 처음부터 다시 해요.</li>
           <li>머리 위에 <span style="color:var(--gold)">!</span>가 뜬 사람은 새로 할 말이 생긴 사람이에요.</li>
           <li>비문에 새겨진 키워드를 누르면 철학자별 해석을 볼 수 있어요.</li>
           <li>빨간 차양 아래 델포이의 신녀를 누르면 2 오볼에 신탁(힌트)을 받아요.</li>
@@ -644,15 +646,16 @@ function bellURL(){return outlined(mk(20,20,R=>{
 
 /* ---------------- world layout (fills the window) ---------------- */
 const bg=document.createElement('canvas');
-let STATUE={x:0,y:0},RING={x0:0,x1:0,y0:0,y1:0,cx:0,cy:0},SLOT=[],BEANS={x:12,y:0,w:58,h:30},STOA=0,PROPS=[];
+let ATHENA_ZONE=null,STATUE={x:0,y:0},RING={x0:0,x1:0,y0:0,y1:0,cx:0,cy:0},SLOT=[],BEANS={x:12,y:0,w:58,h:30},STOA=0,PROPS=[];
 function computeScale(){
   const vw=innerWidth,vh=innerHeight;
+  if(isMobile())return 1.5*Math.max(1,vw/340); // phones: people 1.5× bigger; the agora is rearranged to fit ~220 px wide
   let s=1.2*Math.max(220,vh-140)/240;
   s=Math.min(s,vw/340);
   return Math.max(1,s);
 }
 function uiRects(){
-  return ['stelebox','collbox','narr','ringpanel','hdr'].map(id=>{const r=$(id).getBoundingClientRect();return {x0:r.left/SCALE-8,x1:r.right/SCALE+8,y0:r.top/SCALE-4,y1:r.bottom/SCALE+24};});
+  return ['stelebox','collbox','narr','ringpanel','hdr','tut'].filter(id=>!$(id).hidden).map(id=>{const r=$(id).getBoundingClientRect();return {x0:r.left/SCALE-8,x1:r.right/SCALE+8,y0:r.top/SCALE-4,y1:r.bottom/SCALE+24};});
 }
 function underUI(x,y){return uiRects().some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1);}
 const isMobile=()=>matchMedia('(max-width:700px)').matches;
@@ -667,14 +670,14 @@ function layout(){
   cv.width=W;cv.height=H;cv.style.width=(W*SCALE)+'px';cv.style.height=(H*SCALE)+'px';
   ctx.imageSmoothingEnabled=false;
   const rp=$('ringpanel');
-  const rw=120,rh=72;
   const mob=isMobile();compactLabels();
+  const rw=mob?104:120,rh=mob?62:72; // phones: the ring is ~1.3× its old on-screen size (the scale grew 1.5×)
   const pw=mob?innerWidth-16:Math.min(innerWidth-24-168,Math.max(rw*SCALE+40,520));
   rp.style.width=pw+'px';
   const hdrB=$('hdr').getBoundingClientRect().bottom;
   // phones: the corner window sits right under the header and the stoa starts below it, so nothing covers the stalls
   STOA=mob?Math.ceil((hdrB+6+rp.offsetHeight)/SCALE)+3:Math.ceil(hdrB/SCALE)+3; // roof tiles start just below the header
-  const top=mob?STOA+50:Math.max(Math.ceil((hdrB+rp.offsetHeight+16)/SCALE)+12,STOA+50);
+  const top=mob?STOA+88:Math.max(Math.ceil((hdrB+rp.offsetHeight+16)/SCALE)+12,STOA+50);
   RING={x0:Math.round(W/2-rw/2),x1:Math.round(W/2+rw/2),y0:top,y1:top+rh};
   RING.cx=Math.round((RING.x0+RING.x1)/2);RING.cy=Math.round((RING.y0+RING.y1)/2);
   SLOT=[[RING.x0+24,RING.y1-10],[RING.x1-24,RING.y1-10],[RING.x0+24,RING.y0+28],[RING.x1-24,RING.y0+28]];
@@ -685,13 +688,17 @@ function layout(){
   PROPS=[];
   const add=(img,x,y,foot,ex)=>{x=Math.round(x);y=Math.round(y);const p={img,x,y,base:y+img.height-1,...ex};if(foot)p.foot=[x+foot[0],y+foot[1],x+foot[2],y+foot[3]];PROPS.push(p);return p;};
   const LZ1=RING.x0-14,RZ0=RING.x1+14;
-  const ax=Math.max(4,Math.min(LZ1-44,RING.x0-104)),aBase=RING.y1-2;
+  // phones put Athena and both stalls in one row under the stoa; wider screens flank the ring with them
+  const ax=mob?4:Math.max(4,Math.min(LZ1-44,RING.x0-104)),aBase=mob?STOA+98:RING.y1-2;
   const st=add(ATHENA,ax,aBase-ATHENA.height+1,[0,ATHENA.height-9,ATHENA.width,ATHENA.height],{owl:true,shadow:[20,ATHENA.height-1,22,3]});
   STATUE.x=st.x+OWL_AT.x;STATUE.y=st.y+OWL_AT.y;
+  ATHENA_ZONE=mob?[0,STOA,st.x+st.img.width+3,st.y+st.img.height]:null; // phones: the corner behind the statue is too cramped to wander in
   // W ≥ 340 always (computeScale), so the oracle's stall always fits between Athena and the ring
-  const ox=Math.min(ax+ATHENA.width+3,LZ1-44);
+  const ox=mob?ax+ATHENA.width+3:Math.min(ax+ATHENA.width+3,LZ1-44);
   add(ORACLE,ox,STOA+37,[1,30,43,45],{act:'oracle',oracle:true});
-  BEANS={x:10,y:Math.min(RING.y1+34,H-72),w:58,h:30};
+  // phones: keep the plot clear of the folded panels at the bottom
+  const uiTop=mob?$('collbox').getBoundingClientRect().top/SCALE:H;
+  BEANS=mob?{x:8,y:Math.round(Math.max(RING.y1+33,Math.min(RING.y1+40,uiTop-26-8))),w:50,h:26}:{x:10,y:Math.min(RING.y1+34,H-72),w:58,h:30};
   add(fence(BEANS.w+6),BEANS.x-3,BEANS.y-9,null);
   add(MOUND,BEANS.x+BEANS.w-1,BEANS.y+BEANS.h-12,[0,7,19,14],{shadow:[9,13,9,2]});
   add(BASKET,BEANS.x+BEANS.w,BEANS.y+1,[0,3,11,9]);
@@ -772,8 +779,11 @@ const CELL=4,DIRS=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
 let GW=0,GH=0,WALK=new Uint8Array(0),WALKLIST=[];
 function buildWalk(){
   GW=Math.ceil(W/CELL);GH=Math.ceil(H/CELL);WALK=new Uint8Array(GW*GH);WALKLIST=[];
-  const ui=uiRects(),rb=ringBox(),top=STOA+46,obs=PROPS.filter(p=>p.foot).map(p=>p.foot);
+  // nobody walks above the ring's top edge or behind the stalls, so awnings never hide anyone
+  const stallBase=Math.max(0,...PROPS.filter(p=>p.oracle||p.img===SHOP).map(p=>p.base+2));
+  const ui=uiRects(),rb=ringBox(),top=Math.max(STOA+46,RING.y0,stallBase),obs=PROPS.filter(p=>p.foot).map(p=>p.foot);
   obs.push([BEANS.x-3,BEANS.y-9,BEANS.x+BEANS.w+3,BEANS.y+BEANS.h+2]);
+  if(ATHENA_ZONE)obs.push(ATHENA_ZONE);
   for(let gy=0;gy<GH;gy++)for(let gx=0;gx<GW;gx++){
     const x=gx*CELL+2,y=gy*CELL+2;
     const ok=y>=top&&y<=H-6&&x>=6&&x<=W-6&&!(x>rb.x0&&x<rb.x1&&y>rb.y0&&y<rb.y1)
@@ -1012,7 +1022,7 @@ function applyRule(rule,occ){
     if(solved.has('C2')&&solved.has('C3'))stage=Math.max(stage,2);
     if(rule.id==='C4')stage=Math.max(stage,3);
   }
-  if(stage>prev)unl.push(...stageUp(prev));
+  if(stage>prev){unl.push(...stageUp(prev));snapshotRound();}
   burst(RING.cx,RING.cy,26,['#e8c35a','#fff','#f2ead9']);floatText('결판!',RING.cx,RING.y0+24,'#e8c35a');
   const info=KWINFO[rule.kw];
   const okey=occ&&occ.map(n=>canon(n.shown)).sort().join('+'),lines=(rule.alt&&rule.alt[okey])||rule.dlg;
@@ -1032,8 +1042,16 @@ function chapterCleared(){const c=CHAP[chapter],s=interps[c.central];return !!s&
 function checkDay(){if(water<=0&&ending===0&&!dayOver&&!modalOpen)dayEnd();}
 function dayEnd(){
   dayOver=true;
-  openModal(`<p class="eyebrow">${day}일째 · 해가 졌어요</p><h2 id="mtitle">물시계가 다 비었어요</h2><p>오늘의 논쟁은 여기까지예요. 아고라 사람들도 집으로 돌아가요. 비문에 새긴 키워드와 도감은 그대로 남아 있어요.</p>`,
-    [{label:'다음 날 아침',primary:true}],()=>{day++;water=100;dayOver=false;farmed.clear();narrate(`${day}일째 아침이에요. 물시계를 다시 채웠어요.`);updateAll();});
+  openModal(`<p class="eyebrow">${day}일째 · 해가 졌어요</p><h2 id="mtitle">시간이 다 됐어요</h2><p>물시계가 다 비었어요. 이번 단계에서 새긴 키워드와 도감 해석, 번 오볼로스는 사라지고, 다음 날 아침 이 단계를 처음부터 다시 해요.</p>`,
+    [{label:'이 단계 다시 하기',primary:true}],retryRound);
+}
+function retryRound(){ // back to the snapshot taken when this stage began, on a new morning
+  const s=JSON.parse(JSON.stringify(roundSnap||saveData())),d=day+1;
+  s.tutDone=s.tutDone||tutDone; // a finished tutorial stays finished
+  npcs=[];ring.fill(null);fighting=null;particles=[];texts=[];dust=[];
+  loading=true;restore(s);loading=false;
+  day=d;water=100;dayOver=false;farmed.clear();lastWater=-1;lastPhase='';
+  narrate(`${day}일째 아침. 이 단계를 처음부터 다시 시작해요. 물시계를 가득 채웠어요.`);updateAll();
 }
 
 /* ---------------- ending ---------------- */
@@ -1067,7 +1085,7 @@ function startChapter2(){
   chapter=2;stage=0;ending=0;tutDone=true;tourStep=-1;setTut(null);endT=0;skyT=0;endModal=false;day++;water=100;dayOver=false;farmed.clear();ring.fill(null);fighting=null;
   owl={state:'perch',turnUntil:0,nextTurn:now+6000,ft:0};
   npcs=[];['heraclitus','parmenides','anaximander','xenophanes','pythagoras','empedocles'].forEach(pid=>spawn(pid));
-  lastWater=-1;lastPhase='';narrate(`${day}일째 아침. 2장 '변화'가 시작됐어요.`);updateAll();
+  lastWater=-1;lastPhase='';snapshotRound();narrate(`${day}일째 아침. 2장 '변화'가 시작됐어요.`);updateAll();
   openModal(`<p class="eyebrow">2장</p><h2 id="mtitle">변화</h2>
     <p>다음 날 아침, 부엉이가 조각상에 돌아왔어요. 파르메니데스도 이제 아고라를 거닐어요. 탈레스와 아낙시메네스는 밀레토스로 돌아갔고요.</p>
     <p>이번 장의 질문은 "세상은 변하는가"예요. 1장처럼 <b>같은 단어</b>를 말하는 사람들을 찾아 링에 올려 보세요.</p>`,[{label:'시작',primary:true}]);
@@ -1163,7 +1181,7 @@ setSound(SND.on);
 let tutDone=false,tourStep=-1,tutCur=null;
 const TOUR=[
   {k:'새 손님',t:'아낙시만드로스와 아낙시메네스가 아고라에 들어왔어요. 여기서부터가 본격적인 논쟁이에요.',a:'ringfront'},
-  {k:'클렙시드라',t:'이제부터 물시계의 물이 흘러요. 가만히 있어도 줄고, 싸움을 붙여도 줄어요. 물이 다 떨어지면 하루가 끝나요.',a:'#klepbox',hl:'#klepbox'},
+  {k:'클렙시드라',t:'이제부터 물시계의 물이 흘러요. 가만히 있어도 줄고, 싸움을 붙여도 줄어요. 물이 다 떨어지면 이번 단계를 처음부터 다시 해야 해요.',a:'#klepbox',hl:'#klepbox'},
   {k:'델포이의 신녀',t:'막혔을 땐 신녀를 눌러 보세요. 2 오볼을 바치면 신탁으로 힌트를 내려 줘요.',a:'oracle',hl:'oracle'},
   {k:'콩밭',t:'철학자를 콩밭에 끌어다 놓으면 잠깐 일해서 오볼을 벌어요. 한 사람당 하루 한 번이에요.',a:'garden',hl:'garden'},
   {k:'물장수',t:'물장수를 누르면 3 오볼에 물시계를 채워 줘요. 이제 맞서는 사람들을 찾아 링에 올려 보세요.',a:'shop',hl:'shop'}
@@ -1178,7 +1196,7 @@ function tutRect(t){
 }
 function placeTut(){
   const c=tutCur,el=$('tut'),hl=$('hl');
-  if(!c){el.hidden=true;hl.hidden=true;return;}
+  if(!c){const was=!el.hidden;el.hidden=true;hl.hidden=true;if(was)tutZoneChanged();return;}
   $('tutk').textContent=c.k;$('tutt').textContent=c.t;$('tutn').textContent=c.n||'';
   const b=$('tutbtn');b.hidden=!c.btn;if(c.btn)b.textContent=c.btn;
   el.hidden=false;
@@ -1191,7 +1209,10 @@ function placeTut(){
   const hr=tutRect(c.hl);
   if(hr){hl.hidden=false;const pad=6;hl.style.left=(hr.x-pad)+'px';hl.style.top=(hr.y-pad)+'px';hl.style.width=(hr.w+pad*2)+'px';hl.style.height=(hr.h+pad*2)+'px';hl.classList.toggle('round',c.hl==='#fightbtn');}
   else hl.hidden=true;
+  tutZoneChanged();
 }
+// re-plan walking around (or through) the card: anyone under it steps out, everyone picks a fresh route
+function tutZoneChanged(){if(!WALK.length)return;buildWalk();for(const n of npcs){if(n.state!=='wander'||STILL(n))continue;if(!walkable(n.x,n.y))snap(n);pickTarget(n);}}
 function setTut(c){const k=c?c.k+c.t+(c.hl||''):'',o=tutCur?tutCur.k+tutCur.t+(tutCur.hl||''):'';tutCur=c;if(k!==o||!c)placeTut();}
 function tutStage0(){ // derives the current step from the game state
   if(tourStep>=0)return;
@@ -1446,7 +1467,7 @@ function draw(){
 /* ---------------- update ---------------- */
 function update(dt){
   const paused=modalOpen||dayOver||tourStep>=0;
-  if(!paused&&ending===0&&!fighting&&water>0&&tutDone){water-=dt*100/300;if(water<=0){water=0;updateRingUI();checkDay();}}
+  if(!paused&&ending===0&&!fighting&&water>0&&tutDone){water-=dt*100/420;if(water<=0){water=0;updateRingUI();checkDay();}}
   if(fighting&&!modalOpen){
     fighting.t+=dt;fighting.next-=dt;
     if(fighting.dud){if(fighting.t>DUD_T)resolveFight();}
@@ -1537,11 +1558,17 @@ document.addEventListener('click',e=>{const h=$('help');if(h.open&&!h.contains(e
 // saved, so a reload during the sunset falls back to the last save and the ending replays.
 const SAVE_KEY='agora-ring:v1';
 let saveT=0,loading=false;
-function saveGame(){
-  if(loading||ending===1)return;
+let roundSnap=null; // state at the start of the current stage, restored when the klepsydra runs dry
+function snapshotRound(){const d=saveData();d.water=100;d.ending=0;roundSnap=JSON.parse(JSON.stringify(d));}
+function saveData(){
   const sets=o=>Object.fromEntries(Object.entries(o).map(([k,s])=>[k,[...s]]));
   const data={v:1,stage,water:Math.round(water*10)/10,day,obols,got:[...got],solved:[...solved],interps:sets(interps),
     fieldCard,born,chapter,field2,met:[...met],heard:[...heard],heardLines:[...heardLines],farmed:[...farmed],tutDone,ending,seen:Object.fromEntries(npcs.map(n=>[n.pid,n.seen]))};
+  return data;
+}
+function saveGame(){
+  if(loading||ending===1)return;
+  const data=saveData();data.roundSnap=roundSnap;
   try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));}catch(e){}
 }
 function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');return s&&s.v===1?s:null;}catch(e){return null;}}
@@ -1590,13 +1617,15 @@ function init(fresh){
   owl={state:'perch',turnUntil:0,nextTurn:performance.now()+6000,ft:0};tourStep=-1;tutCur=null;
   updateAll();layout();
   let ok=false;
-  if(saved){try{restore(saved);ok=true;}catch(e){npcs=[];}}
+  roundSnap=null;
+  if(saved){try{restore(saved);ok=true;roundSnap=saved.roundSnap||null;}catch(e){npcs=[];}}
   if(!ok){
     stage=0;water=100;day=1;obols=2;got=new Set();interps={};solved=new Set();fieldCard=false;born=false;chapter=1;met=new Set();field2=false;heard=new Set();ending=0;skyT=0;endModal=false;owl.state='perch';
     const a=spawn('thales'),b=spawn('heraclitus');
     a.x=RING.cx-78;a.y=RING.y1+40;b.x=RING.cx+78;b.y=RING.y1+52;snap(a);snap(b);a.pauseUntil=b.pauseUntil=now+5000;pickTarget(a);pickTarget(b); // either side of the tutorial card
     narrate('아고라에 두 사람이 서성이고 있어요. 눌러서 무슨 말을 하는지 들어 보세요.');
   }
+  if(!roundSnap)snapshotRound();
   loading=false;lastWater=-1;lastPhase='';updateAll();
   if(saved&&saved.tutDone===undefined&&stage>=1)tutDone=true; // saves from before the tutorial existed
   if(ending===0&&chapterCleared())startEnding();else if(!tutDone&&stage>=1&&ending===0&&chapter===1)startTour();else checkDay();
