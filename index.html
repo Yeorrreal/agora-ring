@@ -118,7 +118,8 @@ canvas#scene.act{cursor:pointer}
 .tut.down::after{top:100%;border-width:7px 7px 0;border-top-color:var(--parch)}
 .tut.up::before{bottom:calc(100% + 2px);border-width:0 9px 9px;border-bottom-color:var(--dark)}
 .tut.up::after{bottom:100%;border-width:0 7px 7px;border-bottom-color:var(--parch)}
-.hl{position:fixed;z-index:12;pointer-events:none;border:2px dashed var(--gold);box-shadow:0 0 0 2px rgba(26,20,24,.6);animation:hlpulse 1s steps(2) infinite}
+.bubbles{position:fixed;inset:0;z-index:9;pointer-events:none} /* speech bubbles sit above the tutorial highlight */
+.hl{position:fixed;z-index:8;pointer-events:none;border:2px dashed var(--gold);box-shadow:0 0 0 2px rgba(26,20,24,.6);animation:hlpulse 1s steps(2) infinite}
 .hl.round{border-radius:50%}
 @keyframes hlpulse{50%{border-color:#fff3c0}}
 /* the Pythia's oracle: a dark, billowing cloud */
@@ -282,6 +283,7 @@ canvas#scene.act{cursor:pointer}
 </section>
 
 <p class="narr panel" id="narr" aria-live="polite"></p>
+<div class="bubbles" id="bubbles"></div>
 <div class="hl" id="hl" hidden></div>
 <div class="tut" id="tut" hidden role="status"><span class="tk" id="tutk">처음 오셨군요</span><p id="tutt"></p><div class="row"><span class="tiny" id="tutn"></span><button class="btn" id="tutbtn" type="button" hidden>다음</button></div></div>
 <div class="obub" id="obub" hidden><div class="cl"><b>피티아의 신탁</b><span id="obubt"></span>
@@ -1231,7 +1233,8 @@ function placeTut(){
   el.style.left=Math.round(left)+'px';el.style.top=Math.round(top)+'px';el.className='tut '+(below?'up':'down');
   el.style.setProperty('--ax',Math.max(16,Math.min(w-16,cx-left))+'px');
   const hr=tutRect(c.hl);
-  if(hr){hl.hidden=false;const pad=6;hl.style.left=(hr.x-pad)+'px';hl.style.top=(hr.y-pad)+'px';hl.style.width=(hr.w+pad*2)+'px';hl.style.height=(hr.h+pad*2)+'px';hl.classList.toggle('round',c.hl==='#fightbtn');}
+  if(hr){hl.hidden=false;const pad=6;hl.style.left=(hr.x-pad)+'px';hl.style.top=(hr.y-pad)+'px';hl.style.width=(hr.w+pad*2)+'px';hl.style.height=(hr.h+pad*2)+'px';hl.style.zIndex=c.hl[0]==='#'&&$(c.hl.slice(1)).closest('#hdr')?12:8; // over the header only when pointing into it
+  hl.classList.toggle('round',c.hl==='#fightbtn');}
   else hl.hidden=true;
   tutZoneChanged();
 }
@@ -1533,7 +1536,7 @@ function update(dt){
 const pool=[];
 function syncBubbles(){
   const vis=npcs.filter(n=>!n.hidden&&n.shown&&(n.state==='held'||now<n.bubbleUntil)&&!(fighting&&n.state==='ring'));
-  while(pool.length<vis.length){const d=document.createElement('div');d.className='bubble';screenEl.appendChild(d);pool.push(d);}
+  while(pool.length<vis.length){const d=document.createElement('div');d.className='bubble';$('bubbles').appendChild(d);pool.push(d);}
   pool.forEach((d,i)=>{const n=vis[i];if(!n){d.hidden=true;d._k='';return;}
     d.hidden=false;
     const ls=STILL(n)?[]:unlocked(n.pid),li=ls.indexOf(n.shown); // "2/3": which of the lines they can say right now
