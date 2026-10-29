@@ -1,10 +1,11 @@
-"""Inline the Galmuri11 pixel font and the sound clips (sounds/) into the game and write index.html (the only built file).
+"""Inline the Galmuri11 pixel font, the sound clips (sounds/) and the English text (lang-en.txt) into the game
+and write index.html (the only built file).
 Run `npm install galmuri@2.39.3` in this folder first.
 
     python3 build.py                     -> index.html
     python3 build.py --artifact PATH     -> also an unwrapped copy at PATH, for publishing as a claude.ai artifact
 """
-import base64, pathlib, sys
+import base64, json, pathlib, sys
 here = pathlib.Path(__file__).parent
 dist = here / "node_modules" / "galmuri" / "dist"
 src = (here / "agora-ring.src.html").read_text(encoding="utf-8")
@@ -13,6 +14,14 @@ out = src.replace("__FONT_REG__", enc("Galmuri11.woff2")).replace("__FONT_BOLD__
 # sound clips (sounds/ is kept out of git; see README)
 snd = lambda f: base64.b64encode((here / "sounds" / f).read_bytes()).decode()
 out = out.replace("__SND_PUNCH__", snd("punches.wav")).replace("__SND_BELL__", snd("bell.mp3"))
+# English text: one "Korean ||| English" pair per line, '#' starts a comment line
+en = {}
+for ln in (here / "lang-en.txt").read_text(encoding="utf-8").splitlines():
+    if ln.strip() and not ln.startswith("#"):
+        ko, sep, e = ln.partition(" ||| ")
+        if not sep: sys.exit(f"lang-en.txt: no ' ||| ' in {ln!r}")
+        en[ko] = e
+out = out.replace("/*__LANG_EN__*/{}", json.dumps(en, ensure_ascii=False).replace("</", "<\\/"))
 if "--artifact" in sys.argv:
     # The artifact host adds its own document skeleton, so this copy stays unwrapped.
     path = pathlib.Path(sys.argv[sys.argv.index("--artifact") + 1])

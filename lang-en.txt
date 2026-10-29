@@ -1,0 +1,531 @@
+# Agora Ring — English text. One line per string:  Korean ||| English
+# build.py inlines this file; a Korean string with no line here simply stays Korean.
+# Lines that quote a philosopher follow the usual English renderings of the Greek
+# (Diels–Kranz fragments, Jowett's Plato), not a re-translation of the Korean.
+
+# ---- names ----
+탈레스 ||| Thales
+헤라클레이토스 ||| Heraclitus
+아낙시만드로스 ||| Anaximander
+아낙시메네스 ||| Anaximenes
+피타고라스 ||| Pythagoras
+크세노파네스 ||| Xenophanes
+엠페도클레스 ||| Empedocles
+파르메니데스 ||| Parmenides
+제논 ||| Zeno
+크라틸로스 ||| Cratylus
+아낙사고라스 ||| Anaxagoras
+멜리소스 ||| Melissus
+데모크리토스 ||| Democritus
+젊은 소크라테스 ||| Young Socrates
+소크라테스 ||| Socrates
+에우튀프론 ||| Euthyphro
+히피아스 ||| Hippias
+프로타고라스 ||| Protagoras
+고르기아스 ||| Gorgias
+메논 ||| Meno
+폴로스 ||| Polus
+칼리클레스 ||| Callicles
+케팔로스 ||| Cephalus
+폴레마르코스 ||| Polemarchus
+트라시마코스 ||| Thrasymachus
+플라톤 ||| Plato
+아리스토텔레스 ||| Aristotle
+
+# ---- chapters 1–2: what each one says in the agora ----
+세상의 근원은 물이다. ||| The first principle of all things is water.
+자석이 쇠를 움직이게 하니 돌에도 영혼이 있다. ||| The magnet has a soul, for it moves the iron.
+세상의 근원은 불이다. ||| The first principle of all things is fire, ever-living fire.
+조화는 활과 리라처럼 서로 당기는 힘에서 나온다. ||| There is a harmony of opposite tension, as in the bow and the lyre.
+투쟁이 모든 것을 낳는다. 투쟁은 만물의 아버지다. ||| All things come to pass through strife. War is the father of all.
+모든 것은 변한다. 같은 강물에 두 번 들어갈 수 없다. ||| All things flow. You cannot step twice into the same river.
+낮과 밤은 하나다. ||| Day and night are one.
+감각을 믿어라. 눈과 귀가 가장 확실한 증인이다. ||| Trust the senses. The things of sight and hearing, these I prize most.
+정의란 싸움 그 자체다. ||| Justice is strife.
+근원은 물도 불도 아니다. 정해지지 않은 무한한 것이다. ||| The first principle is neither water nor fire. It is the boundless (apeiron).
+정의란 때가 되면 치르는 대가다. ||| Things pay justice and penalty to one another for their injustice, according to the order of time.
+땅은 아무것에도 기대지 않고 한가운데 떠 있다. ||| The earth hangs aloft at the centre, held up by nothing.
+근원은 하나로 정할 수 있다. ||| The first principle can be named as one thing.
+세상의 근원은 공기다. ||| The first principle of all things is air.
+영혼은 숨이다. 숨이 멎으면 영혼도 떠난다. ||| Our soul, being air, holds us together. When the breath goes, the soul goes.
+근원은 재료가 아니다. 수이다. ||| The first principle is not a stuff. All is number.
+조화는 당기는 힘이 아니라 수의 비율에서 나온다. ||| Harmony comes not from tension but from the ratios of numbers.
+영혼은 죽지 않고 다른 몸으로 옮겨갈 뿐이다. ||| The soul is immortal; it passes into other living bodies.
+콩은 먹지 마라. 콩밭에도 들어가지 마라. ||| Abstain from beans. Do not even walk through a bean field.
+친구의 것은 모두의 것이다. ||| Friends have all things in common.
+세상의 근원은 흙이다. 모든 것은 흙에서 나와 흙으로 돌아간다. ||| All things are from earth, and in earth all things end.
+소에게 손이 있다면 신을 소의 모습으로 그렸을 것이다. ||| If oxen had hands, they would draw the gods in the shape of oxen.
+신은 애쓰지 않고, 생각만으로 모든 것을 흔든다. ||| Without toil, god shakes all things by the thought of his mind.
+물, 불, 공기, 흙. 네 뿌리가 섞이고 갈라진다. ||| Fire, water, earth and air: the four roots of all things, mixing and parting.
+투쟁은 떼어 놓을 뿐이다. 묶는 것은 사랑이다. ||| Strife only drives apart. It is Love that binds.
+물, 불, 공기, 흙. 네 뿌리가 모든 것을 이룬다. ||| Fire, water, earth and air: hear first the four roots of all things.
+생겨나는 것은 없다. 네 뿌리가 섞여 새것처럼 보일 뿐이다. ||| There is no birth of any mortal thing, only mixing and exchange of what is mixed.
+있는 것은 있고, 없는 것은 없다. ||| What is, is; what is not, is not.
+움직임은 환상이다. 나를 옮길 수는 없소. ||| Motion is an illusion. You cannot move me.
+있는 것은 결코 변하지 않는다. ||| What is never changes.
+낮과 밤은 둘이다. 틈 없이 이어진 것만이 하나다. ||| Day and night are two. Only what is continuous, without a gap, is one.
+감각을 믿지 마라. 이성으로 판가름하라. ||| Do not trust the aimless eye and the echoing ear. Judge by reason.
+생겨나지도 섞이지도 않는다. 있는 것은 그대로 있다. ||| It does not come to be, nor does it mix. What is stays as it is.
+정의란 있는 것을 꽉 묶어 두는 사슬이다. ||| Justice does not loose her fetters; she holds what is fast.
+있는 것은 나눌 수 없다. 전부 똑같으니까. ||| Nor is it divisible, since it is all alike.
+날아가는 화살은 사실 움직이지 않는다. ||| The flying arrow is at rest.
+끝없이 나눌 수 있다면, 크기가 사라지고 만다. ||| If things can be divided without end, size itself disappears.
+모든 것은 쉬지 않고 움직인다. ||| Everything is always moving.
+스승님 말씀대로, 모든 것은 변한다. ||| As my master says, all things change.
+생겨나는 것은 없다. 섞이고 갈라지며 바뀔 뿐이다. ||| Nothing comes to be or perishes. Things are only mixed together and separated.
+정신(누스)이 모든 것을 다스린다. ||| Mind (nous) rules all things.
+끝없이 나눌 수 있다. 가장 작은 것은 없다. ||| Of the small there is no smallest, but always a smaller.
+허공은 없다. 그러니 어떤 것도 자리를 옮길 수 없다. ||| Nor is there any void. So nothing can move.
+있는 것은 시작도 끝도 없다. ||| What is has no beginning and no end.
+있는 것은 나눌 수 없다. 나뉘면 틈이 생기니까. ||| What is cannot be divided, for a division would leave a gap.
+허공은 있다. 원자들이 그 속을 떠다닌다. ||| The void exists. Atoms drift through it.
+원자는 나눌 수 없다. 그런 원자가 셀 수 없이 많다. ||| Atoms cannot be cut, and there are countless of them.
+감각은 믿을 수 없다. 단맛도 쓴맛도 관습일 뿐이다. ||| By convention sweet, by convention bitter; in reality, atoms and void.
+아름다움 그 자체 같은 것이 따로 있지 않을까요? ||| Is there not a beauty itself, just by itself?
+
+# ---- chapter 3: walking lines ----
+오늘은 누구의 말을 들어 볼까? ||| Whose words shall I hear today?
+경건한 것은 신들이 사랑하는 것이다. ||| Piety is that which is dear to the gods.
+나는 지금 아버지를 고발하러 가는 길이오. ||| I am on my way to prosecute my father.
+아름다운 것은 아름다운 처녀다. ||| A beautiful maiden is a beautiful thing.
+이 옷도 신발도 반지도 내가 손수 만들었소. ||| This cloak, these shoes, this ring: I made them all myself.
+사람은 만물의 척도다. ||| Man is the measure of all things.
+법과 염치는 신이 모든 사람에게 나눠 준 것이다. ||| Law, reverence and justice were given by the gods to all men alike.
+말로는 무엇이든 설득할 수 있다. ||| With words you can persuade anyone of anything.
+무엇이든 물어보시오. 다 답해 주겠소. ||| Ask me anything. I will answer it all.
+덕에 대해서라면 수없이 연설해 봤지요. ||| I have made a thousand speeches about virtue.
+고르기아스 선생님께 배웠지요. ||| I learned it all from Gorgias.
+불의를 당하는 것이 저지르는 것보다 나쁘다. ||| To suffer injustice is worse than to do it.
+참주는 하고 싶은 대로 다 하니 행복하오. ||| A tyrant does whatever he likes. So he is happy.
+강자가 더 갖는 게 자연이오. ||| By nature, the stronger should have more.
+법은 약자들이 강자를 누르려고 만든 것이다. ||| Laws are made by the weak, to hold the strong down.
+정의는 빚진 것을 갚는 것이다. ||| Justice is paying back what you owe.
+늙으니 욕망에서 풀려나 편하오. ||| In old age I am free of the passions. A great peace.
+정의는 친구를 돕고 적을 해치는 것이다. ||| Justice is doing good to friends and harm to enemies.
+정의는 강자의 이익일 뿐이다. ||| Justice is nothing else than the interest of the stronger.
+내 답을 듣고 싶으면 돈부터 내시오. ||| If you want my answer, pay me first.
+선생님의 문답을 하나도 빠짐없이 적어 두었습니다. ||| I have written down every word of your conversations, master.
+언젠가 이 문답들을 책으로 엮을 생각입니다. ||| One day I will make books of these dialogues.
+선생님, 그건 좀… ||| Master, I'm not so sure…
+
+# ---- chapter 1 fights ----
+모든 것은 젖어 있소. 씨앗도, 양분도! ||| Everything is moist. Seeds, food, all of it!
+모든 것은 타오르고 있소. 멈추는 것은 없지! ||| Everything is ablaze. Nothing stands still!
+물과 불. 두 사람 다 세상이 무엇에서 시작됐는지를 말하고 있소. ||| Water and fire. Both are saying what the world began from.
+물이 근원이면 불은 어디서 왔고, 불이 근원이면 물은 어디서 왔소? 근원은 둘 다 아니오. ||| If water is the first principle, where did fire come from? If fire, where did water come from? It is neither.
+…음. ||| …Hm.
+불은 물이 되고 흙이 되었다가 다시 불이 되오. 정해질 필요가 없지. ||| Fire becomes water, then earth, then fire again. Nothing needs to stay fixed.
+서로 정반대인 물과 불. 둘을 함께 세워 두고, 근원이 정해지지 않았다는 자를 붙여 보시오. ||| Water and fire are opposites. Stand them together, and add the one who says the first principle is not fixed.
+근원을 하나로 정해 버리면, 그 반대의 것은 어디서 나오겠느냐? ||| Fix the first principle as one thing, and where would its opposite come from?
+선생님, 공기 하나로도 됩니다. 짙어지면 물과 흙이, 엷어지면 불이 되니까요. ||| Air alone will do, master. Thickened, it becomes water and earth; thinned, it becomes fire.
+근원은 정할 수 없다는 스승, 정할 수 있다는 제자. 하나에서 어떻게 여럿이 나오는지를 두고 맞서고 있소. ||| A master who says the first principle can't be fixed, a pupil who says it can. They clash over how the many come from one.
+물이든 불이든 공기든, 재료일 뿐이오. 그것을 짜는 것은 수요. ||| Water, fire, air: mere stuff. What gives them order is number.
+재료를 근원으로 꼽던 세 사람이 한목소리로 반박했지만, 현의 비율 앞에서 말문이 막혔어요. ||| The three who named a stuff as the first principle protested as one, then fell silent before the ratios of the strings.
+물, 불, 공기는 모두 재료요. 셋이 함께, 재료가 아닌 근원을 말하는 자에게 덤비면? ||| Water, fire and air are all stuffs. What if all three take on the one whose first principle is no stuff at all?
+현이 팽팽히 당겨져야 소리가 나오. 다툼 없는 조화는 없소. ||| A string must be pulled tight to sing. There is no harmony without strife.
+그 소리가 아름다운 건 현의 길이가 1:2, 2:3이기 때문이오. ||| It sounds beautiful because the strings stand at 1:2 and 2:3.
+헤라클레이토스와 피타고라스. 둘 다 "조화"를 말하지만 뜻이 다르다오. ||| Heraclitus and Pythagoras. Both say "harmony", but they mean different things.
+돌도 쇠를 끄는데, 영혼이 숨 쉬는 것들만의 것이겠소? ||| A stone can draw iron. All things are full of gods. Is soul only for things that breathe?
+숨이 없는 돌에 무슨 영혼이 있겠소. ||| What soul could a breathless stone have?
+숨이 멎어도 영혼은 다음 몸을 찾아가오. ||| When the breath stops, the soul goes on to its next body.
+신들, 숨, 다시 태어남. 세 사람이 같은 것을 다르게 부르고 있소. ||| Gods, breath, rebirth. Three men call the same thing by different names.
+넷이 뒤엉킨 먼지 속에서 한 사람이 걸어 나왔어요. ||| Out of the dust of the four-way brawl, someone walked out.
+다들 옳소. 근원은 하나가 아니라 넷이오. ||| You are all right. There is not one first principle but four.
+물, 불, 공기… 흙만 있으면 넷이 다 모이겠군. ||| Water, fire, air… add earth, and all four are here.
+그대의 투쟁이 낳은 것도, 사랑이 묶어 두지 않으면 금세 흩어지오. ||| Whatever your Strife begets scatters at once, unless Love binds it.
+묶여 멈춘 것은 죽은 것이오. 싸움이 멎으면 세상도 멎지. ||| What is bound and still is dead. When strife stops, the world stops.
+"투쟁"을 말하는 자가 둘이오. 하나는 사랑과 함께, 하나는 만물의 아버지로. ||| Two men speak of "strife". One pairs it with Love; one calls it the father of all.
+
+# ---- chapter 2 fights ----
+그대가 선 그 물도 이미 흘러갔소. ||| The water you stand in has already flowed on.
+흐른다는 건 있던 것이 없어진다는 말이오. 없는 것은 없소. ||| To flow is for what is to become what is not. But what is not, is not.
+'변한다'는 말을 두 사람이 정반대로 쓰고 있소. ||| Two men use the word 'change' in opposite ways.
+오르막길과 내리막길도 하나요. 맞서는 것들이 함께 하나를 이루지. ||| The way up and the way down are one and the same. Opposites together make one.
+맞선다는 건 틈이 있다는 말이오. 하나에는 틈이 없소. ||| Opposition means a gap. The One has no gaps.
+'하나'를 말하는 두 사람. 둘 다 처음 보는 사람이 아니오. ||| Two men speak of 'one'. Neither is new here.
+화살은 매 순간 제자리에 있소. 멈춘 순간을 모아도 움직임은 나오지 않소. ||| At every instant the arrow is where it is. Add up still instants and you never get motion.
+(말없이 손가락만 까딱인다) ||| (says nothing, only wags a finger)
+…말로 하시오! ||| …Use your words!
+'움직인다'는 말을 새로 온 두 사람이 서로 다르게 쓰오. ||| The two newcomers use the word 'motion' differently.
+모든 것 속에 모든 것의 몫이 있소. 섞이는 비율이 바뀔 뿐. ||| In everything there is a portion of everything. Only the mixture changes.
+사랑이 섞고 투쟁이 가르지. ||| Love mixes, Strife divides.
+섞인다는 건 자리를 옮긴다는 것이오. 빈 곳이 없는데 어디로 옮기겠소? ||| To mix is to move. With no empty place, where would anything move to?
+'생겨나지 않는다'는 말을 하는 자가 셋이오. ||| Three men say 'nothing comes to be'.
+뜨거움이 지나치면 차가움에게 대가를 치르지. 여름 뒤엔 겨울이 오오. ||| When heat goes too far, it pays the penalty to cold. After summer comes winter.
+다툼이 있어야 정의도 있소. 싸움이 멎으면 정의도 사라지지. ||| Without strife there is no justice. End the fight, and justice is gone.
+그 사슬 덕에 있는 것은 생겨나지도 사라지지도 않소. ||| Held in her fetters, what is neither comes to be nor perishes.
+'정의'를 말하는 자가 셋 있소. 그중 하나는 아주 오래전부터 그 말을 해 왔지. ||| Three men speak of 'justice'. One of them has been saying it for a very long time.
+끝없이 쪼개면 크기 없는 조각만 남소. 그걸 모아 크기가 생긴다는 말이오? ||| Cut forever and only sizeless bits are left. Can you build a size out of those?
+생기오. 아무리 작아도 그 안에 모든 것의 몫이 있으니까. ||| You can. However small, each holds a portion of everything.
+둘이 끝없이 쪼개는 사이, 먼지 속에서 누군가 웃으며 걸어 나왔어요. ||| While the two kept cutting, someone walked out of the dust, laughing.
+끝까지 쪼개면 더는 쪼갤 수 없는 것이 나오지. 원자(아토몬)라 부르겠소. ||| Cut far enough and you reach what cannot be cut. I shall call it the atom (atomon).
+'끝없이 나눈다'는 말을, 한 사람은 반박하려고, 한 사람은 믿어서 하오. ||| Two men say 'divided without end': one to refute it, one because he believes it.
+빈 곳이 없으니 아무것도 자리를 옮길 수 없소. ||| There is no empty place, so nothing can move.
+자리를 옮기는 게 보이니 빈 곳이 있는 거요. 하하. ||| I can see things move, so there must be empty space. Ha ha.
+웃는 자와 제독이 '허공'을 두고 다투오. ||| The laughing man and the admiral quarrel over the 'void'.
+보고 들어 보면 알 수 있소. 불은 뜨겁고 강물은 흐르오. ||| Look and listen and you will know. Fire is hot, the river flows.
+눈은 움직임을 보지만, 이성은 움직임이 없다고 말하오. ||| The eye sees motion, but reason says there is none.
+단맛은 혀가 정한 약속일 뿐이오. 진짜는 원자와 허공이지. 하하. ||| Sweet is by convention of the tongue. In reality there are atoms and void. Ha ha.
+나도 감각은 못 믿소. 다만 이성이 찾아낸 건 원자요. ||| I don't trust the senses either. But what reason finds is atoms.
+'감각'을 믿는 자와 믿지 않는 자. ||| One who trusts the 'senses', and one who doesn't.
+있는 것은 하나요. 나눌 틈이 없지. ||| What is, is one. There is no gap to divide it.
+나뉘려면 빈 곳이 있어야 하는데, 빈 곳은 없소. ||| To be divided there must be empty space, and there is none.
+나뉘지 않는 건 맞소. 다만 그런 것이 하나가 아니라 셀 수 없이 많지. 하하. ||| Indivisible, yes. But not one: countless. Ha ha.
+'나눌 수 없다'는 말에 모두 동의하오. 다만 그것이 하나냐 여럿이냐에서 갈리지. ||| All agree on 'indivisible'. They split over whether it is one or many.
+
+# ---- chapter 3: Euthyphro (E1) ----
+어디를 그리 바삐 가시오? ||| Where are you off to in such a hurry?
+아버지를 살인죄로 고발하러 가는 길이오. ||| To prosecute my father for murder.
+아버지를? 그게 경건한 일이라 확신하오? ||| Your own father? Are you sure that is pious?
+물론이오. 신들이 사랑하는 것이 경건이오. ||| Of course. Piety is what the gods love.
+그런데 신들끼리는 사이가 좋소? ||| And do the gods get along with one another?
+아니지요. 제우스도 제 아버지를 묶었는걸요. ||| Hardly. Even Zeus put his own father in chains.
+그럼 신들끼리 마음이 갈리기도 하겠구려. ||| Then the gods must sometimes disagree.
+그렇소. 같은 일을 어떤 신은 사랑하고 어떤 신은 미워하오. ||| They do. The same act some gods love and others hate.
+…다음에 이야기합시다. 지금은 바빠서. ||| …Another time, Socrates. I am in a hurry, and must go now.
+그가 처음 한 말과, 신들이 다툰다는 말을 함께 놓아 보시오. ||| Set his first answer beside what he says about the gods' quarrels.
+
+# ---- Hippias (E2) ----
+히피아스, 오랜만이오. 요즘도 바쁘시오? ||| Hippias! It has been a long while. Still busy?
+올림피아에 갈 때마다 나는 늘 이겼소. ||| Every time I go to Olympia, I win.
+올림피아 사람들도 내 말에 감탄하오. ||| At Olympia they marvel at my speeches.
+그런 분이니 하나만 묻겠소. 아름다움이 무엇이오? ||| Then you can tell me one thing. What is beauty?
+그것쯤이야 쉽지. ||| Nothing easier.
+아름다운 처녀가 곧 아름다움이오. ||| A beautiful maiden: that is beauty.
+그 처녀를 여신 곁에 세우면 어떻소? ||| And if she stands beside a goddess?
+여신에 비하면 처녀는 아름답지 않지. ||| Beside a goddess, the maiden is not beautiful.
+그럼 금으로 꾸미면? ||| What about gold, then?
+금을 두르면 무엇이든 빛나오. ||| Put gold on anything and it shines.
+…오늘은 이만 가 보겠소. ||| …I must be going.
+아름다운 것은 어렵소. ||| Beautiful things are difficult.
+그는 예를 들었을 뿐이오. 그 예가 언제나 들어맞는지 보시오. ||| He only gave an example. See whether it always holds.
+
+# ---- Protagoras (E3) ----
+그대는 젊은이들에게 무엇을 가르치오? ||| What do you teach the young?
+시민이 나랏일을 잘 하도록 가르치지. ||| How to be good citizens and manage the city's affairs.
+수업료는 어떻게 받소? ||| And how do you charge?
+수업료는 배운 이가 정하게 하오. ||| I let the pupil decide the fee.
+그렇다면 앎이란 무엇이오? ||| Then what is knowledge?
+사람은 만물의 척도. 느끼는 대로가 참이오. ||| Man is the measure of all things. What seems true to each man is true for him.
+같은 바람을 두고도 그렇소? ||| Even about the same wind?
+같은 바람도 사람에 따라 차고 따뜻하지. ||| The same wind is cold to one man and warm to another.
+그대 말에 반대하는 이도 있소? ||| Does anyone disagree with you?
+수없이 많지. 다들 내가 틀렸다 하오. ||| Countless people. They all say I am wrong.
+그 사람들 생각은 어떻소? ||| And what about their opinion?
+그들 생각도 그들에겐 참이오. ||| Their opinion is true for them, too.
+강연이 있어서 이만. ||| I have a lecture to give. Farewell.
+그 말은 그 자신에게도 해당되오. ||| His saying applies to himself as well.
+
+# ---- Gorgias (E4) ----
+연설술은 무엇을 하는 기술이오? ||| What does the art of rhetoric do?
+무엇이든 설득하지. 의사보다도 잘. ||| It persuades, about anything. Better than a doctor.
+의사보다도 말이오? ||| Better than a doctor?
+내 동생이 의사인데, 환자는 내 말을 듣지. ||| My brother is a doctor, but his patients listen to me.
+그러려면 옳고 그름도 알아야 하오? ||| Must one know right and wrong for that?
+몰라도 되오. 듣는 이들도 모르니까. ||| No need. The audience doesn't know either.
+군중 앞에선 아는 자보다 내가 잘 말하오. ||| Before a crowd, I speak better than the man who knows.
+제자가 옳고 그름을 모르고 찾아오면? ||| And if a pupil comes to you not knowing right and wrong?
+내가 정의도 가르쳐 주지. ||| Then I teach him justice too.
+그 제자가 말을 나쁘게 쓰면? ||| And if that pupil makes bad use of his words?
+권투를 배운 자가 부모를 때려도 스승 탓이 아니듯, 제자가 정의롭지 못하게 써도 스승 탓은 아니오. ||| If a boxer beats his parents, you don't blame his trainer. If a pupil uses rhetoric unjustly, don't blame his teacher.
+…폴로스, 자네가 좀 이어받게. ||| …Polus, you take over.
+가르친 것과, 제자가 한 짓을 나란히 놓아 보시오. ||| Set what he teaches beside what his pupil does.
+
+# ---- Meno (E5) ----
+소크라테스, 덕은 가르칠 수 있습니까? ||| Can you tell me, Socrates, whether virtue can be taught?
+나는 덕이 무엇인지도 모르오. 그대는 아시오? ||| I do not even know what virtue is. Do you?
+덕은 남을 다스리는 힘이지요. ||| Virtue is the power to rule over others.
+다스리기만 하면 덕이오? 부당하게 다스려도? ||| Any ruling at all? Even ruling unjustly?
+아니지요. 정의롭게 다스려야지요. 정의도 용기도 덕이니까요. ||| No, one must rule justly. Justice is virtue, and so is courage.
+그럼 덕은 하나요, 여럿이오? ||| So is virtue one, or many?
+벌떼처럼 수없이 많지요. ||| Many, like a swarm of bees.
+노예는 어떻소? 노예에게도 덕이 있소? ||| What of a slave? Has a slave virtue too?
+노예라… 생각해 본 적이 없군요. ||| A slave… I never thought about that.
+착한 노예가 있다면, 그는 주인을 다스리오? ||| If a slave is good, does he rule over his master?
+착한 노예라도 주인을 다스리진 않지요. ||| Even a good slave does not rule over his master.
+선생님은 사람을 마비시키는 전기가오리 같습니다. ||| You are exactly like the flat torpedo fish, the electric ray, Socrates: whoever comes near you goes numb.
+전기가오리 ||| electric ray
+덕 있는 사람이 언제나 다스리는 자리에 있소? ||| Is the virtuous man always the one who rules?
+
+# ---- Polus (E6) ----
+고르기아스 선생님이 지셨다니! 이번엔 내가 상대하겠소. ||| My master beaten? Then I will take you on myself.
+좋소. 그대는 연설술을 무엇이라 보오? ||| Gladly. What do you think rhetoric is?
+내가 책까지 쓴 대단한 기술이지. ||| A great art. I have written a book on it.
+연설가는 참주처럼 누구든 나라에서 내쫓을 수 있소. ||| An orator, like a tyrant, can banish anyone he likes from the city.
+그런 힘을 가진 이가 행복하오? ||| Is a man with such power happy?
+참주는 누구든 가둘 수 있으니 행복하지. ||| A tyrant can imprison anyone. Of course he is happy.
+모두 참주를 부러워하오. ||| Everyone envies a tyrant.
+아르켈라오스를 보시오. ||| Look at Archelaus.
+그럼 불의를 저지르는 쪽과 당하는 쪽, 어느 쪽이 나쁘오? ||| Then which is worse: to do injustice, or to suffer it?
+당하는 쪽이 더 나쁘지. ||| To suffer it is the greater evil.
+어느 쪽이 더 부끄럽소? ||| And which is more shameful?
+저지르는 쪽이 더 부끄럽소. 부끄러운 건 나쁜 거고. ||| To do it is more shameful. And what is shameful is evil.
+저지르고도 벌받지 않으면? ||| And if he does wrong and goes unpunished?
+벌받지 않는 자가 더 행복하오. ||| Then he is happier still.
+…칼리클레스, 당신이 말해 보시오! ||| …Callicles, you tell him!
+그가 '나쁘다'고 한 곳이 두 군데 있소. ||| He calls something 'evil' in two places.
+
+# ---- Callicles (E7) ----
+소크라테스, 당신은 철학 놀음에 빠져 세상을 거꾸로 보오. ||| Socrates, your philosophy turns the whole of human life upside down.
+그럼 그대가 바로 세워 주시오. 무엇이 옳소? ||| Then set it right for me. What is right?
+자연은 법보다 앞서오. ||| Nature comes before law.
+법은 무엇이오? ||| And law?
+약자들이 모여 둘러친 울타리지. ||| A fence the weak put up together.
+그럼 철학은? ||| And philosophy?
+철학은 젊을 때나 하는 거요. ||| Philosophy is a fine thing for the young.
+철학만 하다간 법정에서 제 몸도 못 지키오. ||| Do nothing but philosophy and you can't even defend yourself in court.
+그대가 말하는 좋은 삶은 무엇이오? ||| Then what is the good life?
+쾌락이 곧 좋음이오. ||| Pleasure is the good.
+가려운 데를 평생 긁는 삶도? ||| Even a life spent scratching an itch?
+그것도 즐겁다면 괜찮은 삶이지. ||| If it is pleasant, it is a fine life.
+밑 빠진 항아리를 끝없이 채우는 삶은? ||| And forever filling a leaky jar?
+계속 채우면 그만이오. ||| Just keep filling it.
+적이 물러나면 겁쟁이도 기뻐하오. 그 쾌락도 좋은 것이오? ||| Cowards rejoice when the enemy retreats. Is that pleasure good too?
+아니, 쾌락에도 좋은 것과 나쁜 것이 있소. ||| No. Some pleasures are good and some are bad.
+마음대로 하시오. 난 더 대답 안 하겠소. ||| Do as you please. I won't answer any more.
+쾌락이 곧 좋음이라면, 나쁜 쾌락은 무엇이오? ||| If pleasure is the good, what is a bad pleasure?
+
+# ---- Cephalus (E8) ----
+소크라테스, 피레우스까지 자주 좀 오시오. ||| You don't come down to the Piraeus as often as you ought, Socrates.
+기꺼이요. 늙는다는 건 어떻습니까? ||| Gladly. Tell me, what is it like to grow old?
+소포클레스도 욕망은 사나운 주인이라 했지. ||| Sophocles said the passions are a mad and furious master.
+재산이 많아서 편하신 건 아니고요? ||| Isn't it your wealth that makes it easy?
+재산은 물려받은 만큼만 남기면 되오. ||| I only want to leave as much as I inherited.
+부자라서 남을 속일 일이 없지. ||| A rich man never needs to cheat anyone.
+늙으면 저승 이야기가 무서워지오. ||| When you are old, the tales of the world below grow frightening.
+그래서 빚 없이 떠나는 게 정의라는 말씀이군요. ||| So justice is leaving this world owing nothing?
+그렇소. 빌린 것을 돌려주는 것이오. ||| Yes. It is giving back what you have borrowed.
+시모니데스도 그리 말했소. ||| Simonides said so, too.
+칼을 맡긴 친구가 미쳐서 돌려 달라면? ||| And if a friend left his sword with you, went mad, and asked for it back?
+그런 친구에게 칼을 돌려줄 순 없지. ||| Then you can't give the sword back to him.
+난 제사 지내러 가 보겠소. 이야기는 아들이 이어받을 거요. ||| I must go and see to the sacrifices. My son will carry on the argument.
+언제나 그렇소? 칼을 생각해 보시오. ||| Always? Think of the sword.
+
+# ---- Polemarchus (E9) ----
+아버지 대신 제가 이어받겠습니다. ||| I will take over the argument from my father.
+시모니데스는 정의를 무엇이라 했소? ||| What did Simonides say justice is?
+빚진 것을 갚는 게 정의라 했지요. ||| Paying back what is owed.
+그 말을 그대는 어떻게 이해하오? ||| And how do you understand that?
+정의는 친구를 돕고 적을 해치는 것이오. ||| Justice is doing good to friends and harm to enemies.
+전쟁에서는 친구를 돕고 적과 싸우지요. ||| In war, you help your friends and fight your enemies.
+평화로울 땐 정의가 어디에 쓸모 있소? ||| And in peacetime, what is justice good for?
+돈을 맡길 때 쓸모 있지요. ||| For keeping money safe.
+친구를 잘못 알아볼 때도 있소? ||| Do we ever mistake who our friends are?
+있지요. 좋은 친구인 줄 알았는데. ||| We do. We think someone is a good friend, and…
+그럼 진짜 좋은 사람이 친구지요. ||| Then a friend is someone who is really good.
+말을 해치면 말은 더 좋아지오, 나빠지오? ||| If you harm a horse, does it become better or worse?
+나빠지지요. ||| Worse.
+사람도 해침을 당하면 덜 정의로워지겠구려. ||| So a man, when harmed, becomes less just.
+그렇겠지요. ||| I suppose so.
+그럼 정의로운 사람이 남을 덜 정의롭게 만들 수 있소? ||| Then can a just man make others less just?
+정의로운 사람이 남을 해칠 리 없지요. ||| A just man would never harm anyone.
+그럼 저도 선생님 편이 되지요. ||| Then I am ready to fight at your side, Socrates.
+그가 '해친다'고 한 말이 둘이오. ||| He speaks of 'harm' twice.
+
+# ---- Thrasymachus (E10) ----
+트라시마코스가 짐승처럼 뛰어들었어요. ||| Thrasymachus hurled himself at them like a wild beast.
+무슨 헛소리들이오! 묻기만 하지 말고 답을 해 보시오. ||| What nonsense! Stop asking questions and give an answer yourself.
+나는 모르니 묻는 거요. 그대가 답해 주시오. ||| I ask because I do not know. You answer, then.
+돈을 내면 대답해 주겠소. ||| I'll answer if you pay me.
+정의는 강자의 이익일 뿐! ||| Justice is nothing else than the interest of the stronger!
+강자란 누구요? ||| And who is the stronger?
+나라를 다스리는 자가 법을 만들지. ||| The rulers of a city make its laws.
+백성은 그 법을 따라야 하오. ||| And the subjects must obey those laws.
+다스리는 자는 실수하지 않소? ||| Do rulers never make mistakes?
+사람이니 실수도 하지. ||| They are human. They make mistakes.
+그럼 정의로운 사람은 어떻게 되오? ||| Then what becomes of the just man?
+정의란 남 좋은 일일 뿐이오. ||| Justice is really another man's good.
+불의한 자가 늘 더 많이 갖소. ||| The unjust man always has more.
+참주야말로 가장 행복하오. ||| The tyrant is the happiest of all.
+양치기는 양을 위해 양을 치오? ||| Does the shepherd tend his sheep for the sheep's sake?
+양치기도 결국 제 이익을 위해 양을 치지. ||| The shepherd fattens his sheep for his own good.
+다스리는 자가 실수로 제게 해로운 명령을 내리면? ||| And if a ruler, by mistake, gives an order that harms himself?
+강자에게 해로운 명령이라도 따르는 게 정의요. ||| Then justice is obeying it, even against the interest of the stronger.
+트라시마코스의 얼굴이 붉어졌어요. ||| And then Thrasymachus blushed.
+양치기의 기술은 양을 위한 것이오. ||| The art of the shepherd is concerned only with the good of the sheep.
+강자에게 이로운 것과 해로운 것을, 그가 둘 다 정의라 했소. ||| He called both what helps the stronger and what harms him 'justice'.
+
+# ---- chapter 3 ring fights ----
+법은 많은 약자들이 둘러친 울타리요. 사자 새끼를 길들이듯 강자를 길들이지. ||| Laws are a fence put up by the many weak. They tame the strong like young lions.
+제우스는 염치와 정의를 몇 사람이 아니라 모두에게 나눠 주었소. 그래서 나라가 서는 거요. ||| Zeus gave reverence and justice not to a few but to all. That is why cities can stand.
+'법'을 두고 소피스트 둘이 맞서오. 링에 올려 보시오. ||| Two sophists clash over 'law'. Put them in the ring.
+빌린 것을 갚고 거짓말하지 않으면, 죽을 때 두려울 게 없소. ||| Pay what you borrowed and tell no lies, and you need not fear death.
+친구에게는 좋은 것을, 적에게는 해를 갚는 게 정의지요. ||| Justice is giving good to friends and evil to enemies.
+다 헛소리! 어느 나라든 다스리는 자가 제 이익에 맞게 법을 만들고 그걸 정의라 부르오. ||| Nonsense, all of it! In every city the rulers make laws for their own interest and call that justice.
+피레우스에서 온 세 사람이 저마다 '정의'를 말하오. 셋을 함께 링에 올려 보시오. ||| Three men from the Piraeus each speak of 'justice'. Put all three in the ring.
+
+# ---- keywords, chapters ----
+근원 ||| Origin
+아페이론 ||| Apeiron
+하나와 여럿 ||| One & Many
+수 ||| Number
+조화 ||| Harmony
+영혼 ||| Soul
+4원소 ||| Four Roots
+사랑과 투쟁 ||| Love & Strife
+변화 ||| Change
+하나 ||| The One
+움직임 ||| Motion
+생겨남 ||| Coming-to-be
+정의 ||| Justice
+무한분할 ||| Divisibility
+불가분 ||| Indivisible
+허공 ||| Void
+감각 ||| Senses
+경건 ||| Piety
+아름다움 ||| Beauty
+척도 ||| Measure
+설득 ||| Persuasion
+덕 ||| Virtue
+불의 ||| Injustice
+쾌락 ||| Pleasure
+법 ||| Law
+
+# ---- the codex: Greek word, then each philosopher's reading ----
+αρχή · 아르케 ||| αρχή · arche
+άπειρον · 무한정자 ||| άπειρον · the boundless
+εν και πολλά · 헨 카이 폴라 ||| εν και πολλά · hen kai polla
+αριθμός · 아리트모스 ||| αριθμός · arithmos
+αρμονία · 하르모니아 ||| αρμονία · harmonia
+ψυχή · 프쉬케 ||| ψυχή · psyche
+ριζώματα · 네 뿌리 ||| ριζώματα · the four roots
+φιλότης · νείκος · 필로테스 · 네이코스 ||| φιλότης · νείκος · philotes · neikos
+μεταβολή · 메타볼레 ||| μεταβολή · metabole
+εν · 헨 ||| εν · hen
+κίνησις · 키네시스 ||| κίνησις · kinesis
+γένεσις · 게네시스 ||| γένεσις · genesis
+δίκη · 디케 ||| δίκη · dike
+επ' άπειρον διαίρεσις · 에프 아페이론 디아이레시스 ||| επ' άπειρον διαίρεσις · ep' apeiron diairesis
+αδιαίρετον · 아디아이레톤 ||| αδιαίρετον · adiaireton
+κενόν · 케논 ||| κενόν · kenon
+οσιότης · 호시오테스 ||| οσιότης · hosiotes
+το καλόν · 토 칼론 ||| το καλόν · to kalon
+μέτρον · 메트론 ||| μέτρον · metron
+πειθώ · 페이토 ||| πειθώ · peitho
+αρετή · 아레테 ||| αρετή · arete
+αδικία · 아디키아 ||| αδικία · adikia
+ηδονή · 헤도네 ||| ηδονή · hedone
+νόμος · 노모스 ||| νόμος · nomos
+αίσθησις · 아이스테시스 ||| αίσθησις · aisthesis
+2장에서 열려요 ||| Opens in Chapter 2
+3장에서 열려요 ||| Opens in Chapter 3
+물 ||| Water
+모든 것을 적시고 살리는 것. 땅도 물 위에 떠 있다 ||| What wets and nourishes all things. Even the earth floats on water
+불 ||| Fire
+영원히 살아 있는 불. 멈추지 않고 타오르며 바뀐다 ||| An ever-living fire, kindling in measures and going out in measures
+어느 것으로도 정해지지 않은 것. 물이 근원이라면 불은 어디서 왔겠는가 ||| What is fixed as nothing. If water were the first principle, where would fire come from?
+공기 ||| Air
+짙어지고 엷어지며 모든 것이 되는 것 ||| Thickening and thinning, it becomes all things
+재료가 아니라 짜임새. 현의 길이를 반으로 줄이면 한 옥타브가 오른다 ||| Not a stuff but a structure. Halve a string and the note rises an octave
+흙 ||| Earth
+모든 것이 나와서 돌아가는 곳. 우리도 흙과 물에서 생겨났다 ||| Where all things come from and end. We are all born of earth and water
+네 뿌리 ||| Four roots
+하나가 아니라 넷의 섞임 ||| Not one, but a mixture of four
+원자와 허공 ||| Atoms and void
+나눌 수 없는 것들과 그것들이 움직이는 빈자리 ||| Uncuttable things, and the empty space they move in
+끝도 경계도 성질도 정해지지 않은 것. 모든 대립하는 것들이 여기서 나온다 ||| Without end, border or quality. All the opposites come out of it
+정해지지 않은 하나에서 뜨거움과 차가움 같은 대립자들이 갈라져 나온다 ||| From the one boundless thing, opposites like hot and cold split off
+공기 하나가 짙어지면 바람·구름·물·흙이, 엷어지면 불이 된다 ||| Air alone: thickened, it becomes wind, cloud, water, earth; thinned, fire
+현의 비율, 별의 운행. 모든 것의 짜임새는 수로 셀 수 있다 ||| The ratios of strings, the courses of the stars. The structure of all things can be counted
+활과 리라처럼 서로 당기는 힘들의 긴장 ||| The tension of opposite pulls, as in the bow and the lyre
+수의 비율로 맞춰진 질서 ||| An order tuned by ratios of number
+사물을 움직이는 힘. 자석에도 있다 ||| The power that moves things. Even the magnet has one
+몸을 묶어 주는 숨 ||| The breath that holds the body together
+죽지 않고 몸을 옮겨 다니는 것 ||| Something deathless that passes from body to body
+물, 불, 공기, 흙. 생겨남도 사라짐도 없이 섞이고 나뉠 뿐 ||| Fire, water, earth, air. No birth, no death: only mixing and parting
+섞는 힘과 가르는 힘이 번갈아 우주를 다스린다 ||| A force that mixes and a force that splits rule the cosmos by turns
+투쟁이 만물의 아버지다. 대립이 곧 정의다 ||| War is the father of all. Strife is justice
+흐름 ||| Flux
+같은 강에 들어가도 늘 다른 물이 흘러온다. 멈추지 않고 흐르며 바뀐다 ||| On those who step into the same rivers, different waters flow. All things flow and change
+불변 ||| Changeless
+있는 것은 생겨나지도 사라지지도, 변하지도 않는다 ||| What is neither comes to be, nor perishes, nor changes
+역설 ||| Paradox
+움직임과 변화는 모순을 낳으니 있을 수 없다 ||| Motion and change breed contradictions, so they cannot be
+섞임 ||| Mixture
+변화란 이미 있던 것들이 섞이고 갈라지는 일 ||| Change is things that already exist mixing and separating
+새로 생기는 건 없다. 네 뿌리가 섞이고 갈라질 뿐 ||| Nothing new is born. The four roots only mix and part
+원자 ||| Atoms
+나눌 수 없는 원자들이 허공 속에서 자리를 바꾸는 일 ||| Uncuttable atoms changing places in the void
+무한한 하나 ||| The boundless One
+허공이 없으니 아무것도 움직이거나 변하지 않는다 ||| There is no void, so nothing moves or changes
+낮과 밤, 오르막과 내리막처럼 대립하는 것들이 이루는 하나 ||| The one made of opposites: day and night, the way up and the way down
+틈도 차이도 없이 빈틈없이 이어진 하나 ||| One and continuous, without a gap or a difference
+매 순간 멈춰 있는 화살, 거북이를 끝내 따라잡지 못하는 아킬레우스. 모순이라 있을 수 없는 것 ||| The arrow at rest at every instant; Achilles who never catches the tortoise. A contradiction, so impossible
+모든 것이 움직여서 말로 붙잡을 수조차 없는 것 ||| Everything moves, so nothing can even be pinned down in words
+새로 생기는 건 없다. 모든 것 속에 모든 것의 몫이 섞여 있다 ||| Nothing new comes to be. In everything a portion of everything is mixed
+태어남은 없다. 네 뿌리가 사랑으로 섞이고 미움으로 갈라진다 ||| There is no birth. The four roots mix in Love and part in Strife
+있는 것은 생겨나지도 사라지지도 않는다. 섞이는 것도 움직임이다 ||| What is neither comes to be nor perishes. Even mixing is a kind of motion
+사물들이 시간의 질서에 따라 서로 치르는 대가 ||| The penalty things pay to one another, according to the order of time
+싸움 그 자체가 정의다 ||| Strife itself is justice
+있는 것을 사슬로 묶어 생겨나지도 사라지지도 못하게 하는 여신 ||| The goddess who holds what is in fetters, so it can neither come to be nor perish
+빚진 것을 갚고 거짓말하지 않는 것 ||| Speaking the truth and paying your debts
+친구에게 이롭고 적에게 해로운 것 ||| Good to friends and harm to enemies
+강자의 이익. 다스리는 자가 제 이익에 맞게 법을 만든다 ||| The interest of the stronger. Rulers make laws to suit themselves
+자연에 따르면 강자가 약자보다 더 갖는 것 ||| By nature, the stronger having more than the weaker
+모두가 나눠 가진 것. 그래서 누구나 나랏일에 한마디 할 수 있다 ||| A share given to all, so anyone may speak on the city's affairs
+다스림 받는 이를 돌보는 것. 양치기의 기술은 양을 위한 것이다 ||| Caring for those who are ruled. The shepherd's art is for the good of the sheep
+끝없이 나뉜다면 크기가 사라지니, 여럿은 있을 수 없다 ||| If things divide without end, size vanishes; so there cannot be many
+아무리 나눠도 가장 작은 것은 없다 ||| However far you divide, there is no smallest
+있는 것은 하나라서 나눌 틈이 없다 ||| What is, is one: there is no gap to divide it by
+나뉘면 틈(빈 곳)이 생기는데, 빈 곳은 없다 ||| Division would make a gap (an empty place), and there is no empty place
+나눌 수 없는 원자가 셀 수 없이 많다 ||| Uncuttable atoms, countless in number
+없는 것도 있는 것만큼 있다. 원자들이 움직이는 빈자리 ||| What is not exists no less than what is: the empty place where atoms move
+허공은 없으니 아무것도 움직이지 않는다 ||| There is no void, so nothing moves
+신들이 사랑하는 것 ||| What the gods love
+신들도 서로 다투니, 같은 일이 경건하면서 경건하지 않게 된다 ||| The gods quarrel, so the same act is both pious and impious
+아름다운 처녀 ||| A beautiful maiden
+여신 곁의 처녀는 아름답지 않다. 예는 아름다움 그 자체가 아니다 ||| Beside a goddess the maiden is not beautiful. An example is not beauty itself
+사람은 만물의 척도. 느끼는 대로가 참이다 ||| Man is the measure of all things. As things seem to each, so they are
+그렇다면 "프로타고라스가 틀렸다"는 생각도 참이 된다 ||| Then the opinion "Protagoras is wrong" is true as well
+연설술은 무엇이든 설득한다. 옳고 그름을 몰라도 ||| Rhetoric persuades about anything, without knowing right or wrong
+정의를 배운 이는 정의롭다. 그런데 제자가 정의롭지 못하게 쓴다면? ||| Whoever has learned justice is just. So what if a pupil uses it unjustly?
+남을 다스리는 힘 ||| The power to rule over others
+착한 노예는 다스리지 않는다. 덕의 예가 아니라 덕이 무엇인지를 물었다 ||| A good slave does not rule. I asked what virtue is, not for an example of it
+당하는 쪽이 더 나쁘다. 참주는 하고 싶은 대로 하니 행복하다 ||| Suffering it is worse. The tyrant does as he likes, so he is happy
+저지르는 쪽이 더 부끄럽다면, 더 나쁜 것도 저지르는 쪽이다 ||| If doing injustice is more shameful, doing it is also the greater evil
+쾌락이 곧 좋음. 욕망을 키우고 마음껏 채워라 ||| Pleasure is the good. Let your desires grow, and fill them
+좋은 쾌락과 나쁜 쾌락이 있다면, 쾌락은 좋음 그 자체가 아니다 ||| If there are good and bad pleasures, pleasure is not the good itself
+약자들이 강자를 묶어 두려고 만든 굴레 ||| A yoke the weak made to bind the strong
+제우스가 모두에게 나눠 준 염치와 정의. 그래서 나라가 선다 ||| Reverence and justice, given by Zeus to all. That is why cities stand
+단맛도 쓴맛도 관습. 감각은 원자의 진실을 보여 주지 못한다 ||| Sweet and bitter are by convention. The senses cannot show the truth of atoms
+보고 듣고 배우는 것이 가장 확실한 증인이다 ||| What can be seen, heard and learned is the surest witness
+눈과 귀는 길을 잃게 한다. 이성으로 판가름하라 ||| Eyes and ears lead astray. Judge by reason
+
+# ---- Socrates' best-known arguments (Jowett and the usual renderings) ----
+경건한 것은 경건하기 때문에 신들이 사랑하는가, 아니면 신들이 사랑하기 때문에 경건한가? ||| Is the pious loved by the gods because it is pious, or is it pious because it is loved by the gods?
+『에우튀프론』 10a ||| Euthyphro 10a
+아름다운 것들은 어렵다. ||| What is beautiful is difficult.
+『대 히피아스』 304e ||| Hippias Major 304e
+모든 생각이 참이라면, "프로타고라스가 틀렸다"는 생각도 참이 된다. ||| If every opinion is true, then the opinion of those who think Protagoras is wrong is true as well.
+『테아이테토스』 171a ||| Theaetetus 171a
+연설술은 기술이 아니라 아첨이다. 요리가 의술을 흉내 내듯, 정의를 흉내 낼 뿐이다. ||| Rhetoric is not an art but a knack, a flattery. As cookery is to medicine, so is rhetoric to justice.
+『고르기아스』 464d–465c ||| Gorgias 464d–465c
+덕의 벌떼를 늘어놓지 말고, 그 모든 덕을 덕이게 하는 하나를 말해 주시오. ||| I ask for one virtue and you give me a swarm. Tell me the one nature that makes them all virtues.
+『메논』 72a–c ||| Meno 72a–c
+불의를 저지르는 것이 불의를 당하는 것보다 더 나쁘다. ||| To do injustice is worse than to suffer it.
+『고르기아스』 469b, 474b ||| Gorgias 469b, 474b
+욕망을 끝없이 채우는 삶은 체로 밑 빠진 항아리에 물을 붓는 것과 같다. ||| The life of endless desire is like pouring water into a leaky jar with a sieve.
+『고르기아스』 493b–494a ||| Gorgias 493b–494a
+미친 친구에게 맡겨 둔 칼을 돌려주는 것도 정의인가? ||| If a friend deposited arms with me when in his right mind, and asks for them when he is not, ought I to give them back?
+『국가』 1권 331c ||| Republic I, 331c
+누구든 해치는 것은 정의로운 사람이 하는 일이 아니다. ||| To injure a friend or anyone else is not the act of a just man.
+『국가』 1권 335d–e ||| Republic I, 335d–e
+어떤 기술도 자기 이익이 아니라 그것이 돌보는 쪽의 이익을 구한다. 양치기의 기술은 양을 위한 것이다. ||| No art seeks its own interest, but the interest of its subject. The art of the shepherd is concerned only with the good of his sheep.
+『국가』 1권 342c–e ||| Republic I, 342c–e
+
+# ---- dialogues collected in chapter 3 ----
+대 히피아스 ||| Hippias Major
+테아이테토스 ||| Theaetetus
+국가 1권 ||| Republic I
+소크라테스의 변명 ||| Apology
+
+# ---- the night after chapter 3: Plato and Aristotle ----
+이데아는 사물과 따로 떨어진 참된 실재라네… ||| The Forms are the true reality, apart from things…
+아닌 것 같은데요? ||| I don't think so?
+시인은 나라에서 추방해야 하네. ||| The poets must be banished from the city.
+엥, 그런가요? ||| Huh, must they?
+수호자들은 재산도 가족도 함께 나눠야 하네. ||| The guardians must hold property and families in common.
+음… 모두의 것은 아무도 돌보지 않던데요. ||| Hm… what is common to the greatest number gets the least care.
+좋음은 하나라네. 좋음의 이데아. ||| The good is one. The Form of the Good.
+글쎄요, 좋음은 여러 뜻으로 말해지는걸요. ||| Well, 'good' is said in many ways.
+참 대단한 분이셨지... ||| What a man he was...

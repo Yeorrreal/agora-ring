@@ -57,6 +57,7 @@ canvas#scene.act{cursor:pointer}
 .help summary{cursor:pointer;list-style:none;font-weight:700;font-size:12.5px;padding:6px 12px;background:var(--panel2);color:var(--ink);box-shadow:0 0 0 2px var(--dark)}
 .help summary::-webkit-details-marker{display:none}
 .hicon{display:block;width:22px;height:22px;image-rendering:pixelated}
+.langb{font-size:15px;line-height:22px;letter-spacing:.02em;align-self:stretch}.langb span{color:#6f6578}.langb span.on{color:var(--ink)} /* a/가: the live language is bright */
 .btn.icon,.help summary{display:flex;align-items:center;justify-content:center;padding:4px 7px}
 .help .drop{position:absolute;right:0;top:calc(100% + 10px);width:min(340px,calc(100vw - 32px));padding:12px 14px}
 .help ol{padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:12px}
@@ -68,7 +69,7 @@ canvas#scene.act{cursor:pointer}
 .btn:focus-visible,.kwbtn:focus-visible,.mini:focus-visible,summary:focus-visible{outline:2px solid var(--water);outline-offset:3px}
 .btn[disabled]{background:#4a4150;color:#8b8094;cursor:not-allowed}
 .btn.ghost{background:var(--panel2);color:var(--ink)}
-.mini{font:inherit;font-size:10.5px;background:transparent;border:0;color:var(--muted);cursor:pointer;padding:2px 4px;box-shadow:0 0 0 1px var(--hi)}
+.mini{font:inherit;font-size:10.5px;background:transparent;border:0;color:var(--muted);cursor:pointer;padding:2px 4px;box-shadow:0 0 0 1px var(--hi);white-space:nowrap}
 .mini:hover{color:var(--ink)}
 
 /* ring roster, pinned above the ring by script */
@@ -106,7 +107,7 @@ canvas#scene.act{cursor:pointer}
 
 /* stele, bottom-right */
 .stelebox{position:fixed;right:var(--gr);bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);z-index:6;width:250px;padding:10px;display:flex;flex-direction:column;gap:6px}
-.stelebox .head{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.stelebox .head{display:flex;justify-content:space-between;align-items:center;gap:6px;white-space:nowrap}
 .stelebox .head .r{display:flex;align-items:center;gap:6px}
 .stelebox.closed .stele{display:none}
 .stele{list-style:none;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:2px 6px;background:#cfc7b4;box-shadow:inset 0 0 0 2px #a59d89,inset 0 0 0 4px #ded7c6}
@@ -245,7 +246,7 @@ canvas#scene.act{cursor:pointer}
 @media (prefers-reduced-motion:reduce){.btn:active{transform:none}}
 </style>
 
-<div class="screen" id="screen"><canvas id="scene" width="384" height="240" aria-label="위에서 내려다본 아고라와 링"></canvas></div>
+<div class="screen" id="screen"><canvas id="scene" width="384" height="240" aria-label="위에서 내려다본 아고라와 링" data-en-aria="The agora and the ring, seen from above"></canvas></div>
 <div class="ptip" id="ptip" hidden></div>
 
 <header class="hdr" id="hdr">
@@ -255,7 +256,7 @@ canvas#scene.act{cursor:pointer}
     <div class="stats">
     <div class="klep" id="klepbox">
       <canvas id="klep" width="32" height="48" aria-hidden="true"></canvas>
-      <div class="v"><span class="lbl">클렙시드라</span><span class="big" id="waterv">100</span><span class="tiny" id="dayv">1일째 · 해가 높아요</span></div>
+      <div class="v"><span class="lbl" data-en="Klepsydra">클렙시드라</span><span class="big" id="waterv">100</span><span class="tiny" id="dayv">1일째 · 해가 높아요</span></div>
     </div>
     <span class="sep"></span>
     <span class="coin" id="obolv">2 오볼</span>
@@ -263,12 +264,22 @@ canvas#scene.act{cursor:pointer}
    </div>
    <div class="hdrR panel" id="hdrR">
     <button class="btn" id="ch2btn" type="button" hidden>2장으로</button>
-    <button class="btn ghost icon" id="soundbtn" type="button" aria-pressed="true" aria-label="소리 켜고 끄기"><img class="hicon" id="soundicon" alt=""></button>
-    <button class="btn ghost icon" id="resetbtn2" type="button" aria-label="처음으로" title="처음으로"><img class="hicon" id="reseticon" alt=""></button>
+    <button class="btn ghost icon langb" id="langbtn" type="button" aria-label="English / 한국어" title="English / 한국어"><span data-l="en">a</span>/<span data-l="ko">가</span></button>
+    <button class="btn ghost icon" id="soundbtn" type="button" aria-pressed="true" aria-label="소리 켜고 끄기" data-en-aria="Sound on / off"><img class="hicon" id="soundicon" alt=""></button>
+    <button class="btn ghost icon" id="resetbtn2" type="button" aria-label="처음으로" title="처음으로" data-en-aria="Start over"><img class="hicon" id="reseticon" alt=""></button>
     <details class="help" id="help">
-      <summary aria-label="하는 법" title="하는 법"><img class="hicon" id="helpicon" alt=""></summary>
+      <summary aria-label="하는 법" title="하는 법" data-en-aria="How to play"><img class="hicon" id="helpicon" alt=""></summary>
       <div class="drop panel">
-        <ol>
+        <ol data-en='<li>Tap someone in the agora to see what they say. Tap again for their other lines.</li>
+          <li>Drag people who say opposing things into the ring. Each is judged by the line they were saying when they stepped in.</li>
+          <li>Ringing the bell to start a fight drains the klepsydra: −8 for a decisive bout, −15 for talking past each other. It also leaks on its own (a full klepsydra lasts 7 minutes). When it runs dry, you replay that stage from the start.</li>
+          <li>Someone with a <span style="color:var(--gold)">!</span> over their head has something new to say.</li>
+          <li>Tap a keyword carved on the stele to see how each philosopher reads it.</li>
+          <li>Tap the Pythia of Delphi under the red awning to get an oracle (a hint) for 2 obols.</li>
+          <li>Drop a philosopher on the bean field and they work a while to earn obols. Once a day each.</li>
+          <li>The water seller under the blue awning refills the klepsydra for obols.</li>
+          <li>In Chapter 3, drop a sophist on Socrates and the dialogue flows. Put the two of his fragments that collide into the ring and ring the bell to refute him.</li>
+          <li>Sound starts with your first tap. Tap the speaker icon at the top right to turn it on or off. The a/가 button switches between English and Korean.</li>'>
           <li>아고라의 사람을 누르면 말풍선이 떠요. 계속 누르면 다른 말을 해요.</li>
           <li>서로 맞서는 말을 하는 사람들을 링으로 끌어다 놓아요. 링에 올라간 순간의 말로 판정해요.</li>
           <li>종을 쳐서 싸움을 붙이면 물시계의 물이 줄어요. 결판 −8, 동문서답 −15. 가만히 있어도 조금씩 새요(가득 찬 물시계는 7분). 다 비면 그 단계를 처음부터 다시 해요.</li>
@@ -278,28 +289,28 @@ canvas#scene.act{cursor:pointer}
           <li>철학자를 콩밭에 끌어다 놓으면 잠깐 일해서 오볼을 벌어요. 한 사람당 하루 한 번.</li>
           <li>파란 차양의 물장수에게서 오볼로 물시계를 채울 수 있어요.</li>
           <li>3장에서는 소피스트를 소크라테스에게 끌어다 놓으면 문답이 흘러가요. 상대의 말 조각 중 서로 부딪치는 둘을 링에 올리고 종을 치면 논박이에요.</li>
-          <li>소리는 화면을 처음 누를 때부터 나요. 오른쪽 위 스피커 아이콘을 누르면 껐다 켤 수 있어요.</li>
+          <li>소리는 화면을 처음 누를 때부터 나요. 오른쪽 위 스피커 아이콘을 누르면 껐다 켤 수 있어요. a/가 버튼으로 영어와 한국어를 바꿔요.</li>
         </ol>
-        <p class="tiny savenote">진행도는 이 브라우저에 자동으로 저장돼요. <button class="mini" id="resetbtn" type="button">처음부터 다시</button></p>
+        <p class="tiny savenote"><span data-en="Progress is saved in this browser automatically.">진행도는 이 브라우저에 자동으로 저장돼요.</span> <button class="mini" id="resetbtn" type="button" data-en="Start over">처음부터 다시</button></p>
       </div>
     </details>
    </div>
   </div>
 </header>
 
-<section class="ringpanel panel" id="ringpanel" aria-label="링 위의 말">
+<section class="ringpanel panel" id="ringpanel" aria-label="링 위의 말" data-en-aria="In the ring">
   <ul id="ringlist"></ul>
-  <div class="tray" id="tray" hidden><div class="trh"><b id="trayt"></b><span><button class="mini" id="trayre" type="button">다시 듣기</button><button class="mini" id="trayx" type="button">그만두기</button></span></div><div class="chips" id="chips"></div></div>
-  <button class="bell" id="fightbtn" type="button" aria-label="싸움 붙이기"></button>
+  <div class="tray" id="tray" hidden><div class="trh"><b id="trayt"></b><span><button class="mini" id="trayre" type="button" data-en="Replay">다시 듣기</button><button class="mini" id="trayx" type="button" data-en="Leave">그만두기</button></span></div><div class="chips" id="chips"></div></div>
+  <button class="bell" id="fightbtn" type="button" aria-label="싸움 붙이기" data-en-aria="Ring the bell"></button>
 </section>
 
-<section class="collbox panel" id="collbox" aria-label="모은 철학자">
+<section class="collbox panel" id="collbox" aria-label="모은 철학자" data-en-aria="Collection">
   <div class="head"><button class="title" id="collopen" type="button">모은 철학자<b id="collcount">2 / 8</b></button><button class="mini" id="colltog" type="button" aria-expanded="true">접기</button></div>
   <div class="collgrid" id="collgrid"></div>
 </section>
 
 <section class="stelebox panel" id="stelebox">
-  <div class="head"><span class="lbl">비문<span class="hide-s"> · 새겨진 키워드</span></span><span class="r"><span id="kwcount" style="font-weight:700">0 / 8</span><button class="mini" id="steletog" type="button" aria-expanded="true">접기</button></span></div>
+  <div class="head"><span class="lbl" data-en='Stele<span class="hide-s"> · keywords</span>'>비문<span class="hide-s"> · 새겨진 키워드</span></span><span class="r"><span id="kwcount" style="font-weight:700">0 / 8</span><button class="mini" id="steletog" type="button" aria-expanded="true">접기</button></span></div>
   <ol class="stele" id="stele"></ol>
 </section>
 
@@ -307,12 +318,12 @@ canvas#scene.act{cursor:pointer}
 <div class="bubbles" id="bubbles"></div>
 <div class="hl" id="hl" hidden></div>
 <div class="tut" id="tut" hidden role="status"><span class="tk" id="tutk">처음 오셨군요</span><p id="tutt"></p><div class="row"><span class="tiny" id="tutn"></span><button class="btn" id="tutbtn" type="button" hidden>다음</button></div></div>
-<div class="obub" id="obub" hidden><div class="cl"><b>피티아의 신탁</b><span id="obubt"></span>
+<div class="obub" id="obub" hidden><div class="cl"><b data-en="The Pythia's oracle">피티아의 신탁</b><span id="obubt"></span>
   <i style="left:6%;top:-9px;width:24px;height:24px"></i><i style="left:30%;top:-12px;width:30px;height:30px"></i><i style="left:58%;top:-10px;width:26px;height:26px"></i><i style="left:80%;top:-6px;width:18px;height:18px"></i>
   <i style="left:14%;bottom:-8px;width:20px;height:20px"></i><i style="left:46%;bottom:-10px;width:24px;height:24px"></i><i style="left:74%;bottom:-7px;width:18px;height:18px"></i>
   <i style="left:calc(50% - 6px);bottom:-22px;width:12px;height:12px"></i><i style="left:calc(50% - 2px);bottom:-32px;width:7px;height:7px"></i></div></div>
 
-<div class="rotate" role="alert"><p><b>폰을 세로로 돌려 주세요</b>아고라 링은 세로 화면에 맞춰져 있어요.</p></div>
+<div class="rotate" role="alert"><p data-en="<b>Please turn your phone upright</b>Agora Ring is made for a portrait screen."><b>폰을 세로로 돌려 주세요</b>아고라 링은 세로 화면에 맞춰져 있어요.</p></div>
 <div class="modal" id="modal" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="mtitle"><div id="mbody" style="display:flex;flex-direction:column;gap:12px"></div><div class="acts" id="macts"></div></div></div>
 
 <script>
@@ -321,6 +332,14 @@ let W=384,H=240,SCALE=3;
 const cv=document.getElementById('scene'), ctx=cv.getContext('2d');
 const screenEl=document.getElementById('screen');
 const $=id=>document.getElementById(id);
+// language: the a/가 button switches Korean ↔ English (remembered). Data text is looked up by its Korean words in
+// lang-en.txt (inlined by build.py); UI text sits inline as L(korean, english).
+const EN_={"탈레스": "Thales", "헤라클레이토스": "Heraclitus", "아낙시만드로스": "Anaximander", "아낙시메네스": "Anaximenes", "피타고라스": "Pythagoras", "크세노파네스": "Xenophanes", "엠페도클레스": "Empedocles", "파르메니데스": "Parmenides", "제논": "Zeno", "크라틸로스": "Cratylus", "아낙사고라스": "Anaxagoras", "멜리소스": "Melissus", "데모크리토스": "Democritus", "젊은 소크라테스": "Young Socrates", "소크라테스": "Socrates", "에우튀프론": "Euthyphro", "히피아스": "Hippias", "프로타고라스": "Protagoras", "고르기아스": "Gorgias", "메논": "Meno", "폴로스": "Polus", "칼리클레스": "Callicles", "케팔로스": "Cephalus", "폴레마르코스": "Polemarchus", "트라시마코스": "Thrasymachus", "플라톤": "Plato", "아리스토텔레스": "Aristotle", "세상의 근원은 물이다.": "The first principle of all things is water.", "자석이 쇠를 움직이게 하니 돌에도 영혼이 있다.": "The magnet has a soul, for it moves the iron.", "세상의 근원은 불이다.": "The first principle of all things is fire, ever-living fire.", "조화는 활과 리라처럼 서로 당기는 힘에서 나온다.": "There is a harmony of opposite tension, as in the bow and the lyre.", "투쟁이 모든 것을 낳는다. 투쟁은 만물의 아버지다.": "All things come to pass through strife. War is the father of all.", "모든 것은 변한다. 같은 강물에 두 번 들어갈 수 없다.": "All things flow. You cannot step twice into the same river.", "낮과 밤은 하나다.": "Day and night are one.", "감각을 믿어라. 눈과 귀가 가장 확실한 증인이다.": "Trust the senses. The things of sight and hearing, these I prize most.", "정의란 싸움 그 자체다.": "Justice is strife.", "근원은 물도 불도 아니다. 정해지지 않은 무한한 것이다.": "The first principle is neither water nor fire. It is the boundless (apeiron).", "정의란 때가 되면 치르는 대가다.": "Things pay justice and penalty to one another for their injustice, according to the order of time.", "땅은 아무것에도 기대지 않고 한가운데 떠 있다.": "The earth hangs aloft at the centre, held up by nothing.", "근원은 하나로 정할 수 있다.": "The first principle can be named as one thing.", "세상의 근원은 공기다.": "The first principle of all things is air.", "영혼은 숨이다. 숨이 멎으면 영혼도 떠난다.": "Our soul, being air, holds us together. When the breath goes, the soul goes.", "근원은 재료가 아니다. 수이다.": "The first principle is not a stuff. All is number.", "조화는 당기는 힘이 아니라 수의 비율에서 나온다.": "Harmony comes not from tension but from the ratios of numbers.", "영혼은 죽지 않고 다른 몸으로 옮겨갈 뿐이다.": "The soul is immortal; it passes into other living bodies.", "콩은 먹지 마라. 콩밭에도 들어가지 마라.": "Abstain from beans. Do not even walk through a bean field.", "친구의 것은 모두의 것이다.": "Friends have all things in common.", "세상의 근원은 흙이다. 모든 것은 흙에서 나와 흙으로 돌아간다.": "All things are from earth, and in earth all things end.", "소에게 손이 있다면 신을 소의 모습으로 그렸을 것이다.": "If oxen had hands, they would draw the gods in the shape of oxen.", "신은 애쓰지 않고, 생각만으로 모든 것을 흔든다.": "Without toil, god shakes all things by the thought of his mind.", "물, 불, 공기, 흙. 네 뿌리가 섞이고 갈라진다.": "Fire, water, earth and air: the four roots of all things, mixing and parting.", "투쟁은 떼어 놓을 뿐이다. 묶는 것은 사랑이다.": "Strife only drives apart. It is Love that binds.", "물, 불, 공기, 흙. 네 뿌리가 모든 것을 이룬다.": "Fire, water, earth and air: hear first the four roots of all things.", "생겨나는 것은 없다. 네 뿌리가 섞여 새것처럼 보일 뿐이다.": "There is no birth of any mortal thing, only mixing and exchange of what is mixed.", "있는 것은 있고, 없는 것은 없다.": "What is, is; what is not, is not.", "움직임은 환상이다. 나를 옮길 수는 없소.": "Motion is an illusion. You cannot move me.", "있는 것은 결코 변하지 않는다.": "What is never changes.", "낮과 밤은 둘이다. 틈 없이 이어진 것만이 하나다.": "Day and night are two. Only what is continuous, without a gap, is one.", "감각을 믿지 마라. 이성으로 판가름하라.": "Do not trust the aimless eye and the echoing ear. Judge by reason.", "생겨나지도 섞이지도 않는다. 있는 것은 그대로 있다.": "It does not come to be, nor does it mix. What is stays as it is.", "정의란 있는 것을 꽉 묶어 두는 사슬이다.": "Justice does not loose her fetters; she holds what is fast.", "있는 것은 나눌 수 없다. 전부 똑같으니까.": "Nor is it divisible, since it is all alike.", "날아가는 화살은 사실 움직이지 않는다.": "The flying arrow is at rest.", "끝없이 나눌 수 있다면, 크기가 사라지고 만다.": "If things can be divided without end, size itself disappears.", "모든 것은 쉬지 않고 움직인다.": "Everything is always moving.", "스승님 말씀대로, 모든 것은 변한다.": "As my master says, all things change.", "생겨나는 것은 없다. 섞이고 갈라지며 바뀔 뿐이다.": "Nothing comes to be or perishes. Things are only mixed together and separated.", "정신(누스)이 모든 것을 다스린다.": "Mind (nous) rules all things.", "끝없이 나눌 수 있다. 가장 작은 것은 없다.": "Of the small there is no smallest, but always a smaller.", "허공은 없다. 그러니 어떤 것도 자리를 옮길 수 없다.": "Nor is there any void. So nothing can move.", "있는 것은 시작도 끝도 없다.": "What is has no beginning and no end.", "있는 것은 나눌 수 없다. 나뉘면 틈이 생기니까.": "What is cannot be divided, for a division would leave a gap.", "허공은 있다. 원자들이 그 속을 떠다닌다.": "The void exists. Atoms drift through it.", "원자는 나눌 수 없다. 그런 원자가 셀 수 없이 많다.": "Atoms cannot be cut, and there are countless of them.", "감각은 믿을 수 없다. 단맛도 쓴맛도 관습일 뿐이다.": "By convention sweet, by convention bitter; in reality, atoms and void.", "아름다움 그 자체 같은 것이 따로 있지 않을까요?": "Is there not a beauty itself, just by itself?", "오늘은 누구의 말을 들어 볼까?": "Whose words shall I hear today?", "경건한 것은 신들이 사랑하는 것이다.": "Piety is that which is dear to the gods.", "나는 지금 아버지를 고발하러 가는 길이오.": "I am on my way to prosecute my father.", "아름다운 것은 아름다운 처녀다.": "A beautiful maiden is a beautiful thing.", "이 옷도 신발도 반지도 내가 손수 만들었소.": "This cloak, these shoes, this ring: I made them all myself.", "사람은 만물의 척도다.": "Man is the measure of all things.", "법과 염치는 신이 모든 사람에게 나눠 준 것이다.": "Law, reverence and justice were given by the gods to all men alike.", "말로는 무엇이든 설득할 수 있다.": "With words you can persuade anyone of anything.", "무엇이든 물어보시오. 다 답해 주겠소.": "Ask me anything. I will answer it all.", "덕에 대해서라면 수없이 연설해 봤지요.": "I have made a thousand speeches about virtue.", "고르기아스 선생님께 배웠지요.": "I learned it all from Gorgias.", "불의를 당하는 것이 저지르는 것보다 나쁘다.": "To suffer injustice is worse than to do it.", "참주는 하고 싶은 대로 다 하니 행복하오.": "A tyrant does whatever he likes. So he is happy.", "강자가 더 갖는 게 자연이오.": "By nature, the stronger should have more.", "법은 약자들이 강자를 누르려고 만든 것이다.": "Laws are made by the weak, to hold the strong down.", "정의는 빚진 것을 갚는 것이다.": "Justice is paying back what you owe.", "늙으니 욕망에서 풀려나 편하오.": "In old age I am free of the passions. A great peace.", "정의는 친구를 돕고 적을 해치는 것이다.": "Justice is doing good to friends and harm to enemies.", "정의는 강자의 이익일 뿐이다.": "Justice is nothing else than the interest of the stronger.", "내 답을 듣고 싶으면 돈부터 내시오.": "If you want my answer, pay me first.", "선생님의 문답을 하나도 빠짐없이 적어 두었습니다.": "I have written down every word of your conversations, master.", "언젠가 이 문답들을 책으로 엮을 생각입니다.": "One day I will make books of these dialogues.", "선생님, 그건 좀…": "Master, I'm not so sure…", "모든 것은 젖어 있소. 씨앗도, 양분도!": "Everything is moist. Seeds, food, all of it!", "모든 것은 타오르고 있소. 멈추는 것은 없지!": "Everything is ablaze. Nothing stands still!", "물과 불. 두 사람 다 세상이 무엇에서 시작됐는지를 말하고 있소.": "Water and fire. Both are saying what the world began from.", "물이 근원이면 불은 어디서 왔고, 불이 근원이면 물은 어디서 왔소? 근원은 둘 다 아니오.": "If water is the first principle, where did fire come from? If fire, where did water come from? It is neither.", "…음.": "…Hm.", "불은 물이 되고 흙이 되었다가 다시 불이 되오. 정해질 필요가 없지.": "Fire becomes water, then earth, then fire again. Nothing needs to stay fixed.", "서로 정반대인 물과 불. 둘을 함께 세워 두고, 근원이 정해지지 않았다는 자를 붙여 보시오.": "Water and fire are opposites. Stand them together, and add the one who says the first principle is not fixed.", "근원을 하나로 정해 버리면, 그 반대의 것은 어디서 나오겠느냐?": "Fix the first principle as one thing, and where would its opposite come from?", "선생님, 공기 하나로도 됩니다. 짙어지면 물과 흙이, 엷어지면 불이 되니까요.": "Air alone will do, master. Thickened, it becomes water and earth; thinned, it becomes fire.", "근원은 정할 수 없다는 스승, 정할 수 있다는 제자. 하나에서 어떻게 여럿이 나오는지를 두고 맞서고 있소.": "A master who says the first principle can't be fixed, a pupil who says it can. They clash over how the many come from one.", "물이든 불이든 공기든, 재료일 뿐이오. 그것을 짜는 것은 수요.": "Water, fire, air: mere stuff. What gives them order is number.", "재료를 근원으로 꼽던 세 사람이 한목소리로 반박했지만, 현의 비율 앞에서 말문이 막혔어요.": "The three who named a stuff as the first principle protested as one, then fell silent before the ratios of the strings.", "물, 불, 공기는 모두 재료요. 셋이 함께, 재료가 아닌 근원을 말하는 자에게 덤비면?": "Water, fire and air are all stuffs. What if all three take on the one whose first principle is no stuff at all?", "현이 팽팽히 당겨져야 소리가 나오. 다툼 없는 조화는 없소.": "A string must be pulled tight to sing. There is no harmony without strife.", "그 소리가 아름다운 건 현의 길이가 1:2, 2:3이기 때문이오.": "It sounds beautiful because the strings stand at 1:2 and 2:3.", "헤라클레이토스와 피타고라스. 둘 다 \"조화\"를 말하지만 뜻이 다르다오.": "Heraclitus and Pythagoras. Both say \"harmony\", but they mean different things.", "돌도 쇠를 끄는데, 영혼이 숨 쉬는 것들만의 것이겠소?": "A stone can draw iron. All things are full of gods. Is soul only for things that breathe?", "숨이 없는 돌에 무슨 영혼이 있겠소.": "What soul could a breathless stone have?", "숨이 멎어도 영혼은 다음 몸을 찾아가오.": "When the breath stops, the soul goes on to its next body.", "신들, 숨, 다시 태어남. 세 사람이 같은 것을 다르게 부르고 있소.": "Gods, breath, rebirth. Three men call the same thing by different names.", "넷이 뒤엉킨 먼지 속에서 한 사람이 걸어 나왔어요.": "Out of the dust of the four-way brawl, someone walked out.", "다들 옳소. 근원은 하나가 아니라 넷이오.": "You are all right. There is not one first principle but four.", "물, 불, 공기… 흙만 있으면 넷이 다 모이겠군.": "Water, fire, air… add earth, and all four are here.", "그대의 투쟁이 낳은 것도, 사랑이 묶어 두지 않으면 금세 흩어지오.": "Whatever your Strife begets scatters at once, unless Love binds it.", "묶여 멈춘 것은 죽은 것이오. 싸움이 멎으면 세상도 멎지.": "What is bound and still is dead. When strife stops, the world stops.", "\"투쟁\"을 말하는 자가 둘이오. 하나는 사랑과 함께, 하나는 만물의 아버지로.": "Two men speak of \"strife\". One pairs it with Love; one calls it the father of all.", "그대가 선 그 물도 이미 흘러갔소.": "The water you stand in has already flowed on.", "흐른다는 건 있던 것이 없어진다는 말이오. 없는 것은 없소.": "To flow is for what is to become what is not. But what is not, is not.", "'변한다'는 말을 두 사람이 정반대로 쓰고 있소.": "Two men use the word 'change' in opposite ways.", "오르막길과 내리막길도 하나요. 맞서는 것들이 함께 하나를 이루지.": "The way up and the way down are one and the same. Opposites together make one.", "맞선다는 건 틈이 있다는 말이오. 하나에는 틈이 없소.": "Opposition means a gap. The One has no gaps.", "'하나'를 말하는 두 사람. 둘 다 처음 보는 사람이 아니오.": "Two men speak of 'one'. Neither is new here.", "화살은 매 순간 제자리에 있소. 멈춘 순간을 모아도 움직임은 나오지 않소.": "At every instant the arrow is where it is. Add up still instants and you never get motion.", "(말없이 손가락만 까딱인다)": "(says nothing, only wags a finger)", "…말로 하시오!": "…Use your words!", "'움직인다'는 말을 새로 온 두 사람이 서로 다르게 쓰오.": "The two newcomers use the word 'motion' differently.", "모든 것 속에 모든 것의 몫이 있소. 섞이는 비율이 바뀔 뿐.": "In everything there is a portion of everything. Only the mixture changes.", "사랑이 섞고 투쟁이 가르지.": "Love mixes, Strife divides.", "섞인다는 건 자리를 옮긴다는 것이오. 빈 곳이 없는데 어디로 옮기겠소?": "To mix is to move. With no empty place, where would anything move to?", "'생겨나지 않는다'는 말을 하는 자가 셋이오.": "Three men say 'nothing comes to be'.", "뜨거움이 지나치면 차가움에게 대가를 치르지. 여름 뒤엔 겨울이 오오.": "When heat goes too far, it pays the penalty to cold. After summer comes winter.", "다툼이 있어야 정의도 있소. 싸움이 멎으면 정의도 사라지지.": "Without strife there is no justice. End the fight, and justice is gone.", "그 사슬 덕에 있는 것은 생겨나지도 사라지지도 않소.": "Held in her fetters, what is neither comes to be nor perishes.", "'정의'를 말하는 자가 셋 있소. 그중 하나는 아주 오래전부터 그 말을 해 왔지.": "Three men speak of 'justice'. One of them has been saying it for a very long time.", "끝없이 쪼개면 크기 없는 조각만 남소. 그걸 모아 크기가 생긴다는 말이오?": "Cut forever and only sizeless bits are left. Can you build a size out of those?", "생기오. 아무리 작아도 그 안에 모든 것의 몫이 있으니까.": "You can. However small, each holds a portion of everything.", "둘이 끝없이 쪼개는 사이, 먼지 속에서 누군가 웃으며 걸어 나왔어요.": "While the two kept cutting, someone walked out of the dust, laughing.", "끝까지 쪼개면 더는 쪼갤 수 없는 것이 나오지. 원자(아토몬)라 부르겠소.": "Cut far enough and you reach what cannot be cut. I shall call it the atom (atomon).", "'끝없이 나눈다'는 말을, 한 사람은 반박하려고, 한 사람은 믿어서 하오.": "Two men say 'divided without end': one to refute it, one because he believes it.", "빈 곳이 없으니 아무것도 자리를 옮길 수 없소.": "There is no empty place, so nothing can move.", "자리를 옮기는 게 보이니 빈 곳이 있는 거요. 하하.": "I can see things move, so there must be empty space. Ha ha.", "웃는 자와 제독이 '허공'을 두고 다투오.": "The laughing man and the admiral quarrel over the 'void'.", "보고 들어 보면 알 수 있소. 불은 뜨겁고 강물은 흐르오.": "Look and listen and you will know. Fire is hot, the river flows.", "눈은 움직임을 보지만, 이성은 움직임이 없다고 말하오.": "The eye sees motion, but reason says there is none.", "단맛은 혀가 정한 약속일 뿐이오. 진짜는 원자와 허공이지. 하하.": "Sweet is by convention of the tongue. In reality there are atoms and void. Ha ha.", "나도 감각은 못 믿소. 다만 이성이 찾아낸 건 원자요.": "I don't trust the senses either. But what reason finds is atoms.", "'감각'을 믿는 자와 믿지 않는 자.": "One who trusts the 'senses', and one who doesn't.", "있는 것은 하나요. 나눌 틈이 없지.": "What is, is one. There is no gap to divide it.", "나뉘려면 빈 곳이 있어야 하는데, 빈 곳은 없소.": "To be divided there must be empty space, and there is none.", "나뉘지 않는 건 맞소. 다만 그런 것이 하나가 아니라 셀 수 없이 많지. 하하.": "Indivisible, yes. But not one: countless. Ha ha.", "'나눌 수 없다'는 말에 모두 동의하오. 다만 그것이 하나냐 여럿이냐에서 갈리지.": "All agree on 'indivisible'. They split over whether it is one or many.", "어디를 그리 바삐 가시오?": "Where are you off to in such a hurry?", "아버지를 살인죄로 고발하러 가는 길이오.": "To prosecute my father for murder.", "아버지를? 그게 경건한 일이라 확신하오?": "Your own father? Are you sure that is pious?", "물론이오. 신들이 사랑하는 것이 경건이오.": "Of course. Piety is what the gods love.", "그런데 신들끼리는 사이가 좋소?": "And do the gods get along with one another?", "아니지요. 제우스도 제 아버지를 묶었는걸요.": "Hardly. Even Zeus put his own father in chains.", "그럼 신들끼리 마음이 갈리기도 하겠구려.": "Then the gods must sometimes disagree.", "그렇소. 같은 일을 어떤 신은 사랑하고 어떤 신은 미워하오.": "They do. The same act some gods love and others hate.", "…다음에 이야기합시다. 지금은 바빠서.": "…Another time, Socrates. I am in a hurry, and must go now.", "그가 처음 한 말과, 신들이 다툰다는 말을 함께 놓아 보시오.": "Set his first answer beside what he says about the gods' quarrels.", "히피아스, 오랜만이오. 요즘도 바쁘시오?": "Hippias! It has been a long while. Still busy?", "올림피아에 갈 때마다 나는 늘 이겼소.": "Every time I go to Olympia, I win.", "올림피아 사람들도 내 말에 감탄하오.": "At Olympia they marvel at my speeches.", "그런 분이니 하나만 묻겠소. 아름다움이 무엇이오?": "Then you can tell me one thing. What is beauty?", "그것쯤이야 쉽지.": "Nothing easier.", "아름다운 처녀가 곧 아름다움이오.": "A beautiful maiden: that is beauty.", "그 처녀를 여신 곁에 세우면 어떻소?": "And if she stands beside a goddess?", "여신에 비하면 처녀는 아름답지 않지.": "Beside a goddess, the maiden is not beautiful.", "그럼 금으로 꾸미면?": "What about gold, then?", "금을 두르면 무엇이든 빛나오.": "Put gold on anything and it shines.", "…오늘은 이만 가 보겠소.": "…I must be going.", "아름다운 것은 어렵소.": "Beautiful things are difficult.", "그는 예를 들었을 뿐이오. 그 예가 언제나 들어맞는지 보시오.": "He only gave an example. See whether it always holds.", "그대는 젊은이들에게 무엇을 가르치오?": "What do you teach the young?", "시민이 나랏일을 잘 하도록 가르치지.": "How to be good citizens and manage the city's affairs.", "수업료는 어떻게 받소?": "And how do you charge?", "수업료는 배운 이가 정하게 하오.": "I let the pupil decide the fee.", "그렇다면 앎이란 무엇이오?": "Then what is knowledge?", "사람은 만물의 척도. 느끼는 대로가 참이오.": "Man is the measure of all things. What seems true to each man is true for him.", "같은 바람을 두고도 그렇소?": "Even about the same wind?", "같은 바람도 사람에 따라 차고 따뜻하지.": "The same wind is cold to one man and warm to another.", "그대 말에 반대하는 이도 있소?": "Does anyone disagree with you?", "수없이 많지. 다들 내가 틀렸다 하오.": "Countless people. They all say I am wrong.", "그 사람들 생각은 어떻소?": "And what about their opinion?", "그들 생각도 그들에겐 참이오.": "Their opinion is true for them, too.", "강연이 있어서 이만.": "I have a lecture to give. Farewell.", "그 말은 그 자신에게도 해당되오.": "His saying applies to himself as well.", "연설술은 무엇을 하는 기술이오?": "What does the art of rhetoric do?", "무엇이든 설득하지. 의사보다도 잘.": "It persuades, about anything. Better than a doctor.", "의사보다도 말이오?": "Better than a doctor?", "내 동생이 의사인데, 환자는 내 말을 듣지.": "My brother is a doctor, but his patients listen to me.", "그러려면 옳고 그름도 알아야 하오?": "Must one know right and wrong for that?", "몰라도 되오. 듣는 이들도 모르니까.": "No need. The audience doesn't know either.", "군중 앞에선 아는 자보다 내가 잘 말하오.": "Before a crowd, I speak better than the man who knows.", "제자가 옳고 그름을 모르고 찾아오면?": "And if a pupil comes to you not knowing right and wrong?", "내가 정의도 가르쳐 주지.": "Then I teach him justice too.", "그 제자가 말을 나쁘게 쓰면?": "And if that pupil makes bad use of his words?", "권투를 배운 자가 부모를 때려도 스승 탓이 아니듯, 제자가 정의롭지 못하게 써도 스승 탓은 아니오.": "If a boxer beats his parents, you don't blame his trainer. If a pupil uses rhetoric unjustly, don't blame his teacher.", "…폴로스, 자네가 좀 이어받게.": "…Polus, you take over.", "가르친 것과, 제자가 한 짓을 나란히 놓아 보시오.": "Set what he teaches beside what his pupil does.", "소크라테스, 덕은 가르칠 수 있습니까?": "Can you tell me, Socrates, whether virtue can be taught?", "나는 덕이 무엇인지도 모르오. 그대는 아시오?": "I do not even know what virtue is. Do you?", "덕은 남을 다스리는 힘이지요.": "Virtue is the power to rule over others.", "다스리기만 하면 덕이오? 부당하게 다스려도?": "Any ruling at all? Even ruling unjustly?", "아니지요. 정의롭게 다스려야지요. 정의도 용기도 덕이니까요.": "No, one must rule justly. Justice is virtue, and so is courage.", "그럼 덕은 하나요, 여럿이오?": "So is virtue one, or many?", "벌떼처럼 수없이 많지요.": "Many, like a swarm of bees.", "노예는 어떻소? 노예에게도 덕이 있소?": "What of a slave? Has a slave virtue too?", "노예라… 생각해 본 적이 없군요.": "A slave… I never thought about that.", "착한 노예가 있다면, 그는 주인을 다스리오?": "If a slave is good, does he rule over his master?", "착한 노예라도 주인을 다스리진 않지요.": "Even a good slave does not rule over his master.", "선생님은 사람을 마비시키는 전기가오리 같습니다.": "You are exactly like the flat torpedo fish, the electric ray, Socrates: whoever comes near you goes numb.", "전기가오리": "electric ray", "덕 있는 사람이 언제나 다스리는 자리에 있소?": "Is the virtuous man always the one who rules?", "고르기아스 선생님이 지셨다니! 이번엔 내가 상대하겠소.": "My master beaten? Then I will take you on myself.", "좋소. 그대는 연설술을 무엇이라 보오?": "Gladly. What do you think rhetoric is?", "내가 책까지 쓴 대단한 기술이지.": "A great art. I have written a book on it.", "연설가는 참주처럼 누구든 나라에서 내쫓을 수 있소.": "An orator, like a tyrant, can banish anyone he likes from the city.", "그런 힘을 가진 이가 행복하오?": "Is a man with such power happy?", "참주는 누구든 가둘 수 있으니 행복하지.": "A tyrant can imprison anyone. Of course he is happy.", "모두 참주를 부러워하오.": "Everyone envies a tyrant.", "아르켈라오스를 보시오.": "Look at Archelaus.", "그럼 불의를 저지르는 쪽과 당하는 쪽, 어느 쪽이 나쁘오?": "Then which is worse: to do injustice, or to suffer it?", "당하는 쪽이 더 나쁘지.": "To suffer it is the greater evil.", "어느 쪽이 더 부끄럽소?": "And which is more shameful?", "저지르는 쪽이 더 부끄럽소. 부끄러운 건 나쁜 거고.": "To do it is more shameful. And what is shameful is evil.", "저지르고도 벌받지 않으면?": "And if he does wrong and goes unpunished?", "벌받지 않는 자가 더 행복하오.": "Then he is happier still.", "…칼리클레스, 당신이 말해 보시오!": "…Callicles, you tell him!", "그가 '나쁘다'고 한 곳이 두 군데 있소.": "He calls something 'evil' in two places.", "소크라테스, 당신은 철학 놀음에 빠져 세상을 거꾸로 보오.": "Socrates, your philosophy turns the whole of human life upside down.", "그럼 그대가 바로 세워 주시오. 무엇이 옳소?": "Then set it right for me. What is right?", "자연은 법보다 앞서오.": "Nature comes before law.", "법은 무엇이오?": "And law?", "약자들이 모여 둘러친 울타리지.": "A fence the weak put up together.", "그럼 철학은?": "And philosophy?", "철학은 젊을 때나 하는 거요.": "Philosophy is a fine thing for the young.", "철학만 하다간 법정에서 제 몸도 못 지키오.": "Do nothing but philosophy and you can't even defend yourself in court.", "그대가 말하는 좋은 삶은 무엇이오?": "Then what is the good life?", "쾌락이 곧 좋음이오.": "Pleasure is the good.", "가려운 데를 평생 긁는 삶도?": "Even a life spent scratching an itch?", "그것도 즐겁다면 괜찮은 삶이지.": "If it is pleasant, it is a fine life.", "밑 빠진 항아리를 끝없이 채우는 삶은?": "And forever filling a leaky jar?", "계속 채우면 그만이오.": "Just keep filling it.", "적이 물러나면 겁쟁이도 기뻐하오. 그 쾌락도 좋은 것이오?": "Cowards rejoice when the enemy retreats. Is that pleasure good too?", "아니, 쾌락에도 좋은 것과 나쁜 것이 있소.": "No. Some pleasures are good and some are bad.", "마음대로 하시오. 난 더 대답 안 하겠소.": "Do as you please. I won't answer any more.", "쾌락이 곧 좋음이라면, 나쁜 쾌락은 무엇이오?": "If pleasure is the good, what is a bad pleasure?", "소크라테스, 피레우스까지 자주 좀 오시오.": "You don't come down to the Piraeus as often as you ought, Socrates.", "기꺼이요. 늙는다는 건 어떻습니까?": "Gladly. Tell me, what is it like to grow old?", "소포클레스도 욕망은 사나운 주인이라 했지.": "Sophocles said the passions are a mad and furious master.", "재산이 많아서 편하신 건 아니고요?": "Isn't it your wealth that makes it easy?", "재산은 물려받은 만큼만 남기면 되오.": "I only want to leave as much as I inherited.", "부자라서 남을 속일 일이 없지.": "A rich man never needs to cheat anyone.", "늙으면 저승 이야기가 무서워지오.": "When you are old, the tales of the world below grow frightening.", "그래서 빚 없이 떠나는 게 정의라는 말씀이군요.": "So justice is leaving this world owing nothing?", "그렇소. 빌린 것을 돌려주는 것이오.": "Yes. It is giving back what you have borrowed.", "시모니데스도 그리 말했소.": "Simonides said so, too.", "칼을 맡긴 친구가 미쳐서 돌려 달라면?": "And if a friend left his sword with you, went mad, and asked for it back?", "그런 친구에게 칼을 돌려줄 순 없지.": "Then you can't give the sword back to him.", "난 제사 지내러 가 보겠소. 이야기는 아들이 이어받을 거요.": "I must go and see to the sacrifices. My son will carry on the argument.", "언제나 그렇소? 칼을 생각해 보시오.": "Always? Think of the sword.", "아버지 대신 제가 이어받겠습니다.": "I will take over the argument from my father.", "시모니데스는 정의를 무엇이라 했소?": "What did Simonides say justice is?", "빚진 것을 갚는 게 정의라 했지요.": "Paying back what is owed.", "그 말을 그대는 어떻게 이해하오?": "And how do you understand that?", "정의는 친구를 돕고 적을 해치는 것이오.": "Justice is doing good to friends and harm to enemies.", "전쟁에서는 친구를 돕고 적과 싸우지요.": "In war, you help your friends and fight your enemies.", "평화로울 땐 정의가 어디에 쓸모 있소?": "And in peacetime, what is justice good for?", "돈을 맡길 때 쓸모 있지요.": "For keeping money safe.", "친구를 잘못 알아볼 때도 있소?": "Do we ever mistake who our friends are?", "있지요. 좋은 친구인 줄 알았는데.": "We do. We think someone is a good friend, and…", "그럼 진짜 좋은 사람이 친구지요.": "Then a friend is someone who is really good.", "말을 해치면 말은 더 좋아지오, 나빠지오?": "If you harm a horse, does it become better or worse?", "나빠지지요.": "Worse.", "사람도 해침을 당하면 덜 정의로워지겠구려.": "So a man, when harmed, becomes less just.", "그렇겠지요.": "I suppose so.", "그럼 정의로운 사람이 남을 덜 정의롭게 만들 수 있소?": "Then can a just man make others less just?", "정의로운 사람이 남을 해칠 리 없지요.": "A just man would never harm anyone.", "그럼 저도 선생님 편이 되지요.": "Then I am ready to fight at your side, Socrates.", "그가 '해친다'고 한 말이 둘이오.": "He speaks of 'harm' twice.", "트라시마코스가 짐승처럼 뛰어들었어요.": "Thrasymachus hurled himself at them like a wild beast.", "무슨 헛소리들이오! 묻기만 하지 말고 답을 해 보시오.": "What nonsense! Stop asking questions and give an answer yourself.", "나는 모르니 묻는 거요. 그대가 답해 주시오.": "I ask because I do not know. You answer, then.", "돈을 내면 대답해 주겠소.": "I'll answer if you pay me.", "정의는 강자의 이익일 뿐!": "Justice is nothing else than the interest of the stronger!", "강자란 누구요?": "And who is the stronger?", "나라를 다스리는 자가 법을 만들지.": "The rulers of a city make its laws.", "백성은 그 법을 따라야 하오.": "And the subjects must obey those laws.", "다스리는 자는 실수하지 않소?": "Do rulers never make mistakes?", "사람이니 실수도 하지.": "They are human. They make mistakes.", "그럼 정의로운 사람은 어떻게 되오?": "Then what becomes of the just man?", "정의란 남 좋은 일일 뿐이오.": "Justice is really another man's good.", "불의한 자가 늘 더 많이 갖소.": "The unjust man always has more.", "참주야말로 가장 행복하오.": "The tyrant is the happiest of all.", "양치기는 양을 위해 양을 치오?": "Does the shepherd tend his sheep for the sheep's sake?", "양치기도 결국 제 이익을 위해 양을 치지.": "The shepherd fattens his sheep for his own good.", "다스리는 자가 실수로 제게 해로운 명령을 내리면?": "And if a ruler, by mistake, gives an order that harms himself?", "강자에게 해로운 명령이라도 따르는 게 정의요.": "Then justice is obeying it, even against the interest of the stronger.", "트라시마코스의 얼굴이 붉어졌어요.": "And then Thrasymachus blushed.", "양치기의 기술은 양을 위한 것이오.": "The art of the shepherd is concerned only with the good of the sheep.", "강자에게 이로운 것과 해로운 것을, 그가 둘 다 정의라 했소.": "He called both what helps the stronger and what harms him 'justice'.", "법은 많은 약자들이 둘러친 울타리요. 사자 새끼를 길들이듯 강자를 길들이지.": "Laws are a fence put up by the many weak. They tame the strong like young lions.", "제우스는 염치와 정의를 몇 사람이 아니라 모두에게 나눠 주었소. 그래서 나라가 서는 거요.": "Zeus gave reverence and justice not to a few but to all. That is why cities can stand.", "'법'을 두고 소피스트 둘이 맞서오. 링에 올려 보시오.": "Two sophists clash over 'law'. Put them in the ring.", "빌린 것을 갚고 거짓말하지 않으면, 죽을 때 두려울 게 없소.": "Pay what you borrowed and tell no lies, and you need not fear death.", "친구에게는 좋은 것을, 적에게는 해를 갚는 게 정의지요.": "Justice is giving good to friends and evil to enemies.", "다 헛소리! 어느 나라든 다스리는 자가 제 이익에 맞게 법을 만들고 그걸 정의라 부르오.": "Nonsense, all of it! In every city the rulers make laws for their own interest and call that justice.", "피레우스에서 온 세 사람이 저마다 '정의'를 말하오. 셋을 함께 링에 올려 보시오.": "Three men from the Piraeus each speak of 'justice'. Put all three in the ring.", "근원": "Origin", "아페이론": "Apeiron", "하나와 여럿": "One & Many", "수": "Number", "조화": "Harmony", "영혼": "Soul", "4원소": "Four Roots", "사랑과 투쟁": "Love & Strife", "변화": "Change", "하나": "The One", "움직임": "Motion", "생겨남": "Coming-to-be", "정의": "Justice", "무한분할": "Divisibility", "불가분": "Indivisible", "허공": "Void", "감각": "Senses", "경건": "Piety", "아름다움": "Beauty", "척도": "Measure", "설득": "Persuasion", "덕": "Virtue", "불의": "Injustice", "쾌락": "Pleasure", "법": "Law", "αρχή · 아르케": "αρχή · arche", "άπειρον · 무한정자": "άπειρον · the boundless", "εν και πολλά · 헨 카이 폴라": "εν και πολλά · hen kai polla", "αριθμός · 아리트모스": "αριθμός · arithmos", "αρμονία · 하르모니아": "αρμονία · harmonia", "ψυχή · 프쉬케": "ψυχή · psyche", "ριζώματα · 네 뿌리": "ριζώματα · the four roots", "φιλότης · νείκος · 필로테스 · 네이코스": "φιλότης · νείκος · philotes · neikos", "μεταβολή · 메타볼레": "μεταβολή · metabole", "εν · 헨": "εν · hen", "κίνησις · 키네시스": "κίνησις · kinesis", "γένεσις · 게네시스": "γένεσις · genesis", "δίκη · 디케": "δίκη · dike", "επ' άπειρον διαίρεσις · 에프 아페이론 디아이레시스": "επ' άπειρον διαίρεσις · ep' apeiron diairesis", "αδιαίρετον · 아디아이레톤": "αδιαίρετον · adiaireton", "κενόν · 케논": "κενόν · kenon", "οσιότης · 호시오테스": "οσιότης · hosiotes", "το καλόν · 토 칼론": "το καλόν · to kalon", "μέτρον · 메트론": "μέτρον · metron", "πειθώ · 페이토": "πειθώ · peitho", "αρετή · 아레테": "αρετή · arete", "αδικία · 아디키아": "αδικία · adikia", "ηδονή · 헤도네": "ηδονή · hedone", "νόμος · 노모스": "νόμος · nomos", "αίσθησις · 아이스테시스": "αίσθησις · aisthesis", "2장에서 열려요": "Opens in Chapter 2", "3장에서 열려요": "Opens in Chapter 3", "물": "Water", "모든 것을 적시고 살리는 것. 땅도 물 위에 떠 있다": "What wets and nourishes all things. Even the earth floats on water", "불": "Fire", "영원히 살아 있는 불. 멈추지 않고 타오르며 바뀐다": "An ever-living fire, kindling in measures and going out in measures", "어느 것으로도 정해지지 않은 것. 물이 근원이라면 불은 어디서 왔겠는가": "What is fixed as nothing. If water were the first principle, where would fire come from?", "공기": "Air", "짙어지고 엷어지며 모든 것이 되는 것": "Thickening and thinning, it becomes all things", "재료가 아니라 짜임새. 현의 길이를 반으로 줄이면 한 옥타브가 오른다": "Not a stuff but a structure. Halve a string and the note rises an octave", "흙": "Earth", "모든 것이 나와서 돌아가는 곳. 우리도 흙과 물에서 생겨났다": "Where all things come from and end. We are all born of earth and water", "네 뿌리": "Four roots", "하나가 아니라 넷의 섞임": "Not one, but a mixture of four", "원자와 허공": "Atoms and void", "나눌 수 없는 것들과 그것들이 움직이는 빈자리": "Uncuttable things, and the empty space they move in", "끝도 경계도 성질도 정해지지 않은 것. 모든 대립하는 것들이 여기서 나온다": "Without end, border or quality. All the opposites come out of it", "정해지지 않은 하나에서 뜨거움과 차가움 같은 대립자들이 갈라져 나온다": "From the one boundless thing, opposites like hot and cold split off", "공기 하나가 짙어지면 바람·구름·물·흙이, 엷어지면 불이 된다": "Air alone: thickened, it becomes wind, cloud, water, earth; thinned, fire", "현의 비율, 별의 운행. 모든 것의 짜임새는 수로 셀 수 있다": "The ratios of strings, the courses of the stars. The structure of all things can be counted", "활과 리라처럼 서로 당기는 힘들의 긴장": "The tension of opposite pulls, as in the bow and the lyre", "수의 비율로 맞춰진 질서": "An order tuned by ratios of number", "사물을 움직이는 힘. 자석에도 있다": "The power that moves things. Even the magnet has one", "몸을 묶어 주는 숨": "The breath that holds the body together", "죽지 않고 몸을 옮겨 다니는 것": "Something deathless that passes from body to body", "물, 불, 공기, 흙. 생겨남도 사라짐도 없이 섞이고 나뉠 뿐": "Fire, water, earth, air. No birth, no death: only mixing and parting", "섞는 힘과 가르는 힘이 번갈아 우주를 다스린다": "A force that mixes and a force that splits rule the cosmos by turns", "투쟁이 만물의 아버지다. 대립이 곧 정의다": "War is the father of all. Strife is justice", "흐름": "Flux", "같은 강에 들어가도 늘 다른 물이 흘러온다. 멈추지 않고 흐르며 바뀐다": "On those who step into the same rivers, different waters flow. All things flow and change", "불변": "Changeless", "있는 것은 생겨나지도 사라지지도, 변하지도 않는다": "What is neither comes to be, nor perishes, nor changes", "역설": "Paradox", "움직임과 변화는 모순을 낳으니 있을 수 없다": "Motion and change breed contradictions, so they cannot be", "섞임": "Mixture", "변화란 이미 있던 것들이 섞이고 갈라지는 일": "Change is things that already exist mixing and separating", "새로 생기는 건 없다. 네 뿌리가 섞이고 갈라질 뿐": "Nothing new is born. The four roots only mix and part", "원자": "Atoms", "나눌 수 없는 원자들이 허공 속에서 자리를 바꾸는 일": "Uncuttable atoms changing places in the void", "무한한 하나": "The boundless One", "허공이 없으니 아무것도 움직이거나 변하지 않는다": "There is no void, so nothing moves or changes", "낮과 밤, 오르막과 내리막처럼 대립하는 것들이 이루는 하나": "The one made of opposites: day and night, the way up and the way down", "틈도 차이도 없이 빈틈없이 이어진 하나": "One and continuous, without a gap or a difference", "매 순간 멈춰 있는 화살, 거북이를 끝내 따라잡지 못하는 아킬레우스. 모순이라 있을 수 없는 것": "The arrow at rest at every instant; Achilles who never catches the tortoise. A contradiction, so impossible", "모든 것이 움직여서 말로 붙잡을 수조차 없는 것": "Everything moves, so nothing can even be pinned down in words", "새로 생기는 건 없다. 모든 것 속에 모든 것의 몫이 섞여 있다": "Nothing new comes to be. In everything a portion of everything is mixed", "태어남은 없다. 네 뿌리가 사랑으로 섞이고 미움으로 갈라진다": "There is no birth. The four roots mix in Love and part in Strife", "있는 것은 생겨나지도 사라지지도 않는다. 섞이는 것도 움직임이다": "What is neither comes to be nor perishes. Even mixing is a kind of motion", "사물들이 시간의 질서에 따라 서로 치르는 대가": "The penalty things pay to one another, according to the order of time", "싸움 그 자체가 정의다": "Strife itself is justice", "있는 것을 사슬로 묶어 생겨나지도 사라지지도 못하게 하는 여신": "The goddess who holds what is in fetters, so it can neither come to be nor perish", "빚진 것을 갚고 거짓말하지 않는 것": "Speaking the truth and paying your debts", "친구에게 이롭고 적에게 해로운 것": "Good to friends and harm to enemies", "강자의 이익. 다스리는 자가 제 이익에 맞게 법을 만든다": "The interest of the stronger. Rulers make laws to suit themselves", "자연에 따르면 강자가 약자보다 더 갖는 것": "By nature, the stronger having more than the weaker", "모두가 나눠 가진 것. 그래서 누구나 나랏일에 한마디 할 수 있다": "A share given to all, so anyone may speak on the city's affairs", "다스림 받는 이를 돌보는 것. 양치기의 기술은 양을 위한 것이다": "Caring for those who are ruled. The shepherd's art is for the good of the sheep", "끝없이 나뉜다면 크기가 사라지니, 여럿은 있을 수 없다": "If things divide without end, size vanishes; so there cannot be many", "아무리 나눠도 가장 작은 것은 없다": "However far you divide, there is no smallest", "있는 것은 하나라서 나눌 틈이 없다": "What is, is one: there is no gap to divide it by", "나뉘면 틈(빈 곳)이 생기는데, 빈 곳은 없다": "Division would make a gap (an empty place), and there is no empty place", "나눌 수 없는 원자가 셀 수 없이 많다": "Uncuttable atoms, countless in number", "없는 것도 있는 것만큼 있다. 원자들이 움직이는 빈자리": "What is not exists no less than what is: the empty place where atoms move", "허공은 없으니 아무것도 움직이지 않는다": "There is no void, so nothing moves", "신들이 사랑하는 것": "What the gods love", "신들도 서로 다투니, 같은 일이 경건하면서 경건하지 않게 된다": "The gods quarrel, so the same act is both pious and impious", "아름다운 처녀": "A beautiful maiden", "여신 곁의 처녀는 아름답지 않다. 예는 아름다움 그 자체가 아니다": "Beside a goddess the maiden is not beautiful. An example is not beauty itself", "사람은 만물의 척도. 느끼는 대로가 참이다": "Man is the measure of all things. As things seem to each, so they are", "그렇다면 \"프로타고라스가 틀렸다\"는 생각도 참이 된다": "Then the opinion \"Protagoras is wrong\" is true as well", "연설술은 무엇이든 설득한다. 옳고 그름을 몰라도": "Rhetoric persuades about anything, without knowing right or wrong", "정의를 배운 이는 정의롭다. 그런데 제자가 정의롭지 못하게 쓴다면?": "Whoever has learned justice is just. So what if a pupil uses it unjustly?", "남을 다스리는 힘": "The power to rule over others", "착한 노예는 다스리지 않는다. 덕의 예가 아니라 덕이 무엇인지를 물었다": "A good slave does not rule. I asked what virtue is, not for an example of it", "당하는 쪽이 더 나쁘다. 참주는 하고 싶은 대로 하니 행복하다": "Suffering it is worse. The tyrant does as he likes, so he is happy", "저지르는 쪽이 더 부끄럽다면, 더 나쁜 것도 저지르는 쪽이다": "If doing injustice is more shameful, doing it is also the greater evil", "쾌락이 곧 좋음. 욕망을 키우고 마음껏 채워라": "Pleasure is the good. Let your desires grow, and fill them", "좋은 쾌락과 나쁜 쾌락이 있다면, 쾌락은 좋음 그 자체가 아니다": "If there are good and bad pleasures, pleasure is not the good itself", "약자들이 강자를 묶어 두려고 만든 굴레": "A yoke the weak made to bind the strong", "제우스가 모두에게 나눠 준 염치와 정의. 그래서 나라가 선다": "Reverence and justice, given by Zeus to all. That is why cities stand", "단맛도 쓴맛도 관습. 감각은 원자의 진실을 보여 주지 못한다": "Sweet and bitter are by convention. The senses cannot show the truth of atoms", "보고 듣고 배우는 것이 가장 확실한 증인이다": "What can be seen, heard and learned is the surest witness", "눈과 귀는 길을 잃게 한다. 이성으로 판가름하라": "Eyes and ears lead astray. Judge by reason", "경건한 것은 경건하기 때문에 신들이 사랑하는가, 아니면 신들이 사랑하기 때문에 경건한가?": "Is the pious loved by the gods because it is pious, or is it pious because it is loved by the gods?", "『에우튀프론』 10a": "Euthyphro 10a", "아름다운 것들은 어렵다.": "What is beautiful is difficult.", "『대 히피아스』 304e": "Hippias Major 304e", "모든 생각이 참이라면, \"프로타고라스가 틀렸다\"는 생각도 참이 된다.": "If every opinion is true, then the opinion of those who think Protagoras is wrong is true as well.", "『테아이테토스』 171a": "Theaetetus 171a", "연설술은 기술이 아니라 아첨이다. 요리가 의술을 흉내 내듯, 정의를 흉내 낼 뿐이다.": "Rhetoric is not an art but a knack, a flattery. As cookery is to medicine, so is rhetoric to justice.", "『고르기아스』 464d–465c": "Gorgias 464d–465c", "덕의 벌떼를 늘어놓지 말고, 그 모든 덕을 덕이게 하는 하나를 말해 주시오.": "I ask for one virtue and you give me a swarm. Tell me the one nature that makes them all virtues.", "『메논』 72a–c": "Meno 72a–c", "불의를 저지르는 것이 불의를 당하는 것보다 더 나쁘다.": "To do injustice is worse than to suffer it.", "『고르기아스』 469b, 474b": "Gorgias 469b, 474b", "욕망을 끝없이 채우는 삶은 체로 밑 빠진 항아리에 물을 붓는 것과 같다.": "The life of endless desire is like pouring water into a leaky jar with a sieve.", "『고르기아스』 493b–494a": "Gorgias 493b–494a", "미친 친구에게 맡겨 둔 칼을 돌려주는 것도 정의인가?": "If a friend deposited arms with me when in his right mind, and asks for them when he is not, ought I to give them back?", "『국가』 1권 331c": "Republic I, 331c", "누구든 해치는 것은 정의로운 사람이 하는 일이 아니다.": "To injure a friend or anyone else is not the act of a just man.", "『국가』 1권 335d–e": "Republic I, 335d–e", "어떤 기술도 자기 이익이 아니라 그것이 돌보는 쪽의 이익을 구한다. 양치기의 기술은 양을 위한 것이다.": "No art seeks its own interest, but the interest of its subject. The art of the shepherd is concerned only with the good of his sheep.", "『국가』 1권 342c–e": "Republic I, 342c–e", "대 히피아스": "Hippias Major", "테아이테토스": "Theaetetus", "국가 1권": "Republic I", "소크라테스의 변명": "Apology", "이데아는 사물과 따로 떨어진 참된 실재라네…": "The Forms are the true reality, apart from things…", "아닌 것 같은데요?": "I don't think so?", "시인은 나라에서 추방해야 하네.": "The poets must be banished from the city.", "엥, 그런가요?": "Huh, must they?", "수호자들은 재산도 가족도 함께 나눠야 하네.": "The guardians must hold property and families in common.", "음… 모두의 것은 아무도 돌보지 않던데요.": "Hm… what is common to the greatest number gets the least care.", "좋음은 하나라네. 좋음의 이데아.": "The good is one. The Form of the Good.", "글쎄요, 좋음은 여러 뜻으로 말해지는걸요.": "Well, 'good' is said in many ways.", "참 대단한 분이셨지...": "What a man he was..."};
+let LANG=(()=>{try{const v=localStorage.getItem('agora-ring:lang');if(v==='ko'||v==='en')return v;}catch(e){}return /^ko\b/i.test(navigator.language||'ko')?'ko':'en';})();
+const L=(ko,en)=>LANG==='en'?en:ko;
+const tr=t=>LANG==='en'&&t&&EN_[t]!=null?EN_[t]:t;
+const pn=pid=>tr(P[pid].name); // a person's name
+const ob=n=>L(`${n} 오볼`,`${n} ${n===1?'obol':'obols'}`);
 
 /* ---------------- data ---------------- */
 const SKIN='#d9a070', EYE='#2a1c18', SANDAL='#5a3c22', OUT='#1a1418', GOLD='#e8c35a';
@@ -839,7 +858,7 @@ function uiRects(){
 function underUI(x,y){return uiRects().some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1);}
 const isMobile=()=>matchMedia('(max-width:700px)').matches;
 function compactLabels(){ // short button labels so the phone header fits on one line
-  $('soundbtn').title=SND.on?'소리 켬':'소리 끔';$('soundicon').src=iconURL(SND.on?ICON_SND_ON:ICON_SND_OFF,'#f2ead9');
+  $('soundbtn').title=SND.on?L('소리 켬','Sound on'):L('소리 끔','Sound off');$('soundicon').src=iconURL(SND.on?ICON_SND_ON:ICON_SND_OFF,'#f2ead9');
 }
 // desktop: shrink the scale a little at a time until the ring (and the column in front of it) clears the bottom panels
 function layout(){
@@ -962,7 +981,8 @@ let ending=0,endT=0,endFrom=0,skyT=0,endModal=false,dayOver=false,modalOpen=fals
 let heardLines=new Set(); // every line the player has seen in a bubble
 let owl={state:'perch',turnUntil:0,nextTurn:0,ft:0};
 let now=performance.now();
-const CORNERS=['홍코너','청코너','백코너','황코너'];
+const CORNERS=['홍코너','청코너','백코너','황코너'],CORNERS_EN=['RED','BLUE','WHITE','GOLD'];
+const cornerName=i=>L(CORNERS[i],CORNERS_EN[i]);
 
 const CAPS={1:[2,3,4,4],2:[2,2,3,4],3:[2,2,2,3]}; // ring size by stage. Ch1: three-way 아페이론 at stage 1, four-way 수 at stage 2
 function slotsAvail(){return CAPS[chapter][Math.min(stage,3)];}
@@ -983,7 +1003,7 @@ let debate=null; // chapter 3: the refutation in progress {n, so, rule, answers,
 function socTalk(){ // Socrates points at someone he has not questioned yet
   const r=RULES.find(r=>r.elenchus&&liveIn(r)&&!solved.has(r.id)&&(!r.after||solved.has(r.after))&&npcs.some(m=>m.pid===r.who&&!m.hidden));
   if(!r)return P.sokrates.lines[0];
-  const nm=P[r.who].name;return {id:'so_who_'+r.who,kw:'',text:`${nm}${batchim(nm)?'은':'는'} 무엇을 안다고 하던가?`};
+  const k=P[r.who].name;return {id:'so_who_'+r.who,kw:'',text:L(`${k}${batchim(k)?'은':'는'} 무엇을 안다고 하던가?`,`What does ${pn(r.who)} claim to know?`)};
 }
 // walk grid: 4px cells over the agora floor, minus the ring, the HUD and every prop's foot
 const CELL=4,DIRS=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
@@ -1054,7 +1074,7 @@ function hit(p){
   return list.find(n=>p.x>=n.x-9&&p.x<=n.x+9&&p.y>=n.y-21&&p.y<=n.y+2)||null;
 }
 function propAt(p){for(let i=PROPS.length-1;i>=0;i--){const q=PROPS[i];if(q.act&&p.x>=q.x&&p.x<q.x+q.img.width&&p.y>=q.y&&p.y<q.y+q.img.height)return q;}return null;}
-const ACT_TIP={oracle:'델포이의 신녀 · 신탁 2 오볼',shop:'물장수 · 물 +25에 3 오볼',garden:'콩밭 · 철학자를 끌어다 놓으면 일해요'};
+const actTip=k=>({oracle:L('델포이의 신녀 · 신탁 2 오볼','The Pythia of Delphi · an oracle for 2 obols'),shop:L('물장수 · 물 +25에 3 오볼','Water seller · +25 water for 3 obols'),garden:L('콩밭 · 철학자를 끌어다 놓으면 일해요','Bean field · drop a philosopher here to work')})[k];
 function setTip(t,x,y){const d=$('ptip');if(!t){d.hidden=true;return;}d.hidden=false;if(d.textContent!==t)d.textContent=t;d.style.left=Math.round(x*SCALE-d.offsetWidth/2)+'px';d.style.top=Math.round(y*SCALE-d.offsetHeight-8)+'px';}
 const inRing=p=>p.x>=RING.x0-6&&p.x<=RING.x1+6&&p.y>=RING.y0-10&&p.y<=RING.y1+14;
 function hideOtherBubbles(n){npcs.forEach(m=>{if(m!==n&&m.state!=='ring'&&!FIXED(m))m.bubbleUntil=0;});}
@@ -1064,14 +1084,14 @@ function onClick(n){
   if(fighting)return;
   if(chapter===3&&ending===2&&(n.pid==='plato'||n.pid==='aristotle')){nightTalk();return;}
   if(STILL(n)){showLine(n,P[n.pid].lines[0]);return;}
-  if(isSoc(n)){showLine(n,socTalk());n.isNew=false;heard.add(n.pid);if(!debate)narrate('소피스트를 끌어다 소크라테스에게 놓으면 문답이 시작돼요.');return;}
+  if(isSoc(n)){showLine(n,socTalk());n.isNew=false;heard.add(n.pid);if(!debate)narrate(L('소피스트를 끌어다 소크라테스에게 놓으면 문답이 시작돼요.','Drag a sophist onto Socrates to start a dialogue.'));return;}
   const lines=unlocked(n.pid);
   if(n.shown&&(n.state==='ring'||now<n.bubbleUntil))n.li=(n.li+1)%lines.length;
   showLine(n,lines[n.li%lines.length]);
   n.isNew=false;n.seen=lines.length;heard.add(n.pid);
   if(chapter===3){}
-  else if(stage===0&&heard.has('thales')&&heard.has('heraclitus')&&!ring.some(Boolean))narrate('두 사람이 서로 반대되는 말을 하는 것 같아요. 둘 다 위쪽 링으로 끌어다 놓아 보세요.');
-  else if(stage===0&&!ring.some(Boolean))narrate('다른 사람도 눌러 보세요.');
+  else if(stage===0&&heard.has('thales')&&heard.has('heraclitus')&&!ring.some(Boolean))narrate(L('두 사람이 서로 반대되는 말을 하는 것 같아요. 둘 다 위쪽 링으로 끌어다 놓아 보세요.','Those two seem to say opposite things. Drag them both into the ring above.'));
+  else if(stage===0&&!ring.some(Boolean))narrate(L('다른 사람도 눌러 보세요.','Tap the other one too.'));
   updateRingUI();
 }
 cv.addEventListener('pointerdown',e=>{
@@ -1089,12 +1109,12 @@ cv.addEventListener('pointerdown',e=>{
 cv.addEventListener('pointermove',e=>{
   const p=toScene(e);
   if(!drag){hover=hit(p);const q=hover?null:propAt(p),gd=!hover&&!q&&inGarden(p);cv.className=hover?'grab':(q||gd)?'act':'';
-    setTip(q?ACT_TIP[q.act]:gd?ACT_TIP.garden:null,q?q.x+q.img.width/2:BEANS.x+BEANS.w/2,q?q.y:BEANS.y-10);return;}
+    setTip(q?actTip(q.act):gd?actTip('garden'):null,q?q.x+q.img.width/2:BEANS.x+BEANS.w/2,q?q.y:BEANS.y-10);return;}
   const n=drag.n;
   if(!drag.moved&&Math.hypot(p.x-drag.sx,p.y-drag.sy)>3){
     if(fighting)return;
-    if(isSoc(n)){drag=null;narrate('소크라테스는 그 자리에서 기다려요. 다른 사람을 소크라테스에게 데려오세요.');return;}
-    if(STILL(n)){showLine(n,P[n.pid].lines[1]||P[n.pid].lines[0]);drag=null;narrate(`${P[n.pid].name}은(는) 꿈쩍도 하지 않아요.`);return;}
+    if(isSoc(n)){drag=null;narrate(L('소크라테스는 그 자리에서 기다려요. 다른 사람을 소크라테스에게 데려오세요.','Socrates waits where he stands. Bring others to him.'));return;}
+    if(STILL(n)){showLine(n,P[n.pid].lines[1]||P[n.pid].lines[0]);drag=null;narrate(L(`${P[n.pid].name}은(는) 꿈쩍도 하지 않아요.`,`${pn(n.pid)} won't budge.`));return;}
     drag.moved=true;
     if(n.state==='ring'){ring[n.slot]=null;n.slot=-1;updateRingUI();}
     if(n.state==='farm'&&n.paid>0)farmed.add(n.pid); // pulled off the plot early: no second shift today
@@ -1117,11 +1137,11 @@ cv.addEventListener('pointercancel',()=>{if(drag&&drag.moved)toAgora(drag.n,fals
 
 const atSoc=(p,s)=>Math.abs(p.x-s.x)<=12&&p.y>=s.y-26&&p.y<=s.y+8;
 function placeInRing(n){
-  if(debate){narrate('문답 중에는 링에 사람을 올릴 수 없어요. 조각 판의 "그만두기"를 누르면 링이 비어요.');toAgora(n,false);return;}
+  if(debate){narrate(L('문답 중에는 링에 사람을 올릴 수 없어요. 조각 판의 "그만두기"를 누르면 링이 비어요.','No one can enter the ring during a dialogue. Press "Leave" on the fragment tray to clear it.'));toAgora(n,false);return;}
   const max=slotsAvail();const idx=ring.findIndex((s,i)=>i<max&&!s);
-  if(idx<0){narrate(`링이 꽉 찼어요. 지금은 ${max}명까지 올릴 수 있어요.`);toAgora(n,true);return;}
+  if(idx<0){narrate(L(`링이 꽉 찼어요. 지금은 ${max}명까지 올릴 수 있어요.`,`The ring is full. It holds ${max} for now.`));toAgora(n,true);return;}
   ring[idx]=n;n.slot=idx;n.state='ring';n.x=SLOT[idx][0];n.y=SLOT[idx][1];n.flip=idx%2===1;n.bubbleUntil=now+2500;
-  if(stage===0&&ring.filter(Boolean).length>=2&&!solved.size)narrate('준비됐어요. 링 위의 종을 쳐서 싸움을 붙이세요.');
+  if(stage===0&&ring.filter(Boolean).length>=2&&!solved.size)narrate(L('준비됐어요. 링 위의 종을 쳐서 싸움을 붙이세요.','Ready. Ring the bell above the ring to start the fight.'));
   updateRingUI();
 }
 function toAgora(n,fromRing){
@@ -1137,14 +1157,14 @@ function startFight(){
   if(debate){startRefute();return;}
   const occ=ring.filter(Boolean);
   if(fighting||ending===1||modalOpen)return;
-  if(occ.length<2){narrate('혼자서는 싸울 수 없어요. 두 사람 이상 올려 주세요.');return;}
+  if(occ.length<2){narrate(L('혼자서는 싸울 수 없어요. 두 사람 이상 올려 주세요.','No one can fight alone. Put two or more in the ring.'));return;}
   if(water<=0&&ending!==2)return;
   const fb=$('fightbtn');fb.classList.remove('ding');void fb.offsetWidth;fb.classList.add('ding');sndBell();
   const rule=ruleFor(occ);
   const dud=!(rule&&!solved.has(rule.id)); // nothing new to win: no brawl, it just fizzles
   fighting={t:0,occ,next:0,dud};
-  if(dud){floatText('음 그렇군…',RING.cx,RING.y0+28,'#e9e2d0');narrate('음 그렇군…');}
-  else{npcs.forEach(m=>m.bubbleUntil=0);puff(RING.cx,RING.cy+12,10,9);narrate('땡! 논쟁이 시작됐어요.');}
+  if(dud){floatText(L('음 그렇군…','Hm, I see…'),RING.cx,RING.y0+28,'#e9e2d0');narrate(L('음 그렇군…','Hm, I see…'));}
+  else{npcs.forEach(m=>m.bubbleUntil=0);puff(RING.cx,RING.cy+12,10,9);narrate(L('땡! 논쟁이 시작됐어요.','Ding! The debate is on.'));}
   updateRingUI();
 }
 $('fightbtn').addEventListener('click',startFight);
@@ -1165,37 +1185,37 @@ function chipDrop(e,cancel){const d=chipDrag;chipDrag=null;if(!d||!d.on)return;i
 window.addEventListener('pointerup',e=>{if(chipDrag&&e.pointerId===chipDrag.id)chipDrop(e,false);});
 window.addEventListener('pointercancel',e=>{if(chipDrag&&e.pointerId===chipDrag.id)chipDrop(e,true);});
 $('chips').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b||!debate||fighting||chipNoClick)return;const i=+b.dataset.c,k=debate.on.indexOf(i);
-  if(k>=0)debate.on[k]=null;else{const e0=debate.on.indexOf(null);if(e0<0){narrate('링에는 두 말만 올릴 수 있어요. 링 위의 말을 눌러 내리세요.');return;}debate.on[e0]=i;}updateRingUI();});
+  if(k>=0)debate.on[k]=null;else{const e0=debate.on.indexOf(null);if(e0<0){narrate(L('링에는 두 말만 올릴 수 있어요. 링 위의 말을 눌러 내리세요.','Only two lines fit in the ring. Tap one in the ring to take it down.'));return;}debate.on[e0]=i;}updateRingUI();});
 $('trayre').addEventListener('click',()=>{if(!debate||fighting)return;debate.step=0;debate.playing=true;advanceFlow();updateRingUI();});
 $('trayx').addEventListener('click',endDebate);
 // chapter 3: elenchus — listen, then put the two fragments that collide in the ring and ring the bell
 const REFUTE_T=1.15;
 function startDebate(n,so){
-  const nm=P[n.pid].name,r=RULES.find(r=>r.elenchus&&r.who===n.pid&&liveIn(r));
+  const nm=P[n.pid].name,ne=pn(n.pid),r=RULES.find(r=>r.elenchus&&r.who===n.pid&&liveIn(r));
   const no=t=>{toAgora(n,false);narrate(t);};
-  if(debate)return no(`지금은 ${P[debate.n.pid].name}${batchim(P[debate.n.pid].name)?'과':'와'} 문답 중이에요.`);
-  if(!r)return no(`소크라테스가 ${nm}에게는 따로 물을 것이 없대요.`);
-  if(solved.has(r.id))return no(`${nm}의 말은 이미 논박했어요.`);
+  if(debate)return no(L(`지금은 ${P[debate.n.pid].name}${batchim(P[debate.n.pid].name)?'과':'와'} 문답 중이에요.`,`Socrates is already questioning ${pn(debate.n.pid)}.`));
+  if(!r)return no(L(`소크라테스가 ${nm}에게는 따로 물을 것이 없대요.`,`Socrates has nothing to ask ${ne}.`));
+  if(solved.has(r.id))return no(L(`${nm}의 말은 이미 논박했어요.`,`${ne} has already been refuted.`));
   if(r.after&&!solved.has(r.after))return no(r.wait);
   if(modalOpen||(water<=0&&ending!==2))return no('');
   ring.forEach(m=>{if(m)toAgora(m,true);});ring.fill(null);
   n.state='debate';n.path=[];n.x=so.x+15;n.y=so.y;n.flip=true;so.flip=false;
   debate={n,so,rule:r,answers:r.flow.filter(x=>x[0]==='a').map(x=>x[1]),heard:0,step:0,playing:true,on:[null,null]};
-  narrate(`${nm}${batchim(nm)?'과':'와'} 문답을 시작해요. 화면을 누르면 다음 말로 넘어가요.`);
+  narrate(L(`${nm}${batchim(nm)?'과':'와'} 문답을 시작해요. 화면을 누르면 다음 말로 넘어가요.`,`The dialogue with ${ne} begins. Tap the screen for each next line.`));
   updateRingUI();advanceFlow(); // first line now; each tap brings the next
 }
 function advanceFlow(){
   const d=debate;if(!d||!d.playing)return;
-  if(d.step>=d.rule.flow.length){d.playing=false;d.so.bubbleUntil=d.n.bubbleUntil=0;narrate('서로 부딪치는 두 말을 골라 링에 올리고 종을 치세요.');updateRingUI();return;}
+  if(d.step>=d.rule.flow.length){d.playing=false;d.so.bubbleUntil=d.n.bubbleUntil=0;narrate(L('서로 부딪치는 두 말을 골라 링에 올리고 종을 치세요.','Pick the two lines that collide, put them in the ring, and ring the bell.'));updateRingUI();return;}
   const [k,t]=d.rule.flow[d.step],id=`fl_${d.rule.id}_${d.step}`;d.step++;
-  if(k==='n'){d.so.bubbleUntil=d.n.bubbleUntil=0;narrate(t);}
+  if(k==='n'){d.so.bubbleUntil=d.n.bubbleUntil=0;narrate(tr(t));}
   else if(k==='q'){showLine(d.so,{id,kw:'',text:t},1e8);d.n.bubbleUntil=0;}
   else if(k==='s'){showLine(d.n,{id,kw:'',text:t},1e8);d.so.bubbleUntil=0;}
-  else{const i=d.answers.indexOf(t);showLine(d.n,{id,kw:'',text:`${i+1}. ${t}`},1e8);d.so.bubbleUntil=0;if(i+1>d.heard){d.heard=i+1;updateRingUI();}}
+  else{const i=d.answers.indexOf(t);showLine(d.n,{id,kw:'',text:t,no:i+1},1e8);d.so.bubbleUntil=0;if(i+1>d.heard){d.heard=i+1;updateRingUI();}}
 }
 function endDebate(){ // walk away without a verdict
   const d=debate;if(!d||fighting)return;debate=null;d.so.bubbleUntil=d.n.bubbleUntil=0;toAgora(d.n,false);
-  narrate(`${P[d.n.pid].name}${batchim(P[d.n.pid].name)?'이':'가'} 어깨를 으쓱하고 돌아갔어요.`);updateAll();
+  narrate(L(`${P[d.n.pid].name}${batchim(P[d.n.pid].name)?'이':'가'} 어깨를 으쓱하고 돌아갔어요.`,`${pn(d.n.pid)} shrugs and walks off.`));updateAll();
 }
 function startRefute(){
   const d=debate;if(!d||fighting||modalOpen||ending===1||d.on.includes(null))return;
@@ -1204,7 +1224,7 @@ function startRefute(){
   d.playing=false;d.so.bubbleUntil=d.n.bubbleUntil=0;
   const pick=d.on.map(i=>i+1).sort((a,b)=>a-b),hitp=pick.join('+')===[...d.rule.pair].sort((a,b)=>a-b).join('+');
   fighting={t:0,next:0,deb:true,dud:!hitp,pick};
-  narrate(hitp?'땡! 두 말이 맞붙었어요.':'땡!');updateRingUI();
+  narrate(hitp?L('땡! 두 말이 맞붙었어요.','Ding! The two lines collide.'):L('땡!','Ding!'));updateRingUI();
 }
 function resolveRefute(){
   const f=fighting,d=debate;fighting=null;
@@ -1217,7 +1237,7 @@ function resolveRefute(){
     spend(15);d.on=[null,null];
     floatText('?',d.so.x,d.so.y-24,'#ffffff');floatText('?',d.n.x,d.n.y-24,'#ffffff');
     const agree=(d.rule.agree||[]).some(a=>f.pick.join('+')===[...a].sort((x,y)=>x-y).join('+'));
-    narrate('음 그렇군… '+(agree?'두 말이 같은 단어를 쓰지만 서로 맞는 말이에요. 부딪치는 쌍은 따로 있어요.':'두 말은 서로 부딪치지 않아요. 같은 단어로 엇갈리는 두 말을 찾아보세요.'));
+    narrate(L('음 그렇군… ','Hm, I see… ')+(agree?L('두 말이 같은 단어를 쓰지만 서로 맞는 말이에요. 부딪치는 쌍은 따로 있어요.','Those two share a word, but they agree with each other. The colliding pair is elsewhere.'):L('두 말은 서로 부딪치지 않아요. 같은 단어로 엇갈리는 두 말을 찾아보세요.',"Those two don't collide. Look for two lines that use the same word at cross purposes.")));
     checkDay();
   }
   updateAll();
@@ -1242,10 +1262,12 @@ function drawTokens(){ // fragments in the ring: small pixel speech bubbles with
 }
 $('fightbtn').style.backgroundImage=`url(${bellURL()})`;
 $('reseticon').src=iconURL(ICON_RESET,'#f2ead9');$('helpicon').src=iconURL(ICON_HELP,'#f2ead9');
-function kwLabel(k){return hiddenKw(k)&&!gotKw(k)?'???':k;} // hidden only in its own chapter
+function kwLabel(k){return hiddenKw(k)&&!gotKw(k)?'???':tr(k);} // hidden only in its own chapter
 const LINE_OWNER={};Object.entries(P).forEach(([pid,p])=>[...p.lines,...(Array.isArray(p.lines2)?p.lines2:[])].forEach(l=>LINE_OWNER[l.id]=pid));
 const batchim=w=>{const c=w.charCodeAt(w.length-1)-0xac00;return c>=0&&c<11172&&c%28>0;};
-const names=ids=>{const ns=[...new Set(ids.map(id=>P[LINE_OWNER[id]].name))];return ns.slice(0,-1).map(n=>n+(batchim(n)?'과':'와')).join(' ')+(ns.length>1?' ':'')+ns[ns.length-1];};
+const names=ids=>{const ns=[...new Set(ids.map(id=>P[LINE_OWNER[id]].name))];
+  if(LANG==='en'){const e=ns.map(tr);return e.length>1?e.slice(0,-1).join(', ')+' and '+e[e.length-1]:e[0];}
+  return ns.slice(0,-1).map(n=>n+(batchim(n)?'과':'와')).join(' ')+(ns.length>1?' ':'')+ns[ns.length-1];};
 // Wrong group on one topic: compare with this chapter's answers and say what is actually off.
 function sameTopicHint(occ,kw){
   const have=new Set(occ.map(n=>canon(n.shown))),out=[];
@@ -1258,29 +1280,33 @@ function sameTopicHint(occ,kw){
   }
   // a fight that's already over is hiding inside this group
   const done=cands.find(c=>solved.has(c.r.id)&&!c.missing.length&&c.extra.length);
-  if(done)out.push(`${names(done.k)}의 '${kw}' 싸움은 이미 결판났어요.`);
+  if(done)out.push(L(`${names(done.k)}의 '${kw}' 싸움은 이미 결판났어요.`,`The fight between ${names(done.k)} over '${kw}' is already settled.`));
   const open=cands.filter(c=>!solved.has(c.r.id)).sort((a,b)=>b.score-a.score);
-  const say=c=>c.missing.length&&!c.extra.length?`${c.missing.length===1?'한 사람':c.missing.length+'명'}이 더 있어야 해요.`
-    :!c.missing.length?`${c.extra.length===1?'한 사람':c.extra.length+'명'}이 필요 없이 끼어 있어요.`
-    :`${c.extra.length===1?'한 사람':c.extra.length+'명'}을 다른 사람으로 바꿔 보세요.`;
+  const say=c=>c.missing.length&&!c.extra.length?L(`${c.missing.length===1?'한 사람':c.missing.length+'명'}이 더 있어야 해요.`,`${c.missing.length===1?'One more person is':c.missing.length+' more people are'} needed.`)
+    :!c.missing.length?L(`${c.extra.length===1?'한 사람':c.extra.length+'명'}이 필요 없이 끼어 있어요.`,`${c.extra.length===1?"One person doesn't":c.extra.length+" people don't"} belong in this one.`)
+    :L(`${c.extra.length===1?'한 사람':c.extra.length+'명'}을 다른 사람으로 바꿔 보세요.`,`Try swapping ${c.extra.length===1?'one person':c.extra.length+' people'} for someone else.`);
   const best=open[0],ready=open.find(c=>!c.absent&&!c.tooBig);
   if(best&&(best.absent||best.tooBig)){
     const m=best.missing.length,who=m===1?'한 사람':m+'명';
     const need=best.extra.length?`${best.extra.length===1?'한 사람':best.extra.length+'명'}을 바꿔야 하는데`:`${who}이 더 있어야 하는데`;
-    out.push(best.absent?`${need}, ${m===1&&!best.extra.length?'그 사람은':'필요한 사람이'} 아직 아고라에 오지 않았어요.`:`${need}, 링이 아직 좁아요.`);
-    if(ready&&ready!==best)out.push('지금 할 수 있는 싸움은 따로 있어요. '+say(ready));
-    else out.push('다른 싸움을 먼저 풀어 보세요.');
+    const needE=best.extra.length?`${best.extra.length===1?'One person needs':best.extra.length+' people need'} swapping`:`${m===1?'One more person is':m+' more people are'} needed`;
+    out.push(best.absent?L(`${need}, ${m===1&&!best.extra.length?'그 사람은':'필요한 사람이'} 아직 아고라에 오지 않았어요.`,`${needE}, but ${m===1&&!best.extra.length?"that person hasn't":"the people needed haven't"} come to the agora yet.`)
+      :L(`${need}, 링이 아직 좁아요.`,`${needE}, but the ring is still too small.`));
+    if(ready&&ready!==best)out.push(L('지금 할 수 있는 싸움은 따로 있어요. ','There is another fight you can have right now. ')+say(ready));
+    else out.push(L('다른 싸움을 먼저 풀어 보세요.','Try another fight first.'));
   }else if(best)out.push(say(best));
-  else out.push(`이 사람들이 '${kw}'를 두고 벌일 싸움은 이미 다 끝났어요. 다른 단어를 찾아보세요.`);
+  else out.push(L(`이 사람들이 '${kw}'를 두고 벌일 싸움은 이미 다 끝났어요. 다른 단어를 찾아보세요.`,`Every fight these people could have over '${kw}' is already over. Look for another word.`));
   return out.join(' ');
 }
 function missMsg(occ){
-  if(occ.some(STILL))return '파르메니데스는 꿈쩍도 하지 않아요. 싸움이 되지 않아요.';
+  if(occ.some(STILL))return L('파르메니데스는 꿈쩍도 하지 않아요. 싸움이 되지 않아요.',"Parmenides won't budge. There's no fight here.");
   const kws=[...new Set(occ.map(n=>n.shown.kw))];
   const idle=occ.filter(n=>!n.shown.kw);
-  if(idle.length)return `${idle.map(n=>P[n.pid].name).join(', ')}의 말은 아무와도 겹치지 않는 혼잣말이에요. 같은 단어를 쓰는 사람끼리 올려 보세요.`;
-  if(kws.length===1)return `모두 '${kwLabel(kws[0])}'에 대해 말하지만 결판이 나지 않아요. `+sameTopicHint(occ,kwLabel(kws[0]));
-  return `서로 다른 단어로 말하고 있어요 (${kws.map(kwLabel).join(' / ')}). 동문서답 끝에 흩어졌어요. 같은 단어를 쓰는 사람끼리 올려 보세요.`;
+  if(idle.length)return L(`${idle.map(n=>P[n.pid].name).join(', ')}의 말은 아무와도 겹치지 않는 혼잣말이에요. 같은 단어를 쓰는 사람끼리 올려 보세요.`,
+    `${idle.map(n=>pn(n.pid)).join(', ')} ${idle.length>1?'are':'is'} saying something no one else is talking about. Put in people who use the same word.`);
+  if(kws.length===1)return L(`모두 '${kwLabel(kws[0])}'에 대해 말하지만 결판이 나지 않아요. `,`Everyone talks about '${kwLabel(kws[0])}', but nothing is settled. `)+sameTopicHint(occ,kwLabel(kws[0]));
+  return L(`서로 다른 단어로 말하고 있어요 (${kws.map(kwLabel).join(' / ')}). 동문서답 끝에 흩어졌어요. 같은 단어를 쓰는 사람끼리 올려 보세요.`,
+    `They are using different words (${kws.map(kwLabel).join(' / ')}). After talking past each other, they wander off. Put in people who use the same word.`);
 }
 function floatText(t,x=RING.cx,y=RING.y0+24,c='#fff'){texts.push({t,x,y,life:1.4,c});}
 const FIGHT_T=.96,DUD_T=1.1; // brawl length (60% of the old 1.6s), fizzle pause
@@ -1296,24 +1322,25 @@ function resolveFight(){
   ring.fill(null);occ.forEach(n=>toAgora(n,true));
   if(rule&&!solved.has(rule.id)){spend(8);obols+=3;applyRule(rule,occ);}
   else if(rule){spend(4);const f=rule.byOcc?fillInterp(rule,occ):[];
-    narrate(f.length?`이미 결판난 싸움이지만, ${f.map(([k,p])=>P[p].name).join(', ')}의 '${rule.kw}' 해석이 도감에 더해졌어요.`:'음 그렇군… 이미 결판난 싸움이에요. 구경꾼들이 하품을 해요.');checkDay();}
-  else{spend(15);narrate('음 그렇군… '+missMsg(occ));checkDay();}
+    narrate(f.length?L(`이미 결판난 싸움이지만, ${f.map(([k,p])=>P[p].name).join(', ')}의 '${rule.kw}' 해석이 도감에 더해졌어요.`,`Already settled, but the codex gained the reading of '${tr(rule.kw)}' by ${f.map(([k,p])=>pn(p)).join(', ')}.`)
+      :L('음 그렇군… 이미 결판난 싸움이에요. 구경꾼들이 하품을 해요.','Hm, I see… This fight is already settled. The onlookers yawn.'));checkDay();}
+  else{spend(15);narrate(L('음 그렇군… ','Hm, I see… ')+missMsg(occ));checkDay();}
   updateAll();
 }
 function stageUp(prev){
   const msgs=[];
   if(chapter===3){
-    if(prev<1&&stage>=1){spawn('protagoras','edge');spawn('gorgias','edge');spawn('meno','edge');msgs.push('프로타고라스, 고르기아스, 메논이 아고라에 들어왔어요.','이제부터 말 조각이 늘어나요. 조각 판을 스크롤해서 살펴보세요.');}
-    if(prev<2&&stage>=2){spawn('polus','edge');spawn('callicles','edge');msgs.push('폴로스와 칼리클레스가 아고라에 들어왔어요.','같은 단어를 쓰지만 서로 맞는 말이 점점 많아져요.');}
-    if(prev<3&&stage>=3){spawn('cephalus','edge');msgs.push('피레우스에서 늙은 케팔로스가 올라왔어요.','이제 링에 3명까지 올릴 수 있어요.');}
+    if(prev<1&&stage>=1){spawn('protagoras','edge');spawn('gorgias','edge');spawn('meno','edge');msgs.push(L('프로타고라스, 고르기아스, 메논이 아고라에 들어왔어요.','Protagoras, Gorgias and Meno have come into the agora.'),L('이제부터 말 조각이 늘어나요. 조각 판을 스크롤해서 살펴보세요.','From now on there are more fragments. Scroll the tray to see them all.'));}
+    if(prev<2&&stage>=2){spawn('polus','edge');spawn('callicles','edge');msgs.push(L('폴로스와 칼리클레스가 아고라에 들어왔어요.','Polus and Callicles have come into the agora.'),L('같은 단어를 쓰지만 서로 맞는 말이 점점 많아져요.','More and more lines share a word yet agree with each other.'));}
+    if(prev<3&&stage>=3){spawn('cephalus','edge');msgs.push(L('피레우스에서 늙은 케팔로스가 올라왔어요.','Old Cephalus has come up from the Piraeus.'),L('이제 링에 3명까지 올릴 수 있어요.','The ring now holds up to 3.'));}
   }else if(chapter===2){
-    if(prev<1&&stage>=1){spawn('zeno','edge');spawn('cratylus','edge');msgs.push('제논과 크라틸로스가 아고라에 들어왔어요.','헤라클레이토스와 파르메니데스에게 새로 할 말이 생겼어요.');}
-    if(prev<2&&stage>=2){spawn('anaxagoras','edge');spawn('melissus','edge');msgs.push('아낙사고라스와 멜리소스가 아고라에 들어왔어요.','이제 링에 3명까지 올릴 수 있어요.');}
-    if(prev<3&&stage>=3)msgs.push('이제 링에 4명까지 올릴 수 있어요.','몇몇 사람이 \'나눈다\'는 말을 하기 시작했어요.');
+    if(prev<1&&stage>=1){spawn('zeno','edge');spawn('cratylus','edge');msgs.push(L('제논과 크라틸로스가 아고라에 들어왔어요.','Zeno and Cratylus have come into the agora.'),L('헤라클레이토스와 파르메니데스에게 새로 할 말이 생겼어요.','Heraclitus and Parmenides have something new to say.'));}
+    if(prev<2&&stage>=2){spawn('anaxagoras','edge');spawn('melissus','edge');msgs.push(L('아낙사고라스와 멜리소스가 아고라에 들어왔어요.','Anaxagoras and Melissus have come into the agora.'),L('이제 링에 3명까지 올릴 수 있어요.','The ring now holds up to 3.'));}
+    if(prev<3&&stage>=3)msgs.push(L('이제 링에 4명까지 올릴 수 있어요.','The ring now holds up to 4.'),L('몇몇 사람이 \'나눈다\'는 말을 하기 시작했어요.',"Some people have started talking about 'dividing'."));
   }else{
-  if(prev<1&&stage>=1){spawn('anaximander','edge');spawn('anaximenes','edge');msgs.push('아낙시만드로스와 아낙시메네스가 아고라에 들어왔어요.','이제 링에 3명까지 올릴 수 있어요.');}
-  if(prev<2&&stage>=2){spawn('pythagoras','edge');msgs.push('피타고라스가 아고라에 들어왔어요. 콩밭은 피해서 걸어요.','이제 링에 4명까지 올릴 수 있어요.','몇몇 사람에게 새로 할 말이 생겼어요.');}
-  if(prev<3&&stage>=3){spawn('xenophanes','edge');msgs.push('크세노파네스가 아고라에 들어왔어요.');}
+  if(prev<1&&stage>=1){spawn('anaximander','edge');spawn('anaximenes','edge');msgs.push(L('아낙시만드로스와 아낙시메네스가 아고라에 들어왔어요.','Anaximander and Anaximenes have come into the agora.'),L('이제 링에 3명까지 올릴 수 있어요.','The ring now holds up to 3.'));}
+  if(prev<2&&stage>=2){spawn('pythagoras','edge');msgs.push(L('피타고라스가 아고라에 들어왔어요. 콩밭은 피해서 걸어요.','Pythagoras has come into the agora. He walks around the bean field.'),L('이제 링에 4명까지 올릴 수 있어요.','The ring now holds up to 4.'),L('몇몇 사람에게 새로 할 말이 생겼어요.','Some people have something new to say.'));}
+  if(prev<3&&stage>=3){spawn('xenophanes','edge');msgs.push(L('크세노파네스가 아고라에 들어왔어요.','Xenophanes has come into the agora.'));}
   }
   npcs.forEach(n=>{if(STILL(n))return;const c=unlocked(n.pid).length;if(n.seen&&c>n.seen)n.isNew=true;});
   return msgs;
@@ -1328,15 +1355,15 @@ function applyRule(rule,occ){
   const filled=[];
   filled.push(...fillInterp(rule,occ));
   const unl=[];
-  if(rule.elenchus||rule.id==='T2'){const b=bookOf(rule.id);if(b)unl.push(`『${b.t}』에 한 장이 채워졌어요. (${b.rules.filter(id=>solved.has(id)).length} / ${b.rules.length})`);}
-  if(rule.id==='E8'&&!met.has('polemarchus')){spawn('polemarchus','edge');unl.push('케팔로스의 아들 폴레마르코스가 아버지의 이야기를 이어받으러 왔어요.');}
-  if(rule.id==='E9'&&!met.has('thrasymachus')){spawn('thrasymachus','edge');unl.push('듣고만 있던 트라시마코스가 참다못해 뛰어들 기세예요.');}
-  if(rule.id==='E1'&&!met.has('hippias')){spawn('hippias','edge');unl.push('히피아스가 아고라에 들어왔어요. 이제부터는 안내 없이 해 보세요.');}
+  if(rule.elenchus||rule.id==='T2'){const b=bookOf(rule.id);if(b){const a=b.rules.filter(id=>solved.has(id)).length;unl.push(L(`『${b.t}』에 한 장이 채워졌어요. (${a} / ${b.rules.length})`,`A page was added to ${tr(b.t)}. (${a} / ${b.rules.length})`));}}
+  if(rule.id==='E8'&&!met.has('polemarchus')){spawn('polemarchus','edge');unl.push(L('케팔로스의 아들 폴레마르코스가 아버지의 이야기를 이어받으러 왔어요.',"Cephalus' son Polemarchus has come to carry on his father's argument."));}
+  if(rule.id==='E9'&&!met.has('thrasymachus')){spawn('thrasymachus','edge');unl.push(L('듣고만 있던 트라시마코스가 참다못해 뛰어들 기세예요.','Thrasymachus, who has only been listening, can hardly hold himself back.'));}
+  if(rule.id==='E1'&&!met.has('hippias')){spawn('hippias','edge');unl.push(L('히피아스가 아고라에 들어왔어요. 이제부터는 안내 없이 해 보세요.','Hippias has come into the agora. From here on, try it without the guide.'));}
   if(rule.birth&&!met.has(rule.birth)){
     if(rule.birth==='empedocles')born=true;
     const e=spawn(rule.birth);e.x=RING.cx;e.y=RING.y1+26;e.pauseUntil=now+4000;burst(RING.cx,RING.y1+10,30,['#e8c35a','#fff','#c8452c','#5fb3e0']);
     setTimeout(()=>{if(e.state==='wander')showLine(e,unlocked(rule.birth)[0],5000);},400); // never swap the line of someone already in the ring
-    unl.push(rule.birth==='empedocles'?'엠페도클레스가 태어났어요. 싸움의 결과로 등장한 첫 철학자예요.':'데모크리토스가 태어났어요. 근원 도감의 잠긴 칸이 열렸어요.');
+    unl.push(rule.birth==='empedocles'?L('엠페도클레스가 태어났어요. 싸움의 결과로 등장한 첫 철학자예요.','Empedocles is born: the first philosopher to come out of a fight.'):L('데모크리토스가 태어났어요. 근원 도감의 잠긴 칸이 열렸어요.','Democritus is born. The locked slot in the Origin codex is open now.'));
   }
   const prev=stage;
   if(chapter===1){
@@ -1354,20 +1381,20 @@ function applyRule(rule,occ){
   }
   if(stage>prev){unl.push(...stageUp(prev));snapshotRound();}
   else npcs.forEach(n=>{if(STILL(n))return;const c=unlocked(n.pid).length;if(n.seen&&c>n.seen)n.isNew=true;});
-  burst(RING.cx,RING.cy,26,['#e8c35a','#fff','#f2ead9']);floatText(rule.elenchus?'논박!':'결판!',RING.cx,RING.y0+24,'#e8c35a');
+  burst(RING.cx,RING.cy,26,['#e8c35a','#fff','#f2ead9']);floatText(rule.elenchus?L('논박!','Refuted!'):L('결판!','Settled!'),RING.cx,RING.y0+24,'#e8c35a');
   const info=KWINFO[rule.kw];
   const okey=occ&&occ.map(n=>canon(n.shown)).sort().join('+'),lines=(rule.alt&&rule.alt[okey])||rule.dlg;
-  const lk=t=>Object.entries(rule.links||{}).reduce((x,[w,u])=>x.replace(w,`<a href="${u}" target="_blank" rel="noopener">${w}</a>`),t);
-  const dlg=lines.filter(([pid])=>!(rule.elenchus&&pid==='sokrates')).map(([pid,t])=>pid?`<p><b>${P[pid].name}</b> ${lk(t)}</p>`:`<p class="muted">${lk(t)}</p>`).join('');
-  const fil=filled.map(([k,p])=>`${k} · ${P[p].name}`).join(', ');
-  const html=`<p class="eyebrow">${rule.elenchus?'논박 성공':rule.hidden?'숨은 키워드 발견':'키워드 획득'} · 오볼로스 +3</p>
-    <h2 id="mtitle">${rule.kw}</h2><p class="gr">${info.gr}</p>
-    ${rule.elenchus&&FAMOUS[rule.id]?`<div class="soq"><span class="who">소크라테스</span><p>“${FAMOUS[rule.id][0]}”</p><span class="src">${FAMOUS[rule.id][1]}</span></div>`:''}
+  const lk=t=>Object.entries(rule.links||{}).reduce((x,[w,u])=>{const ww=tr(w);return x.replace(ww,`<a href="${u}" target="_blank" rel="noopener">${ww}</a>`);},t);
+  const dlg=lines.filter(([pid])=>!(rule.elenchus&&pid==='sokrates')).map(([pid,t])=>pid?`<p><b>${pn(pid)}</b> ${lk(tr(t))}</p>`:`<p class="muted">${lk(tr(t))}</p>`).join('');
+  const fil=filled.map(([k,p])=>`${tr(k)} · ${pn(p)}`).join(', ');
+  const html=`<p class="eyebrow">${rule.elenchus?L('논박 성공','Refutation'):rule.hidden?L('숨은 키워드 발견','Hidden keyword found'):L('키워드 획득','Keyword won')} · ${L('오볼로스 +3','+3 obols')}</p>
+    <h2 id="mtitle">${tr(rule.kw)}</h2><p class="gr">${tr(info.gr)}</p>
+    ${rule.elenchus&&FAMOUS[rule.id]?`<div class="soq"><span class="who">${pn('sokrates')}</span><p>“${tr(FAMOUS[rule.id][0])}”</p><span class="src">${tr(FAMOUS[rule.id][1])}</span></div>`:''}
     <div class="dlg${rule.elenchus?' after':''}">${dlg}</div>
-    <p class="tiny">도감에 채워진 해석: ${fil}</p>
+    <p class="tiny">${L('도감에 채워진 해석','Readings added to the codex')}: ${fil}</p>
     ${unl.length?`<div class="unl">${unl.map(u=>`<p>${u}</p>`).join('')}</div>`:''}`;
-  narrate(`비문에 '${rule.kw}'가 새겨졌어요.`);
-  openModal(html,[{label:'도감 보기',fn:()=>setTimeout(()=>openCodex(rule.kw),0)},{label:'계속',primary:true}],()=>{
+  narrate(L(`비문에 '${rule.kw}'가 새겨졌어요.`,`'${tr(rule.kw)}' is carved on the stele.`));
+  openModal(html,[{label:L('도감 보기','Open codex'),fn:()=>setTimeout(()=>openCodex(rule.kw),0)},{label:L('계속','Continue'),primary:true}],()=>{
     if(pendingExit){const {n,exit}=pendingExit;pendingExit=null;startExit(n,exit);}
     if(chapterCleared()&&ending===0)startEnding();else if(!tutDone&&stage>=1&&chapter===1)startTour();else checkDay();
   });
@@ -1376,8 +1403,9 @@ function chapterCleared(){const c=CHAP[chapter],s=interps[c.central];return !!s&
 function checkDay(){if(water<=0&&ending===0&&!dayOver&&!modalOpen)dayEnd();}
 function dayEnd(){
   dayOver=true;
-  openModal(`<p class="eyebrow">${day}일째 · 해가 졌어요</p><h2 id="mtitle">시간이 다 됐어요</h2><p>물시계가 다 비었어요. 이번 단계에서 새긴 키워드와 도감 해석, 번 오볼로스는 사라지고, 다음 날 아침 이 단계를 처음부터 다시 해요.</p>`,
-    [{label:'이 단계 다시 하기',primary:true}],retryRound);
+  openModal(L(`<p class="eyebrow">${day}일째 · 해가 졌어요</p><h2 id="mtitle">시간이 다 됐어요</h2><p>물시계가 다 비었어요. 이번 단계에서 새긴 키워드와 도감 해석, 번 오볼로스는 사라지고, 다음 날 아침 이 단계를 처음부터 다시 해요.</p>`,
+    `<p class="eyebrow">Day ${day} · The sun has set</p><h2 id="mtitle">Time's up</h2><p>The klepsydra has run dry. The keywords, codex readings and obols won in this stage are lost, and tomorrow morning you replay this stage from the start.</p>`),
+    [{label:L('이 단계 다시 하기','Replay this stage'),primary:true}],retryRound);
 }
 function retryRound(){ // back to the snapshot taken when this stage began, on a new morning
   const s=JSON.parse(JSON.stringify(roundSnap||saveData())),d=day+1;
@@ -1385,7 +1413,7 @@ function retryRound(){ // back to the snapshot taken when this stage began, on a
   npcs=[];ring.fill(null);fighting=null;debate=null;pendingExit=null;particles=[];texts=[];dust=[];
   loading=true;restore(s);loading=false;
   day=d;water=100;dayOver=false;farmed.clear();lastWater=-1;lastPhase='';
-  narrate(`${day}일째 아침. 이 단계를 처음부터 다시 시작해요. 물시계를 가득 채웠어요.`);updateAll();
+  narrate(L(`${day}일째 아침. 이 단계를 처음부터 다시 시작해요. 물시계를 가득 채웠어요.`,`Morning of day ${day}. This stage starts over, with a full klepsydra.`));updateAll();
 }
 
 /* ---------------- ending ---------------- */
@@ -1401,7 +1429,7 @@ function nightCh3(){
   let pl=npcs.find(n=>n.pid==='plato');if(!pl){pl=spawn('plato');pl.writing=true;}[pl.x,pl.y]=platoSpot();pl.hidden=false;pl.alpha=1;
   let ar=npcs.find(n=>n.pid==='aristotle');if(!ar)ar=spawn('aristotle');ar.hidden=false;ar.alpha=1;ar.flip=true;ar.x=pl.x+17;ar.y=pl.y+2;
   showLine(pl,{id:'pl_sad',kw:'',text:'참 대단한 분이셨지...'},1e8);talkStep=0;
-  narrate('밤의 아고라. 플라톤 곁에 한 젊은이가 와 있어요. 두 사람을 눌러 보세요. (다음 이야기는 준비 중이에요)');
+  narrate(L('밤의 아고라. 플라톤 곁에 한 젊은이가 와 있어요. 두 사람을 눌러 보세요. (다음 이야기는 준비 중이에요)','The agora at night. A young man has joined Plato. Tap the two of them. (The next story is on its way.)'));
 }
 function nightTalk(){ // one line per tap, Plato then Aristotle, so the two bubbles never overlap
   const pl=npcs.find(n=>n.pid==='plato'),ar=npcs.find(n=>n.pid==='aristotle');if(!pl||!ar)return;
@@ -1410,7 +1438,8 @@ function nightTalk(){ // one line per tap, Plato then Aristotle, so the two bubb
 }
 // chapter 3 ending: the refuted crowd storms in, seizes Socrates and leads him away; Plato stays behind writing
 let arrest=null;
-const SHOUT=['체포하라!','젊은이를 타락시킨 자!','신을 모독한 자!','저 사람이오!','끌고 가!','묻기만 하는 자!'];
+const SHOUT=['체포하라!','젊은이를 타락시킨 자!','신을 모독한 자!','저 사람이오!','끌고 가!','묻기만 하는 자!'],
+  SHOUT_EN=['Arrest him!','Corrupter of the youth!','He denies the gods!',"That's the man!",'Take him away!','All he does is ask!'];
 const platoSpot=()=>{const [x,y]=socSpot();return [x+7,y-9];}; // just behind where Socrates stands
 function startArrest(){
   const so=npcs.find(n=>n.pid==='sokrates'&&!n.hidden);
@@ -1423,13 +1452,13 @@ function startArrest(){
     n.state='mob';n.path=findPath(n.x,n.y,tx,ty)||[[tx,ty]];n.tx=tx;n.ty=ty;});
   arrest={so,tussle:false,march:false,plato:false,next:0};
   if(so){const pl=spawn('plato');[pl.x,pl.y]=platoSpot();pl.flip=false;pl.alpha=1;} // behind the crowd, quiet
-  narrate('논박당했던 사람들이 우르르 몰려와요.');updateAll();
+  narrate(L('논박당했던 사람들이 우르르 몰려와요.','Everyone he refuted comes storming in.'));updateAll();
 }
 function startEnding(){
   debate=null;ending=1;endT=0;endFrom=1-water/100;endModal=false;ring.fill(null);
   if(chapter===3){startArrest();return;}
   npcs.forEach(n=>{n.bubbleUntil=0;if(isSoc(n))return;n.state='leave';n.slot=-1;n.path=exitPath(n);[n.tx,n.ty]=n.path[n.path.length-1];}); // Socrates stays where he stands
-  narrate('해가 기울어요. 사람들이 하나둘 각자의 도시로 돌아가요.');updateAll();
+  narrate(L('해가 기울어요. 사람들이 하나둘 각자의 도시로 돌아가요.','The sun sinks. One by one, people head home to their cities.'));updateAll();
 }
 function endingModal(){
   endModal=true;
@@ -1437,25 +1466,33 @@ function endingModal(){
   const night=()=>{if(ending!==1)return;ending=2;
       if(chapter===3){nightCh3();updateAll();return;}
       npcs.forEach(n=>{if(FIXED(n)||n.taken)return;n.hidden=false;n.state='wander';placeRandom(n);pickTarget(n);});
-      narrate(chapter===1?'밤의 아고라. 물시계는 멈췄고, 못다 한 싸움을 마저 붙일 수 있어요. 파르메니데스에게도 말을 걸어 보세요. 준비되면 위의 "2장으로"를 누르세요.'
-        :chapter===2?'밤의 아고라. 못다 한 싸움을 마저 붙일 수 있어요. 젊은 소크라테스에게도 말을 걸어 보세요. 준비되면 위의 "3장으로"를 누르세요.'
-        :'밤의 아고라. 소크라테스가 끌려간 자리에 플라톤이 홀로 남아 있어요. 말을 걸어 보세요.');updateAll();
+      narrate(chapter===1?L('밤의 아고라. 물시계는 멈췄고, 못다 한 싸움을 마저 붙일 수 있어요. 파르메니데스에게도 말을 걸어 보세요. 준비되면 위의 "2장으로"를 누르세요.','The agora at night. The klepsydra has stopped, so you can finish the fights you missed. Try talking to Parmenides, too. When you are ready, press "Chapter 2" at the top.')
+        :chapter===2?L('밤의 아고라. 못다 한 싸움을 마저 붙일 수 있어요. 젊은 소크라테스에게도 말을 걸어 보세요. 준비되면 위의 "3장으로"를 누르세요.','The agora at night. You can finish the fights you missed. Try talking to young Socrates, too. When you are ready, press "Chapter 3" at the top.')
+        :L('밤의 아고라. 소크라테스가 끌려간 자리에 플라톤이 홀로 남아 있어요. 말을 걸어 보세요.','The agora at night. Where Socrates was taken away, Plato remains alone. Try talking to him.'));updateAll();
   };
-  if(chapter===1)openModal(`<p class="eyebrow">1장 끝</p><h2 id="mtitle">첫 번째 석양</h2>
+  const tally=L(`새겨진 키워드 ${n} / ${CHAP[chapter].kw.length} · ${day}일 동안`,`Keywords carved ${n} / ${CHAP[chapter].kw.length} · in ${day} ${day===1?'day':'days'}`);
+  const again={label:L('처음부터','Start over'),fn:()=>setTimeout(()=>init(true),0)},stay=L('밤의 아고라에 남기','Stay in the night agora');
+  if(chapter===1)openModal(L(`<p class="eyebrow">1장 끝</p><h2 id="mtitle">첫 번째 석양</h2>
     <p>미네르바의 부엉이는 황혼이 저물어야 날개를 편다고 했지요.</p>
-    <p>텅 빈 아고라 한가운데, 내내 보이지 않던 한 사람이 서 있어요. 그는 움직이지 않아요.</p>
-    <p class="tiny">새겨진 키워드 ${n} / ${CHAP[chapter].kw.length} · ${day}일 동안</p>`,
-    [{label:'처음부터',fn:()=>setTimeout(()=>init(true),0)},{label:'밤의 아고라에 남기',fn:()=>{}},{label:'2장으로',primary:true,fn:()=>setTimeout(startChapter2,0)}],night);
-  else if(chapter===3)openModal(`<p class="eyebrow">3장 끝</p><h2 id="mtitle">세 번째 석양</h2>
+    <p>텅 빈 아고라 한가운데, 내내 보이지 않던 한 사람이 서 있어요. 그는 움직이지 않아요.</p>`,
+    `<p class="eyebrow">End of Chapter 1</p><h2 id="mtitle">The First Sunset</h2>
+    <p>The owl of Minerva, they say, spreads its wings only with the falling of the dusk.</p>
+    <p>In the middle of the empty agora stands someone you never saw all day. He does not move.</p>`)+`<p class="tiny">${tally}</p>`,
+    [again,{label:stay,fn:()=>{}},{label:L('2장으로','On to Chapter 2'),primary:true,fn:()=>setTimeout(startChapter2,0)}],night);
+  else if(chapter===3)openModal(L(`<p class="eyebrow">3장 끝</p><h2 id="mtitle">세 번째 석양</h2>
     <p>소크라테스는 젊은이를 타락시키고 나라의 신들을 믿지 않는다는 죄목으로 끌려갔어요.</p>
-    <p>텅 빈 아고라에 플라톤이 홀로 남아 오늘의 문답을 서판에 적어요. 스승이 늘 하던 말도 함께요. "나는 모르는 것을 안다고 여기지 않을 뿐이오."</p>
-    <p class="tiny">새겨진 키워드 ${n} / ${CHAP[chapter].kw.length} · ${day}일 동안 · 다음 장은 준비 중이에요</p>`,
-    [{label:'처음부터',fn:()=>setTimeout(()=>init(true),0)},{label:'밤의 아고라에 남기',primary:true}],night);
-  else openModal(`<p class="eyebrow">2장 끝</p><h2 id="mtitle">두 번째 석양</h2>
+    <p>텅 빈 아고라에 플라톤이 홀로 남아 오늘의 문답을 서판에 적어요. 스승이 늘 하던 말도 함께요. "나는 모르는 것을 안다고 여기지 않을 뿐이오."</p>`,
+    `<p class="eyebrow">End of Chapter 3</p><h2 id="mtitle">The Third Sunset</h2>
+    <p>Socrates has been led away, charged with corrupting the youth and not believing in the gods of the city.</p>
+    <p>In the empty agora Plato stays behind, writing the day's dialogues on his tablet, along with the words his master always said: "I neither know nor think that I know."</p>`)+`<p class="tiny">${tally} · ${L('다음 장은 준비 중이에요','The next chapter is on its way')}</p>`,
+    [again,{label:stay,primary:true}],night);
+  else openModal(L(`<p class="eyebrow">2장 끝</p><h2 id="mtitle">두 번째 석양</h2>
     <p>판아테나이아 축제가 끝나 가는 저녁, 늙은 파르메니데스와 제논을 찾아 한 젊은이가 아고라에 들어왔어요.</p>
-    <p>"있는 것이 하나라면, 아름다움 그 자체 같은 것은 어디에 있습니까?" 아직 스무 살도 안 된 소크라테스예요.</p>
-    <p class="tiny">새겨진 키워드 ${n} / ${CHAP[chapter].kw.length} · ${day}일 동안</p>`,
-    [{label:'처음부터',fn:()=>setTimeout(()=>init(true),0)},{label:'밤의 아고라에 남기',fn:()=>{}},{label:'3장으로',primary:true,fn:()=>setTimeout(startChapter3,0)}],night);
+    <p>"있는 것이 하나라면, 아름다움 그 자체 같은 것은 어디에 있습니까?" 아직 스무 살도 안 된 소크라테스예요.</p>`,
+    `<p class="eyebrow">End of Chapter 2</p><h2 id="mtitle">The Second Sunset</h2>
+    <p>On an evening as the Panathenaea draws to a close, a young man comes into the agora looking for old Parmenides and Zeno.</p>
+    <p>"If what is, is one, where is something like beauty itself?" It is Socrates, not yet twenty.</p>`)+`<p class="tiny">${tally}</p>`,
+    [again,{label:stay,fn:()=>{}},{label:L('3장으로','On to Chapter 3'),primary:true,fn:()=>setTimeout(startChapter3,0)}],night);
 }
 // next morning: chapter 2 starts in the same agora, with the progress of chapter 1 kept
 function startChapter2(){
@@ -1463,10 +1500,13 @@ function startChapter2(){
   chapter=2;stage=0;ending=0;tutDone=true;tourStep=-1;setTut(null);endT=0;skyT=0;endModal=false;day++;water=100;dayOver=false;farmed.clear();ring.fill(null);fighting=null;
   owl={state:'perch',turnUntil:0,nextTurn:now+6000,ft:0};
   npcs=[];['heraclitus','parmenides','anaximander','xenophanes','pythagoras','empedocles'].forEach(pid=>spawn(pid));
-  lastWater=-1;lastPhase='';snapshotRound();narrate(`${day}일째 아침. 2장 '변화'가 시작됐어요.`);updateAll();
-  openModal(`<p class="eyebrow">2장</p><h2 id="mtitle">변화</h2>
+  lastWater=-1;lastPhase='';snapshotRound();narrate(L(`${day}일째 아침. 2장 '변화'가 시작됐어요.`,`Morning of day ${day}. Chapter 2, 'Change', begins.`));updateAll();
+  openModal(L(`<p class="eyebrow">2장</p><h2 id="mtitle">변화</h2>
     <p>다음 날 아침, 부엉이가 조각상에 돌아왔어요. 파르메니데스도 이제 아고라를 거닐어요. 탈레스와 아낙시메네스는 밀레토스로 돌아갔고요.</p>
-    <p>이번 장의 질문은 "세상은 변하는가"예요. 1장처럼 <b>같은 단어</b>를 말하는 사람들을 찾아 링에 올려 보세요.</p>`,[{label:'시작',primary:true}]);
+    <p>이번 장의 질문은 "세상은 변하는가"예요. 1장처럼 <b>같은 단어</b>를 말하는 사람들을 찾아 링에 올려 보세요.</p>`,
+    `<p class="eyebrow">Chapter 2</p><h2 id="mtitle">Change</h2>
+    <p>The next morning, the owl is back on the statue. Parmenides walks the agora now, too. Thales and Anaximenes have gone home to Miletus.</p>
+    <p>This chapter asks: "Does the world change?" As in Chapter 1, find people who say <b>the same word</b> and put them in the ring.</p>`),[{label:L('시작','Begin'),primary:true}]);
 }
 
 // chapter 3: decades later, the young man of chapter 2 is the old Socrates who asks everyone in the agora
@@ -1475,11 +1515,15 @@ function startChapter3(){
   chapter=3;stage=0;ending=0;tourStep=-1;setTut(null);endT=0;skyT=0;endModal=false;day++;water=100;dayOver=false;farmed.clear();ring.fill(null);fighting=null;
   owl={state:'perch',turnUntil:0,nextTurn:now+6000,ft:0};
   debate=null;npcs=[];layout();placeSoc(spawn('sokrates'));spawn('euthyphro'); // Hippias comes once the tutorial bout (E1) is won
-  lastWater=-1;lastPhase='';snapshotRound();narrate(`${day}일째 아침. 3장 '정의'가 시작됐어요.`);updateAll();
-  openModal(`<p class="eyebrow">3장</p><h2 id="mtitle">정의</h2>
+  lastWater=-1;lastPhase='';snapshotRound();narrate(L(`${day}일째 아침. 3장 '정의'가 시작됐어요.`,`Morning of day ${day}. Chapter 3, 'Justice', begins.`));updateAll();
+  openModal(L(`<p class="eyebrow">3장</p><h2 id="mtitle">정의</h2>
     <p>몇십 년이 흘렀어요. 그 젊은이는 이제 맨발로 아고라를 지키는 늙은 소크라테스가 되었어요. 그는 한자리에 서서, 지나가는 사람을 붙잡고 묻기만 해요.</p>
     <p>이번엔 당신이 소크라테스예요. 소피스트를 끌어다 <b>소크라테스에게 놓으면</b> 문답이 흘러가고, 상대의 대답이 <b>말 조각</b>으로 쌓여요.</p>
-    <p>그중 <b>서로 부딪치는 두 말</b>을 링에 올리고 종을 치면 논박이에요. 먼저 에우튀프론과 해 봐요. 안내를 따라가면 돼요.</p>`,[{label:'시작',primary:true}]);
+    <p>그중 <b>서로 부딪치는 두 말</b>을 링에 올리고 종을 치면 논박이에요. 먼저 에우튀프론과 해 봐요. 안내를 따라가면 돼요.</p>`,
+    `<p class="eyebrow">Chapter 3</p><h2 id="mtitle">Justice</h2>
+    <p>Decades have passed. That young man is now old Socrates, keeping watch over the agora barefoot. He stands in one spot, stops whoever passes, and only asks questions.</p>
+    <p>This time, you are Socrates. Drag a sophist <b>onto Socrates</b> and the dialogue flows; the answers pile up as <b>fragments</b>.</p>
+    <p>Put <b>the two lines that collide</b> into the ring and ring the bell to refute him. Start with Euthyphro, and follow the guide.</p>`),[{label:L('시작','Begin'),primary:true}]);
 }
 
 /* ---------------- modal ---------------- */
@@ -1494,9 +1538,9 @@ function closeModal(){$('modal').hidden=true;modalOpen=false;tutStage0();const f
 function openCodex(k){
   const info=KWINFO[k],have=interps[k]||new Set(),sl=slotsOf(k),lock=lockOf(k);
   const rows=sl.map(([pid,label,t])=>have.has(pid)
-    ?`<div class="slot"><b>${P[pid].name}${label?' · '+label:''}</b><span>${t}</span></div>`
-    :`<div class="slot empty"><span>???</span><span>아직 링 위에서 듣지 못한 해석</span></div>`).join('')+(lock?`<div class="slot lock"><span>???</span><span>${lock}</span></div>`:'');
-  openModal(`<p class="eyebrow">도감 · 해석 ${sl.filter(x=>have.has(x[0])).length} / ${sl.length}</p><h2 id="mtitle">${k}</h2><p class="gr">${info.gr}</p><div class="slots">${rows}</div>`,[{label:'닫기',primary:true}]);
+    ?`<div class="slot"><b>${pn(pid)}${label?' · '+tr(label):''}</b><span>${tr(t)}</span></div>`
+    :`<div class="slot empty"><span>???</span><span>${L('아직 링 위에서 듣지 못한 해석','A reading not yet heard in the ring')}</span></div>`).join('')+(lock?`<div class="slot lock"><span>???</span><span>${tr(lock)}</span></div>`:'');
+  openModal(`<p class="eyebrow">${L('도감 · 해석','Codex · readings')} ${sl.filter(x=>have.has(x[0])).length} / ${sl.length}</p><h2 id="mtitle">${tr(k)}</h2><p class="gr">${tr(info.gr)}</p><div class="slots">${rows}</div>`,[{label:L('닫기','Close'),primary:true}]);
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalOpen&&!dayOver&&ending!==1)closeModal();});
 
@@ -1571,11 +1615,16 @@ setSound(SND.on);
 // After R1 a short tour points at the klepsydra, the Pythia, the bean plot and the water seller.
 let tutDone=false,tourStep=-1,tutCur=null;
 const TOUR=[
-  {k:'새 손님',t:'아낙시만드로스와 아낙시메네스가 아고라에 들어왔어요. 여기서부터가 본격적인 논쟁이에요.',a:'ringfront'},
-  {k:'클렙시드라',t:'이제부터 물시계의 물이 흘러요. 가만히 있어도 줄고, 싸움을 붙여도 줄어요. 물이 다 떨어지면 이번 단계를 처음부터 다시 해야 해요.',a:'#klepbox',hl:'#klepbox'},
-  {k:'델포이의 신녀',t:'막혔을 땐 신녀를 눌러 보세요. 2 오볼을 바치면 신탁으로 힌트를 내려 줘요.',a:'oracle',hl:'oracle'},
-  {k:'콩밭',t:'철학자를 콩밭에 끌어다 놓으면 잠깐 일해서 오볼을 벌어요. 한 사람당 하루 한 번이에요.',a:'garden',hl:'garden'},
-  {k:'물장수',t:'물장수를 누르면 3 오볼에 물시계를 채워 줘요. 이제 맞서는 사람들을 찾아 링에 올려 보세요.',a:'shop',hl:'shop'}
+  {k:'새 손님',t:'아낙시만드로스와 아낙시메네스가 아고라에 들어왔어요. 여기서부터가 본격적인 논쟁이에요.',a:'ringfront',
+    ke:'New arrivals',te:'Anaximander and Anaximenes have come into the agora. This is where the real debate begins.'},
+  {k:'클렙시드라',t:'이제부터 물시계의 물이 흘러요. 가만히 있어도 줄고, 싸움을 붙여도 줄어요. 물이 다 떨어지면 이번 단계를 처음부터 다시 해야 해요.',a:'#klepbox',hl:'#klepbox',
+    ke:'Klepsydra',te:'From now on the water clock runs. It drains on its own, and every fight costs water too. If it runs dry, you replay this stage from the start.'},
+  {k:'델포이의 신녀',t:'막혔을 땐 신녀를 눌러 보세요. 2 오볼을 바치면 신탁으로 힌트를 내려 줘요.',a:'oracle',hl:'oracle',
+    ke:'The Pythia of Delphi',te:'Stuck? Tap the Pythia. Offer 2 obols and she gives you a hint as an oracle.'},
+  {k:'콩밭',t:'철학자를 콩밭에 끌어다 놓으면 잠깐 일해서 오볼을 벌어요. 한 사람당 하루 한 번이에요.',a:'garden',hl:'garden',
+    ke:'Bean field',te:'Drop a philosopher on the bean field and they work a while to earn obols. Once a day each.'},
+  {k:'물장수',t:'물장수를 누르면 3 오볼에 물시계를 채워 줘요. 이제 맞서는 사람들을 찾아 링에 올려 보세요.',a:'shop',hl:'shop',
+    ke:'Water seller',te:'Tap the water seller to refill the klepsydra for 3 obols. Now find people who disagree and put them in the ring.'}
 ];
 function tutRect(t){
   if(!t)return null;
@@ -1621,26 +1670,26 @@ function tutCh3(){
   if(stage!==0||solved.has('E1')||ending||modalOpen){setTut(null);return;}
   if(fighting)return; // keep the card while the bell rings
   const d=debate;
-  if(!d)setTut({k:'소크라테스의 문답',t:'에우튀프론을 끌어다 소크라테스에게 놓아 보세요. 소크라테스가 묻고, 에우튀프론이 대답할 거예요.',a:'ringtop',hl:'@euthyphro',n:'1 / 4'});
-  else if(d.playing)setTut({k:'말 조각',t:'화면을 누르면 다음 말로 넘어가요. 에우튀프론의 대답은 위의 판에 번호 붙은 조각으로 쌓여요.',a:'ringfront',hl:'#tray',n:'2 / 4'});
-  else if(d.on.includes(null))setTut({k:'부딪치는 두 말',t:"조각 중 서로 부딪치는 두 말을 누르거나 끌어서 링에 올리세요. 힌트: 둘 다 '사랑'이라는 말을 써요.",a:'ringfront',hl:'#chips',n:'3 / 4'});
-  else setTut({k:'논박',t:'링에 두 말이 올라갔어요. 종을 쳐서 맞붙여 보세요. 아니다 싶으면 링 위 조각을 눌러 내릴 수 있어요.',a:'ringfront',hl:'#fightbtn',n:'4 / 4'});
+  if(!d)setTut({k:L('소크라테스의 문답','A Socratic dialogue'),t:L('에우튀프론을 끌어다 소크라테스에게 놓아 보세요. 소크라테스가 묻고, 에우튀프론이 대답할 거예요.','Drag Euthyphro onto Socrates. Socrates will ask, and Euthyphro will answer.'),a:'ringtop',hl:'@euthyphro',n:'1 / 4'});
+  else if(d.playing)setTut({k:L('말 조각','Fragments'),t:L('화면을 누르면 다음 말로 넘어가요. 에우튀프론의 대답은 위의 판에 번호 붙은 조각으로 쌓여요.',"Tap the screen for each next line. Euthyphro's answers pile up on the tray above as numbered fragments."),a:'ringfront',hl:'#tray',n:'2 / 4'});
+  else if(d.on.includes(null))setTut({k:L('부딪치는 두 말','Two lines that collide'),t:L("조각 중 서로 부딪치는 두 말을 누르거나 끌어서 링에 올리세요. 힌트: 둘 다 '사랑'이라는 말을 써요.","Tap or drag the two fragments that collide into the ring. Hint: both use the word 'love'."),a:'ringfront',hl:'#chips',n:'3 / 4'});
+  else setTut({k:L('논박','Refute'),t:L('링에 두 말이 올라갔어요. 종을 쳐서 맞붙여 보세요. 아니다 싶으면 링 위 조각을 눌러 내릴 수 있어요.','Two lines are in the ring. Ring the bell to set them against each other. Changed your mind? Tap a fragment in the ring to take it down.'),a:'ringfront',hl:'#fightbtn',n:'4 / 4'});
 }
 function tutStage0(){ // derives the current step from the game state
   if(tourStep>=0)return;
   if(chapter===3){tutCh3();return;}
   if(chapter!==1||stage!==0||solved.size||ending||fighting||modalOpen){setTut(null);return;}
   const inR=ring.filter(Boolean).length,both=heard.has('thales')&&heard.has('heraclitus');
-  if(inR>=2)setTut({k:'싸움 붙이기',t:'준비됐어요! 오른쪽 위의 둥근 종을 쳐서 싸움을 붙이세요.',a:'ringfront',hl:'#fightbtn',n:'3 / 3'});
-  else if(both)setTut({k:'링에 올리기',t:'두 사람이 서로 반대되는 말을 하는 것 같아요. 두 사람을 차례로 끌어다 링 위에 놓아 보세요.',a:'ringfront',hl:'ring',n:'2 / 3'});
-  else if(heard.size)setTut({k:'말 듣기',t:'좋아요. 다른 한 사람도 눌러서 무슨 말을 하는지 들어 보세요.',a:'ringfront',n:'1 / 3'});
-  else setTut({k:'처음 오셨군요',t:'아고라에 두 사람이 서성이고 있어요. 사람을 눌러서 무슨 말을 하는지 들어 보세요.',a:'ringfront',n:'1 / 3'});
+  if(inR>=2)setTut({k:L('싸움 붙이기','Start the fight'),t:L('준비됐어요! 오른쪽 위의 둥근 종을 쳐서 싸움을 붙이세요.','Ready! Ring the round bell to start the fight.'),a:'ringfront',hl:'#fightbtn',n:'3 / 3'});
+  else if(both)setTut({k:L('링에 올리기','Into the ring'),t:L('두 사람이 서로 반대되는 말을 하는 것 같아요. 두 사람을 차례로 끌어다 링 위에 놓아 보세요.','Those two seem to say opposite things. Drag them one by one into the ring.'),a:'ringfront',hl:'ring',n:'2 / 3'});
+  else if(heard.size)setTut({k:L('말 듣기','Listen'),t:L('좋아요. 다른 한 사람도 눌러서 무슨 말을 하는지 들어 보세요.','Good. Now tap the other one and hear what they say.'),a:'ringfront',n:'1 / 3'});
+  else setTut({k:L('처음 오셨군요','First time here?'),t:L('아고라에 두 사람이 서성이고 있어요. 사람을 눌러서 무슨 말을 하는지 들어 보세요.','Two people are wandering the agora. Tap someone to hear what they say.'),a:'ringfront',n:'1 / 3'});
 }
 function startTour(){tourStep=0;showTour();}
-function showTour(){const s=TOUR[tourStep];setTut({...s,n:`${tourStep+1} / ${TOUR.length}`,btn:tourStep===TOUR.length-1?'시작하기':'다음'});}
+function showTour(){const s=TOUR[tourStep];setTut({...s,k:L(s.k,s.ke),t:L(s.t,s.te),n:`${tourStep+1} / ${TOUR.length}`,btn:tourStep===TOUR.length-1?L('시작하기','Start'):L('다음','Next')});}
 $('tutbtn').addEventListener('click',()=>{
   if(tourStep<0)return;
-  if(++tourStep>=TOUR.length){tourStep=-1;tutDone=true;setTut(null);narrate(`${day}일째. 물시계가 흐르기 시작했어요.`);updateAll();}
+  if(++tourStep>=TOUR.length){tourStep=-1;tutDone=true;setTut(null);narrate(L(`${day}일째. 물시계가 흐르기 시작했어요.`,`Day ${day}. The klepsydra has started to flow.`));updateAll();}
   else showTour();
 });
 
@@ -1676,26 +1725,25 @@ const bookGot=b=>bookPages(b)>0;
 const bookOf=id=>BOOKS.find(b=>b.rules.includes(id));
 function bookHTML(b){
   const k=bookGot(b);
-  return `<button class="pc${k?'':' unk'}" type="button" data-book="${b.id}" aria-label="${k?b.t:'아직 모으지 못한 대화편'}"><span class="ph"><img src="${k?BOOKIMG[b.id]:BOOKSIL[b.id]}" alt=""></span><span class="nm">${k?b.t:'???'}</span></button>`;
+  return `<button class="pc${k?'':' unk'}" type="button" data-book="${b.id}" aria-label="${k?tr(b.t):L('아직 모으지 못한 대화편','A dialogue not yet collected')}"><span class="ph"><img src="${k?BOOKIMG[b.id]:BOOKSIL[b.id]}" alt=""></span><span class="nm">${k?tr(b.t):'???'}</span></button>`;
 }
 function openBook(id){
   const b=BOOKS.find(x=>x.id===id);
-  if(!bookGot(b)){openModal(`<p class="eyebrow">모은 대화편</p><h2 id="mtitle">???</h2><p style="color:var(--muted)">아직 펼치지 못한 대화편이에요. 소크라테스의 문답이 이어지면 채워질 거예요.</p>`,
-    [{label:'목록으로',fn:()=>setTimeout(openGallery,0)},{label:'닫기',primary:true}]);return;}
-  const rows=b.id==='apology'?'<li>“나는 모르는 것을 안다고 여기지 않을 뿐이오.”<br><span class="unk">『소크라테스의 변명』 21d</span></li>'
-    :b.rules.map(id=>{const r=RULE_BY_ID[id],who=r.elenchus?P[r.who].name:'링 위의 싸움';
-      return solved.has(id)?`<li><b>${who}</b> · ${r.kw}${FAMOUS[id]?`<br>“${FAMOUS[id][0]}”`:''}</li>`:'<li class="unk">???</li>';}).join('');
-  openModal(`<p class="eyebrow">모은 대화편 · ${bookPages(b)} / ${bookTotal(b)}</p>
+  const back=[{label:L('목록으로','Back to list'),fn:()=>setTimeout(openGallery,0)},{label:L('닫기','Close'),primary:true}];
+  if(!bookGot(b)){openModal(`<p class="eyebrow">${L('모은 대화편','Dialogues')}</p><h2 id="mtitle">???</h2><p style="color:var(--muted)">${L('아직 펼치지 못한 대화편이에요. 소크라테스의 문답이 이어지면 채워질 거예요.',"A dialogue you haven't opened yet. It fills up as Socrates keeps asking.")}</p>`,back);return;}
+  const rows=b.id==='apology'?L('<li>“나는 모르는 것을 안다고 여기지 않을 뿐이오.”<br><span class="unk">『소크라테스의 변명』 21d</span></li>','<li>“I neither know nor think that I know.”<br><span class="unk">Apology 21d</span></li>')
+    :b.rules.map(id=>{const r=RULE_BY_ID[id],who=r.elenchus?pn(r.who):L('링 위의 싸움','A fight in the ring');
+      return solved.has(id)?`<li><b>${who}</b> · ${tr(r.kw)}${FAMOUS[id]?`<br>“${tr(FAMOUS[id][0])}”`:''}</li>`:'<li class="unk">???</li>';}).join('');
+  openModal(`<p class="eyebrow">${L('모은 대화편','Dialogues')} · ${bookPages(b)} / ${bookTotal(b)}</p>
     <div style="display:flex;gap:14px;align-items:flex-start"><span class="pc" style="pointer-events:none"><span class="ph"><img src="${BOOKIMG[b.id]}" alt="" style="width:48px;height:60px"></span></span>
-    <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1"><h2 id="mtitle">『${b.t}』</h2><p class="gr">${b.gr}</p><ul class="plist">${rows}</ul></div></div>`,
-    [{label:'목록으로',fn:()=>setTimeout(openGallery,0)},{label:'닫기',primary:true}]);
+    <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1"><h2 id="mtitle">${L(`『${b.t}』`,tr(b.t))}</h2><p class="gr">${b.gr}</p><ul class="plist">${rows}</ul></div></div>`,back);
 }
 function cardHTML(pid){
   const k=collected(pid);
-  return `<button class="pc${k?'':' unk'}" type="button" data-pid="${pid}" aria-label="${k?P[pid].name:'아직 모으지 못한 철학자'}"><span class="ph"><img src="${k?PORTRAIT[pid]:SILHOUETTE[pid]}" alt=""></span><span class="nm">${k?P[pid].name:'???'}</span></button>`;
+  return `<button class="pc${k?'':' unk'}" type="button" data-pid="${pid}" aria-label="${k?pn(pid):L('아직 모으지 못한 철학자','A philosopher not yet met')}"><span class="ph"><img src="${k?PORTRAIT[pid]:SILHOUETTE[pid]}" alt=""></span><span class="nm">${k?pn(pid):'???'}</span></button>`;
 }
 function updateColl(){
-  const books=chapter===3,lbl=$('collopen').firstChild,want=books?'모은 대화편':'모은 철학자';
+  const books=chapter===3,lbl=$('collopen').firstChild,want=books?L('모은 대화편','Dialogues'):L('모은 철학자','Philosophers');
   if(lbl.textContent!==want)lbl.textContent=want;
   if(books){$('collgrid').innerHTML=BOOKS.map(bookHTML).join('');$('collcount').textContent=`${BOOKS.filter(bookGot).length} / ${BOOKS.length}`;return;}
   const R=CHAP[chapter].roster;
@@ -1705,33 +1753,33 @@ function updateColl(){
 function openGallery(){
   if(modalOpen)return;
   if(chapter===3){
-    openModal(`<p class="eyebrow">모은 대화편 · ${BOOKS.filter(bookGot).length} / ${BOOKS.length}</p><h2 id="mtitle">소크라테스의 대화편</h2><div class="gallery" id="gallery">${BOOKS.map(bookHTML).join('')}</div>`,[{label:'닫기',primary:true}]);
+    openModal(`<p class="eyebrow">${L('모은 대화편','Dialogues')} · ${BOOKS.filter(bookGot).length} / ${BOOKS.length}</p><h2 id="mtitle">${L('소크라테스의 대화편',"Socrates' dialogues")}</h2><div class="gallery" id="gallery">${BOOKS.map(bookHTML).join('')}</div>`,[{label:L('닫기','Close'),primary:true}]);
     $('gallery').addEventListener('click',e=>{const b=e.target.closest('.pc');if(b){closeModal();setTimeout(()=>openBook(b.dataset.book),0);}});return;
   }
-  openModal(`<p class="eyebrow">모은 철학자 · ${ROSTER.filter(collected).length} / ${ROSTER.length}</p><h2 id="mtitle">아고라의 사람들</h2><div class="gallery" id="gallery">${ROSTER.map(cardHTML).join('')}</div>`,[{label:'닫기',primary:true}]);
+  openModal(`<p class="eyebrow">${L('모은 철학자','Philosophers')} · ${ROSTER.filter(collected).length} / ${ROSTER.length}</p><h2 id="mtitle">${L('아고라의 사람들','People of the agora')}</h2><div class="gallery" id="gallery">${ROSTER.map(cardHTML).join('')}</div>`,[{label:L('닫기','Close'),primary:true}]);
   $('gallery').addEventListener('click',e=>{const b=e.target.closest('.pc');if(b){closeModal();setTimeout(()=>openPerson(b.dataset.pid),0);}});
 }
 function openPerson(pid){
   if(!collected(pid)){
-    openModal(`<p class="eyebrow">모은 철학자</p><h2 id="mtitle">???</h2><p style="color:var(--muted)">아직 아고라에 나타나지 않은 사람이에요. 논쟁이 이어지면 언젠가 모습을 드러낼 거예요.</p>`,
-      [{label:'목록으로',fn:()=>setTimeout(openGallery,0)},{label:'닫기',primary:true}]);return;}
+    openModal(`<p class="eyebrow">${L('모은 철학자','Philosophers')}</p><h2 id="mtitle">???</h2><p style="color:var(--muted)">${L('아직 아고라에 나타나지 않은 사람이에요. 논쟁이 이어지면 언젠가 모습을 드러낼 거예요.',"Someone who hasn't appeared in the agora yet. Keep the debates going and they will show up one day.")}</p>`,
+      [{label:L('목록으로','Back to list'),fn:()=>setTimeout(openGallery,0)},{label:L('닫기','Close'),primary:true}]);return;}
   const kws=Object.keys(KWINFO).filter(k=>slotsOf(k).some(sl=>sl[0]===pid)).map(k=>{
     const sl=slotsOf(k).find(x=>x[0]===pid);
-    return interps[k]&&interps[k].has(pid)?`<li><b>${k}</b>${sl[1]?' · '+sl[1]:''}<br>${sl[2]}</li>`:'<li class="unk">???</li>';}).join('')||'<li class="unk">이 장에서는 맡은 키워드가 없어요.</li>';
+    return interps[k]&&interps[k].has(pid)?`<li><b>${tr(k)}</b>${sl[1]?' · '+tr(sl[1]):''}<br>${tr(sl[2])}</li>`:'<li class="unk">???</li>';}).join('')||`<li class="unk">${L('이 장에서는 맡은 키워드가 없어요.','No keyword of theirs in this chapter.')}</li>`;
   const seenT=new Set(),all=[...P[pid].lines,...(Array.isArray(P[pid].lines2)?P[pid].lines2:[])].filter(l=>!seenT.has(l.text)&&seenT.add(l.text));
   const heardT=new Set([...heardLines].map(id=>LINE[id]&&LINE[id].text)); // a line counts as heard by its words, whichever chapter showed it
-  const lines=all.map(l=>heardT.has(l.text)?`<li>“${l.text}”</li>`:'<li class="unk">???</li>').join('');
-  openModal(`<p class="eyebrow">모은 철학자</p><h2 id="mtitle">${P[pid].name}</h2>
+  const lines=all.map(l=>heardT.has(l.text)?`<li>“${tr(l.text)}”</li>`:'<li class="unk">???</li>').join('');
+  openModal(`<p class="eyebrow">${L('모은 철학자','Philosophers')}</p><h2 id="mtitle">${pn(pid)}</h2>
     <div style="display:flex;gap:14px;align-items:flex-start"><span class="pc" style="pointer-events:none"><span class="ph"><img src="${PORTRAIT[pid]}" alt="" style="width:48px;height:60px"></span></span>
-    <div style="display:flex;flex-direction:column;gap:10px;min-width:0;flex:1"><h3>키워드</h3><ul class="plist">${kws}</ul><h3>한 말</h3><ul class="plist">${lines}</ul></div></div>`,
-    [{label:'목록으로',fn:()=>setTimeout(openGallery,0)},{label:'닫기',primary:true}]);
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0;flex:1"><h3>${L('키워드','Keywords')}</h3><ul class="plist">${kws}</ul><h3>${L('한 말','Sayings')}</h3><ul class="plist">${lines}</ul></div></div>`,
+    [{label:L('목록으로','Back to list'),fn:()=>setTimeout(openGallery,0)},{label:L('닫기','Close'),primary:true}]);
 }
 $('collopen').addEventListener('click',openGallery);
 $('collgrid').addEventListener('click',e=>{const b=e.target.closest('.pc');if(!b||modalOpen)return;if(b.dataset.book)openBook(b.dataset.book);else openPerson(b.dataset.pid);});
-function setCollOpen(open,save=true){$('collbox').classList.toggle('closed',!open);$('colltog').textContent=isMobile()?(open?'▼':'▲'):(open?'접기':'펼치기');$('colltog').setAttribute('aria-expanded',String(open));
+function setCollOpen(open,save=true){$('collbox').classList.toggle('closed',!open);$('colltog').textContent=isMobile()?(open?'▼':'▲'):(open?L('접기','Hide'):L('펼치기','Show'));$('colltog').setAttribute('aria-expanded',String(open));
   if(save)try{localStorage.setItem('agora-ring:coll',open?'1':'0');}catch(e){}}
 $('colltog').addEventListener('click',()=>{setCollOpen($('collbox').classList.contains('closed'));relayout();});
-function setSteleOpen(open){$('stelebox').classList.toggle('closed',!open);$('steletog').textContent=isMobile()?(open?'▼':'▲'):(open?'접기':'펼치기');$('steletog').setAttribute('aria-expanded',String(open));}
+function setSteleOpen(open){$('stelebox').classList.toggle('closed',!open);$('steletog').textContent=isMobile()?(open?'▼':'▲'):(open?L('접기','Hide'):L('펼치기','Show'));$('steletog').setAttribute('aria-expanded',String(open));}
 $('steletog').addEventListener('click',()=>{const open=$('stelebox').classList.contains('closed');setSteleOpen(open);if(open&&isMobile())setCollOpen(false,false);relayout();});
 $('colltog').addEventListener('click',()=>{if(isMobile()&&$('collbox').classList.contains('closed'))setSteleOpen(false);},true); // opening one folds the other
 if(isMobile()){setCollOpen(false,false);setSteleOpen(false);} // phones start with both folded (not remembered)
@@ -1745,26 +1793,27 @@ if(window.ResizeObserver)new ResizeObserver(narrH).observe($('narr'));
 const ORACLE_COST=2;
 function askOracle(){
   if(modalOpen||fighting)return;
-  if(obols<ORACLE_COST){showOracle('신탁에는 공물이 필요하오.');narrate('오볼로스가 모자라요. 콩밭에서 조금 벌 수 있어요.');return;}
+  if(obols<ORACLE_COST){showOracle(L('신탁에는 공물이 필요하오.','An oracle needs an offering.'));narrate(L('오볼로스가 모자라요. 콩밭에서 조금 벌 수 있어요.','Not enough obols. You can earn a few in the bean field.'));return;}
   const avail=id=>({R5:stage>=2,R6:stage>=2,R8:born,C2:stage>=1,C3:stage>=1,C8:solved.has('C6'),C4:stage>=2,C5:stage>=2,C6:stage>=3,C7:met.has('democritus'),C9:met.has('democritus')}[id]??true);
   const here=k=>k.every(id=>{const o=LINE_OWNER[id];return npcs.some(m=>m.pid===o&&!m.hidden)&&unlocked(o).some(l=>canon(l)===id);});
   const can=id=>{const r=RULE_BY_ID[id];if(chapter!==3)return avail(id);
     if(r.elenchus)return npcs.some(m=>m.pid===r.who&&!m.hidden)&&(!r.after||solved.has(r.after));
     return r.keys.some(k=>here(k)&&k.length<=slotsAvail());};
   const r=CHAP[chapter].hints.map(id=>RULE_BY_ID[id]).find(r=>!solved.has(r.id)&&can(r.id));
-  if(!r){showOracle('그대 자신을 알라. (γνώθι σεαυτόν)');narrate('신녀는 더 내릴 신탁이 없대요.');return;}
-  obols-=ORACLE_COST;const o=PROPS.find(q=>q.oracle);if(o)floatText(`-${ORACLE_COST} 오볼`,o.x+21,o.y+12,GOLD);
-  showOracle(r.hint);narrate('피티아가 연기 속에서 신탁을 중얼거려요.');updateAll();
+  if(!r){showOracle(L('그대 자신을 알라. (γνώθι σεαυτόν)','Know thyself. (γνώθι σεαυτόν)'));narrate(L('신녀는 더 내릴 신탁이 없대요.','The Pythia has no more oracles to give.'));return;}
+  obols-=ORACLE_COST;const o=PROPS.find(q=>q.oracle);if(o)floatText('-'+ob(ORACLE_COST),o.x+21,o.y+12,GOLD);
+  showOracle(tr(r.hint));narrate(L('피티아가 연기 속에서 신탁을 중얼거려요.','The Pythia murmurs an oracle through the smoke.'));updateAll();
 }
 // the water seller refills the klepsydra
 const SHOP_COST=3,SHOP_WATER=25;
 function openShop(){
   if(modalOpen||fighting||ending===1)return;
-  if(ending===2){narrate('물장수: "밤엔 물시계가 멈춰 있소. 물은 필요 없겠구려."');return;}
+  if(ending===2){narrate(L('물장수: "밤엔 물시계가 멈춰 있소. 물은 필요 없겠구려."','Water seller: "The klepsydra stands still at night. You won\'t need water."'));return;}
   const full=water>=100-.5;
-  openModal(`<p class="eyebrow">물장수의 노점</p><h2 id="mtitle">물 한 동이</h2><p>클렙시드라에 물을 부으면 오늘 말할 시간이 늘어나요.</p><p class="tiny">지금 물 ${Math.ceil(water)} / 100 · 가진 돈 ${obols} 오볼${full?' · 물시계가 가득 찼어요':''}</p>`,
-    [{label:'그만두기'},{label:`물 +${SHOP_WATER} · ${SHOP_COST} 오볼`,primary:true,disabled:obols<SHOP_COST||full,fn:()=>{
-      obols-=SHOP_COST;water=Math.min(100,water+SHOP_WATER);narrate(`물장수가 클렙시드라에 물을 부었어요. 물 +${SHOP_WATER}.`);updateAll();}}]);
+  openModal(L(`<p class="eyebrow">물장수의 노점</p><h2 id="mtitle">물 한 동이</h2><p>클렙시드라에 물을 부으면 오늘 말할 시간이 늘어나요.</p><p class="tiny">지금 물 ${Math.ceil(water)} / 100 · 가진 돈 ${obols} 오볼${full?' · 물시계가 가득 찼어요':''}</p>`,
+    `<p class="eyebrow">The water seller's stall</p><h2 id="mtitle">A jar of water</h2><p>Pour water into the klepsydra and you get more time to talk today.</p><p class="tiny">Water ${Math.ceil(water)} / 100 · You have ${ob(obols)}${full?' · The klepsydra is full':''}</p>`),
+    [{label:L('그만두기','Never mind')},{label:L(`물 +${SHOP_WATER} · ${SHOP_COST} 오볼`,`+${SHOP_WATER} water · ${ob(SHOP_COST)}`),primary:true,disabled:obols<SHOP_COST||full,fn:()=>{
+      obols-=SHOP_COST;water=Math.min(100,water+SHOP_WATER);narrate(L(`물장수가 클렙시드라에 물을 부었어요. 물 +${SHOP_WATER}.`,`The water seller pours water into the klepsydra. +${SHOP_WATER} water.`));updateAll();}}]);
 }
 // bean plot: a philosopher dropped here hoes for a while and earns a few obols, once a day each
 const FARM_T=4,FARM_PAY=3;
@@ -1772,18 +1821,18 @@ let farmed=new Set();
 const ga=w=>{const c=w.charCodeAt(w.length-1)-0xac00;return w+(c>=0&&c<11172&&c%28?'이':'가');};
 function inGarden(p){return p.x>=BEANS.x-4&&p.x<=BEANS.x+BEANS.w+4&&p.y>=BEANS.y-10&&p.y<=BEANS.y+BEANS.h+4;}
 function startFarm(n){
-  const name=P[n.pid].name;
-  if(n.pid==='pythagoras'){floatText('콩은 안 되오!',n.x,n.y-26,'#fff');narrate('피타고라스는 콩을 질색해요. 콩밭엔 다른 사람을 보내 보세요.');toAgora(n,false);return;}
-  if(farmed.has(n.pid)){floatText('오늘은 그만…',n.x,n.y-26,'#e9e2d0');narrate(`${ga(name)} 오늘은 이미 밭일을 했어요. 내일 다시 부탁해 보세요.`);toAgora(n,false);return;}
-  if(npcs.some(m=>m.state==='farm')){narrate('콩밭엔 한 사람만 들어갈 수 있어요.');toAgora(n,false);return;}
+  const name=P[n.pid].name,ne=pn(n.pid);
+  if(n.pid==='pythagoras'){floatText(L('콩은 안 되오!','Not beans!'),n.x,n.y-26,'#fff');narrate(L('피타고라스는 콩을 질색해요. 콩밭엔 다른 사람을 보내 보세요.',"Pythagoras can't stand beans. Send someone else to the field."));toAgora(n,false);return;}
+  if(farmed.has(n.pid)){floatText(L('오늘은 그만…','Not again today…'),n.x,n.y-26,'#e9e2d0');narrate(L(`${ga(name)} 오늘은 이미 밭일을 했어요. 내일 다시 부탁해 보세요.`,`${ne} has already worked the field today. Ask again tomorrow.`));toAgora(n,false);return;}
+  if(npcs.some(m=>m.state==='farm')){narrate(L('콩밭엔 한 사람만 들어갈 수 있어요.','Only one person fits in the bean field.'));toAgora(n,false);return;}
   n.state='farm';n.farmT=0;n.paid=0;n.bubbleUntil=0;n.path=[];
   n.x=Math.max(BEANS.x+8,Math.min(BEANS.x+BEANS.w-8,n.x));n.y=Math.max(BEANS.y+12,Math.min(BEANS.y+BEANS.h-2,n.y));
-  narrate(`${ga(name)} 콩밭을 매기 시작했어요. 잠깐 일하면 오볼을 조금 벌어요.`);
+  narrate(L(`${ga(name)} 콩밭을 매기 시작했어요. 잠깐 일하면 오볼을 조금 벌어요.`,`${ne} starts hoeing the beans. A little work earns a few obols.`));
 }
 function farmTick(n,dt){
   n.farmT+=dt;n.ft+=dt;if(n.ft>.35){n.ft=0;n.frame^=1;}
-  if(n.farmT>=(n.paid+1)*FARM_T){n.paid++;obols++;floatText('+1 오볼',n.x,n.y-24,GOLD);updateAll();}
-  if(n.paid>=FARM_PAY){farmed.add(n.pid);n.state='wander';n.frame=0;toAgora(n,false);narrate(`${ga(P[n.pid].name)} 밭일을 마쳤어요. 오볼 +${FARM_PAY}.`);updateAll();}
+  if(n.farmT>=(n.paid+1)*FARM_T){n.paid++;obols++;floatText('+'+ob(1),n.x,n.y-24,GOLD);updateAll();}
+  if(n.paid>=FARM_PAY){farmed.add(n.pid);n.state='wander';n.frame=0;toAgora(n,false);narrate(L(`${ga(P[n.pid].name)} 밭일을 마쳤어요. 오볼 +${FARM_PAY}.`,`${pn(n.pid)} is done in the field. +${ob(FARM_PAY)}.`));updateAll();}
 }
 function doAct(a){if(a==='oracle')askOracle();else if(a==='shop')openShop();}
 $('stele').addEventListener('click',e=>{const b=e.target.closest('.kwbtn.got');if(b&&!modalOpen)openCodex(b.dataset.k);});
@@ -1792,8 +1841,8 @@ let chipsHTML='';
 function updateRingUI(){
   const d=debate;$('ringlist').hidden=!!d;$('tray').hidden=!d;
   if(d){
-    $('trayt').textContent=`${P[d.n.pid].name}의 말`;
-    const h=d.heard?d.answers.slice(0,d.heard).map((t,i)=>{const k=d.on.indexOf(i);return `<button class="chipb${k>=0?' on k'+k:''}" type="button" data-c="${i}"><span class="no">${i+1}</span>${t}</button>`;}).join(''):'<span class="wait">문답을 듣는 중…</span>';
+    $('trayt').textContent=L(`${P[d.n.pid].name}의 말`,`${pn(d.n.pid)}'s answers`);
+    const h=d.heard?d.answers.slice(0,d.heard).map((t,i)=>{const k=d.on.indexOf(i);return `<button class="chipb${k>=0?' on k'+k:''}" type="button" data-c="${i}"><span class="no">${i+1}</span>${tr(t)}</button>`;}).join(''):`<span class="wait">${L('문답을 듣는 중…','Listening…')}</span>`;
     if(h!==chipsHTML){const c=$('chips'),sl=c.scrollLeft;c.innerHTML=h;c.scrollLeft=sl;chipsHTML=h;} // keep the phone's scroll position
     $('fightbtn').disabled=d.on.includes(null)||!!fighting||ending===1||(water<=0&&ending!==2);
     tutStage0();return;
@@ -1803,8 +1852,8 @@ function updateRingUI(){
   let h='';
   for(let i=0;i<4;i++){const n=ring[i]; // always 2×2; corners the ring can't hold yet are empty outlines
     h+=i>=max?'<li class="off" aria-hidden="true"></li>'
-      :n?`<li><span class="corner c${i}">${CORNERS[i]}</span><span class="rw"><b>${P[n.pid].name}</b></span></li>`
-       :`<li class="empty"><span class="corner c${i}">${CORNERS[i]}</span><span class="rw">비어 있음</span></li>`;}
+      :n?`<li><span class="corner c${i}">${cornerName(i)}</span><span class="rw"><b>${pn(n.pid)}</b></span></li>`
+       :`<li class="empty"><span class="corner c${i}">${cornerName(i)}</span><span class="rw">${L('비어 있음','Empty')}</span></li>`;}
   $('ringlist').innerHTML=h;
   $('fightbtn').disabled=cnt<2||!!fighting||ending===1||(water<=0&&ending!==2);
   tutStage0();
@@ -1812,8 +1861,8 @@ function updateRingUI(){
 function updateStele(){
   const KW=CHAP[chapter].kw;
   $('stele').innerHTML=KW.map(k=>{
-    if(gotKw(k)){const h=interps[k]||new Set(),sl=slotsOf(k),s=sl.filter(x=>h.has(x[0])).length,t=sl.length;return `<li><button class="kwbtn got" type="button" data-k="${k}">${k}<span class="n">${s}/${t}</span></button></li>`;}
-    if(hiddenKw(k))return `<li><span class="kwbtn">? ? ?<span class="n">숨은</span></span></li>`;
+    if(gotKw(k)){const h=interps[k]||new Set(),sl=slotsOf(k),s=sl.filter(x=>h.has(x[0])).length,t=sl.length;return `<li><button class="kwbtn got" type="button" data-k="${k}">${tr(k)}<span class="n">${s}/${t}</span></button></li>`;}
+    if(hiddenKw(k))return `<li><span class="kwbtn">? ? ?<span class="n">${L('숨은','hidden')}</span></span></li>`;
     return `<li><span class="kwbtn">${'▒'.repeat(Math.min(4,k.length+1))}</span></li>`;
   }).join('');
   $('kwcount').textContent=`${KW.filter(gotKw).length} / ${KW.length}`;
@@ -1821,19 +1870,20 @@ function updateStele(){
 let lastWater=-1,lastPhase='';
 function updateSide(){
   const w=Math.ceil(water);
-  if(w!==lastWater){lastWater=w;$('waterv').innerHTML=ending===2?'—<small>멈춤</small>':`${w}<small>/ 100</small>`;}
-  const t=dayT();const phase=ending===2?'밤':t<.4?'해가 높아요':t<.7?'오후예요':t<.9?'해가 기울어요':'곧 해가 져요';
-  const ph=`${day}일째 · ${phase}`;if(ph!==lastPhase){lastPhase=ph;$('dayv').textContent=ph;}
-  $('obolv').textContent=`${obols} 오볼`;
-  const tt=`아고라 링 · ${chapter}장 ${CHAP[chapter].title}`;if($('title').textContent!==tt)$('title').textContent=tt;
-  $('ch2btn').hidden=!(chapter<3&&ending===2);const nb=`${chapter+1}장으로`;if(chapter<3&&$('ch2btn').textContent!==nb)$('ch2btn').textContent=nb;
+  if(w!==lastWater){lastWater=w;$('waterv').innerHTML=ending===2?`—<small>${L('멈춤','stopped')}</small>`:`${w}<small>/ 100</small>`;}
+  const t=dayT();const phase=ending===2?L('밤','Night'):t<.4?L('해가 높아요','High sun'):t<.7?L('오후예요','Afternoon'):t<.9?L('해가 기울어요','The sun sinks'):L('곧 해가 져요','Near sunset');
+  const ph=L(`${day}일째 · ${phase}`,`Day ${day} · ${phase}`);if(ph!==lastPhase){lastPhase=ph;$('dayv').textContent=ph;}
+  const ov=ob(obols);if($('obolv').textContent!==ov)$('obolv').textContent=ov;
+  const tt=L(`아고라 링 · ${chapter}장 ${CHAP[chapter].title}`,`Agora Ring · Ch.${chapter} ${tr(CHAP[chapter].title)}`);if($('title').textContent!==tt)$('title').textContent=tt;
+  $('ch2btn').hidden=!(chapter<3&&ending===2);const nb=L(`${chapter+1}장으로`,`Chapter ${chapter+1}`);if(chapter<3&&$('ch2btn').textContent!==nb)$('ch2btn').textContent=nb;
 }
 function updateAll(){updateRingUI();updateStele();updateSide();updateColl();saveGame();}
 
 /* ---------------- drawing ---------------- */
 const R=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,w,h);};
 function line(x0,y0,x1,y1,c){x0|=0;y0|=0;x1|=0;y1|=0;const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy;ctx.fillStyle=c;for(;;){ctx.fillRect(x0,y0,1,1);if(x0===x1&&y0===y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx;}if(e2<=dx){e+=dx;y0+=sy;}}}
-function ptext(t,x,y,c){ctx.font='700 11px Galmuri11, monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';x=Math.round(x);y=Math.round(y);
+function ptext(t,x,y,c){ctx.font='700 11px Galmuri11, monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  const hw=Math.ceil(ctx.measureText(t).width/2)+2;x=Math.round(Math.max(hw,Math.min(W-hw,x)));y=Math.round(y); // long shouts stay on screen
   ctx.fillStyle=OUT;for(const [ox,oy] of [[-1,0],[1,0],[0,-1],[0,1]])ctx.fillText(t,x+ox,y+oy);ctx.fillStyle=c;ctx.fillText(t,x,y);}
 function dayT(){return ending>=1?(ending===2?1:skyT):1-water/100;}
 
@@ -1949,7 +1999,7 @@ function update(dt){ // (the klepsydra also waits out the chapter-3 tutorial bou
     else if(fighting.dud){if(fighting.t>DUD_T)resolveFight();}
     else{
       if(fighting.next<=0){fighting.next=.19;const o=fighting.occ[Math.floor(Math.random()*fighting.occ.length)];
-        sndPunch();const WD=['반박!','아니오!','근거는?','틀렸소!','허튼소리!'];floatText(WD[Math.floor(Math.random()*WD.length)],o.x+(Math.random()-.5)*8,o.y-24,'#ffffff');
+        sndPunch();const WD=L(['반박!','아니오!','근거는?','틀렸소!','허튼소리!'],['Objection!','No!','Proof?','Wrong!','Nonsense!']);floatText(WD[Math.floor(Math.random()*WD.length)],o.x+(Math.random()-.5)*8,o.y-24,'#ffffff');
         puff(RING.cx-14+Math.random()*28,RING.cy+8+Math.random()*10,3,6);}
       if(fighting.t>FIGHT_T){puff(RING.cx,RING.cy+10,14,16);resolveFight();}
     }
@@ -1976,26 +2026,26 @@ function update(dt){ // (the klepsydra also waits out the chapter-3 tutorial bou
   if(ending===1&&!modalOpen&&arrest){
     endT+=dt;skyT=endFrom+(1-endFrom)*Math.min(1,endT/9);
     const A=arrest,so=A.so,mob=npcs.filter(n=>n.state==='mob');
-    if(!A.tussle&&endT>3.4){A.tussle=true;narrate('"젊은이를 타락시킨 자!" "신을 모독한 자!" 옥신각신하며 소크라테스를 붙잡아요.');}
+    if(!A.tussle&&endT>3.4){A.tussle=true;narrate(L('"젊은이를 타락시킨 자!" "신을 모독한 자!" 옥신각신하며 소크라테스를 붙잡아요.','"Corrupter of the youth!" "He denies the gods!" In the scuffle, they seize Socrates.'));}
     if(A.tussle&&!A.march&&endT>(A.next||0)&&mob.length){A.next=endT+.38;const o=mob[Math.floor(Math.random()*mob.length)];sndStep();
-      floatText(SHOUT[Math.floor(Math.random()*SHOUT.length)],o.x,o.y-24,'#ffffff');if(so)puff(so.x-6+Math.random()*12,so.y,2,5);}
+      floatText(L(SHOUT,SHOUT_EN)[Math.floor(Math.random()*SHOUT.length)],o.x,o.y-24,'#ffffff');if(so)puff(so.x-6+Math.random()*12,so.y,2,5);}
     if(!A.march&&endT>7){A.march=true; // everyone, Socrates in the middle, files out through one edge
       const lead=so||mob[0];
       if(lead){const ex=exitPath(lead),end=ex[ex.length-1],gate=ex[ex.length-2]||end;
         [so,...mob].filter(Boolean).forEach((n,k)=>{if(n===so)n.taken=true;n.state='march';n.bubbleUntil=0;
           const p=findPath(n.x,n.y,gate[0],gate[1])||[[gate[0],gate[1]]];p.push([end[0],end[1]+(k%3-1)*4]);n.path=p;[n.tx,n.ty]=p[p.length-1];});}
-      narrate('소크라테스가 끌려가요.');}
+      narrate(L('소크라테스가 끌려가요.','Socrates is led away.'));}
     if(endT>9&&owl.state==='perch'){owl.state='fly';owl.ft=0;sndOwl();}
     if(!A.plato&&A.march&&(endT>16||(endT>8.5&&!npcs.some(n=>n.state==='march'&&!n.hidden)))){A.plato=true;A.platoT=endT; // once the procession is gone
       const pl=npcs.find(n=>n.pid==='plato')||spawn('plato');[pl.x,pl.y]=platoSpot();pl.alpha=1;pl.flip=false;pl.writing=true;
-      showLine(pl,{id:'pl_sad',kw:'',text:'참 대단한 분이셨지...'},1e8);narrate('일행이 떠난 자리에 플라톤이 홀로 남아, 서판에 무언가를 열심히 적어요.');}
+      showLine(pl,{id:'pl_sad',kw:'',text:'참 대단한 분이셨지...'},1e8);narrate(L('일행이 떠난 자리에 플라톤이 홀로 남아, 서판에 무언가를 열심히 적어요.','Where the crowd stood, Plato remains alone, writing busily on his tablet.'));}
     if(A.plato&&endT>A.platoT+4.5&&!endModal)endingModal();
   }
   else if(ending===1&&!modalOpen){
     endT+=dt;skyT=endFrom+(1-endFrom)*Math.min(1,endT/3.5);
-    if(endT>3.6&&owl.state==='perch'){owl.state='fly';owl.ft=0;sndOwl();narrate('조각상의 부엉이가 날개를 펴요.');}
+    if(endT>3.6&&owl.state==='perch'){owl.state='fly';owl.ft=0;sndOwl();narrate(L('조각상의 부엉이가 날개를 펴요.','The owl on the statue spreads its wings.'));}
     const G=CHAP[chapter].guest;
-    if(endT>7.2&&!npcs.some(n=>n.pid===G&&n.state!=='leave')){const pm=spawn(G);pm.x=RING.cx;pm.y=Math.round(RING.y1+(H-RING.y1)/2);pm.alpha=0;pm.flip=false;narrate('텅 빈 아고라에 누군가 서 있어요.');}
+    if(endT>7.2&&!npcs.some(n=>n.pid===G&&n.state!=='leave')){const pm=spawn(G);pm.x=RING.cx;pm.y=Math.round(RING.y1+(H-RING.y1)/2);pm.alpha=0;pm.flip=false;narrate(L('텅 빈 아고라에 누군가 서 있어요.','Someone is standing in the empty agora.'));}
     const pm=npcs.find(n=>n.pid===G&&n.state!=='leave');if(pm&&pm.alpha<1)pm.alpha=Math.min(1,pm.alpha+dt*.7);
     if(endT>9.6&&!endModal)endingModal();
   }
@@ -2010,8 +2060,8 @@ function syncBubbles(){
   pool.forEach((d,i)=>{const n=vis[i];if(!n){d.hidden=true;d._k='';return;}
     d.hidden=false;
     const ls=STILL(n)?[]:unlocked(n.pid),li=ls.indexOf(n.shown); // "2/3": which of the lines they can say right now
-    const k=n.pid+'|'+n.shown.id+'|'+ls.length;
-    if(d._k!==k){d._k=k;d.innerHTML=`<span class="who">${P[n.pid].name}</span>${n.shown.text}${li>=0?`<span class="cnt">${li+1}/${ls.length}</span>`:''}`;d.classList.toggle('still',STILL(n));d.classList.toggle('soc',isSoc(n));}
+    const k=LANG+'|'+n.pid+'|'+n.shown.id+'|'+ls.length;
+    if(d._k!==k){d._k=k;d.innerHTML=`<span class="who">${pn(n.pid)}</span>${n.shown.no?n.shown.no+'. ':''}${tr(n.shown.text)}${li>=0?`<span class="cnt">${li+1}/${ls.length}</span>`:''}`;d.classList.toggle('still',STILL(n));d.classList.toggle('soc',isSoc(n));}
     d._n=n;
     const lift=n.state==='held'?4:0,px=n.x*SCALE,fx=n.state==='ring'?(n.slot%2?.14:.86):px<130?.14:px>innerWidth-130?.86:.5; // ring: left corners lean left, right corners lean right
     // ring: a front-corner fighter with someone behind on the same side speaks from under the ring, so the two bubbles never stack
@@ -2103,15 +2153,32 @@ function restore(s){
     ending=2;skyT=1;endModal=true;owl.state='gone';
     const pm=spawn(CHAP[chapter].guest);pm.x=RING.cx;pm.y=Math.round(RING.y1+(H-RING.y1)/2);pm.alpha=1;pm.flip=false;
     if(chapter===3){pm.writing=true;npcs.forEach(n=>{if(n.pid==='sokrates')n.taken=true;});nightCh3();}
-    narrate('밤의 아고라로 돌아왔어요. 물시계는 멈춘 채예요.');
-  }else if(got.size)narrate(`${chapter}장 ${day}일째, 하던 데서 이어 가요. 비문에 새긴 키워드 ${CHAP[chapter].kw.filter(gotKw).length} / ${CHAP[chapter].kw.length}.`);
-  else narrate('아고라에 두 사람이 서성이고 있어요. 눌러서 무슨 말을 하는지 들어 보세요.');
+    narrate(L('밤의 아고라로 돌아왔어요. 물시계는 멈춘 채예요.','Back in the night agora. The klepsydra is still stopped.'));
+  }else if(got.size)narrate(L(`${chapter}장 ${day}일째, 하던 데서 이어 가요. 비문에 새긴 키워드 ${CHAP[chapter].kw.filter(gotKw).length} / ${CHAP[chapter].kw.length}.`,`Chapter ${chapter}, day ${day}: picking up where you left off. Keywords on the stele: ${CHAP[chapter].kw.filter(gotKw).length} / ${CHAP[chapter].kw.length}.`));
+  else narrate(L('아고라에 두 사람이 서성이고 있어요. 눌러서 무슨 말을 하는지 들어 보세요.','Two people are wandering the agora. Tap them to hear what they say.'));
 }
 function askReset(){
   if(modalOpen||fighting||ending===1)return;$('help').open=false;
-  openModal(`<p class="eyebrow">처음부터 다시</p><h2 id="mtitle">비문을 지울까요?</h2><p>새긴 키워드, 도감의 해석, 모은 철학자, 오볼로스와 날짜가 모두 사라지고 튜토리얼부터 다시 시작해요.</p>`,
-    [{label:'지우고 처음부터',fn:()=>setTimeout(()=>init(true),0)},{label:'그만두기',primary:true}]);
+  openModal(L(`<p class="eyebrow">처음부터 다시</p><h2 id="mtitle">비문을 지울까요?</h2><p>새긴 키워드, 도감의 해석, 모은 철학자, 오볼로스와 날짜가 모두 사라지고 튜토리얼부터 다시 시작해요.</p>`,
+    `<p class="eyebrow">Start over</p><h2 id="mtitle">Wipe the stele?</h2><p>All carved keywords, codex readings, philosophers met, obols and days will be gone, and you start again from the tutorial.</p>`),
+    [{label:L('지우고 처음부터','Wipe and start over'),fn:()=>setTimeout(()=>init(true),0)},{label:L('그만두기','Never mind'),primary:true}]);
 }
+// static text: elements carry their English in data-en (inner HTML) / data-en-aria; the Korean is kept on first use
+function applyStatic(){
+  document.querySelectorAll('[data-en]').forEach(el=>{if(el._ko==null)el._ko=el.innerHTML;const h=LANG==='en'?el.dataset.en:el._ko;if(el.innerHTML!==h)el.innerHTML=h;});
+  document.querySelectorAll('[data-en-aria]').forEach(el=>{if(el._koA==null)el._koA=el.getAttribute('aria-label');const a=L(el._koA,el.dataset.enAria);el.setAttribute('aria-label',a);if(el.hasAttribute('title'))el.title=a;});
+  document.documentElement.lang=LANG;document.title=L('아고라 링','Agora Ring');
+  $('langbtn').querySelectorAll('[data-l]').forEach(x=>x.classList.toggle('on',x.dataset.l===LANG));
+}
+function setLang(l){
+  if(modalOpen||l===LANG)return;LANG=l;try{localStorage.setItem('agora-ring:lang',l);}catch(e){}
+  applyStatic();compactLabels();lastPhase='';lastWater=-1;chipsHTML='';
+  setCollOpen(!$('collbox').classList.contains('closed'),false);setSteleOpen(!$('stelebox').classList.contains('closed'));
+  updateAll();if(tourStep>=0)showTour();else tutStage0();
+  narrate(L('이제 한국어로 보여요.','Now in English.'));relayout();
+}
+$('langbtn').addEventListener('click',()=>setLang(LANG==='en'?'ko':'en'));
+applyStatic();
 $('resetbtn').addEventListener('click',askReset);
 $('resetbtn2').addEventListener('click',askReset);
 $('ch2btn').addEventListener('click',()=>{if(modalOpen||ending!==2)return;if(chapter===1)startChapter2();else if(chapter===2)startChapter3();});
@@ -2136,7 +2203,7 @@ function init(fresh){
     stage=0;water=100;day=1;obols=2;got=new Set();interps={};solved=new Set();born=false;chapter=1;met=new Set();heard=new Set();ending=0;skyT=0;endModal=false;owl.state='perch';
     const a=spawn('thales'),b=spawn('heraclitus');
     a.x=RING.cx-78;a.y=RING.y1+40;b.x=RING.cx+78;b.y=RING.y1+52;snap(a);snap(b);a.pauseUntil=b.pauseUntil=now+5000;pickTarget(a);pickTarget(b); // either side of the tutorial card
-    narrate('아고라에 두 사람이 서성이고 있어요. 눌러서 무슨 말을 하는지 들어 보세요.');
+    narrate(L('아고라에 두 사람이 서성이고 있어요. 눌러서 무슨 말을 하는지 들어 보세요.','Two people are wandering the agora. Tap them to hear what they say.'));
   }
   if(!roundSnap)snapshotRound();
   loading=false;lastWater=-1;lastPhase='';updateAll();
