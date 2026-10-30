@@ -139,7 +139,7 @@ canvas#scene.act{cursor:pointer}
 /* the Pythia's oracle: a dark, billowing cloud */
 .obub{position:fixed;z-index:12;pointer-events:none;
   filter:drop-shadow(2px 0 0 var(--dark)) drop-shadow(-2px 0 0 var(--dark)) drop-shadow(0 2px 0 var(--dark)) drop-shadow(0 -2px 0 var(--dark)) drop-shadow(4px 4px 0 rgba(0,0,0,.3))}
-.obub .cl{position:relative;background:#39343f;color:#ece6f4;border-radius:18px;padding:10px 14px;width:max-content;max-width:230px;font-size:12px;line-height:1.5;margin-bottom:26px}
+.obub .cl{position:relative;background:#39343f;color:#ece6f4;border-radius:999px;padding:12px 26px;width:max-content;max-width:230px;font-size:12px;line-height:1.5;margin-bottom:26px}
 .obub .cl b{display:block;font-size:10.5px;color:#b9aecb;margin-bottom:2px}
 .obub i{position:absolute;background:#39343f;border-radius:50%;z-index:-1} /* puffs sit behind the body so they never cover the text */
 .obub.on .cl{animation:billow .55s steps(5) both}
@@ -324,6 +324,7 @@ canvas#scene.act{cursor:pointer}
 <div class="tut" id="tut" hidden role="status"><span class="tk" id="tutk">처음 오셨군요</span><p id="tutt"></p><div class="row"><span class="tiny" id="tutn"></span><button class="btn" id="tutbtn" type="button" hidden>다음</button></div></div>
 <div class="obub" id="obub" hidden><div class="cl"><b data-en="The Pythia's oracle">피티아의 신탁</b><span id="obubt"></span>
   <i style="left:6%;top:-9px;width:24px;height:24px"></i><i style="left:30%;top:-12px;width:30px;height:30px"></i><i style="left:58%;top:-10px;width:26px;height:26px"></i><i style="left:80%;top:-6px;width:18px;height:18px"></i>
+  <i style="left:-10px;top:calc(50% - 14px);width:28px;height:28px"></i><i style="right:-10px;top:calc(50% - 13px);width:26px;height:26px"></i>
   <i style="left:14%;bottom:-8px;width:20px;height:20px"></i><i style="left:46%;bottom:-10px;width:24px;height:24px"></i><i style="left:74%;bottom:-7px;width:18px;height:18px"></i>
   <i style="left:calc(50% - 6px);bottom:-22px;width:12px;height:12px"></i><i style="left:calc(50% - 2px);bottom:-32px;width:7px;height:7px"></i></div></div>
 
@@ -1011,7 +1012,7 @@ function socTalk(){ // Socrates points at someone he has not questioned yet
 }
 // walk grid: 4px cells over the agora floor, minus the ring, the HUD and every prop's foot
 const CELL=4,DIRS=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
-let GW=0,GH=0,WALK=new Uint8Array(0),WALKLIST=[];
+let GW=0,GH=0,WALK=new Uint8Array(0),WALKLIST=[],BUB_ZONES=[],bubZoneKey='';
 function buildWalk(){
   GW=Math.ceil(W/CELL);GH=Math.ceil(H/CELL);WALK=new Uint8Array(GW*GH);WALKLIST=[];
   // nobody walks above the ring's top edge or behind the stalls, so awnings never hide anyone
@@ -1019,11 +1020,12 @@ function buildWalk(){
   const ui=uiRects(),rb=ringBox(),top=Math.max(STOA+46,RING.y0,stallBase),obs=PROPS.filter(p=>p.foot).map(p=>p.foot);
   obs.push([BEANS.x-3,BEANS.y-9,BEANS.x+BEANS.w+3,BEANS.y+BEANS.h+2]);
   if(ATHENA_ZONE)obs.push(ATHENA_ZONE);
+  const bz=BUB_ZONES;
   if(chapter===3){const [sx,sy]=socSpot();obs.push([sx-6,sy-5,sx+6,sy+2]);} // Socrates' spot
   for(let gy=0;gy<GH;gy++)for(let gx=0;gx<GW;gx++){
     const x=gx*CELL+2,y=gy*CELL+2;
     const ok=y>=top&&y<=H-6&&x>=6&&x<=W-6&&!(x>rb.x0&&x<rb.x1&&y>rb.y0&&y<rb.y1)
-      &&!ui.some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)&&!obs.some(o=>x>=o[0]-5&&x<=o[2]+5&&y>=o[1]-1&&y<=o[3]+2);
+      &&!ui.some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)&&!obs.some(o=>x>=o[0]-5&&x<=o[2]+5&&y>=o[1]-1&&y<=o[3]+2)&&!bz.some(o=>x>=o[0]&&x<=o[2]&&y>=o[1]&&y<=o[3]);
     if(ok){WALK[gy*GW+gx]=1;WALKLIST.push(gy*GW+gx);}}
 }
 const cellOf=(x,y)=>Math.max(0,Math.min(GH-1,Math.floor(y/CELL)))*GW+Math.max(0,Math.min(GW-1,Math.floor(x/CELL)));
@@ -1235,7 +1237,7 @@ function resolveRefute(){
   if(!f.dud){
     const r=d.rule,{n,so}=d;debate=null;
     burst(RING.cx,RING.cy,30,['#f4ecd2','#fff','#d84a3a','#3b6fd6']);
-    n.state='aporia';n.bubbleUntil=0;n.path=[];pendingExit={n,exit:r.exit};
+    n.state='aporia';n.bubbleUntil=0;n.path=[];pendingExit={n};
     spend(8);obols+=3;applyRule(r,[so,n]);
   }else{
     spend(15);d.on=[null,null];
@@ -1246,9 +1248,11 @@ function resolveRefute(){
   }
   updateAll();
 }
-function startExit(n,exit){n.state='leave';n.emote=exit;n.path=exitPath(n);[n.tx,n.ty]=n.path[n.path.length-1];n.returnAt=now+30000;}
-function comeBack(n){ // a refuted sophist wanders back in as if nothing happened
-  n.returnAt=0;n.hidden=false;n.emote=null;n.state='wander';
+// chapter 3: the motion a sophist left with (sweat, angry, flee) once Socrates has refuted him
+const refuted=n=>{if(chapter!==3)return null;const r=RULES.find(r=>r.elenchus&&r.who===n.pid&&solved.has(r.id));return r?r.exit:null;};
+function startExit(n){n.state='leave';n.path=exitPath(n);[n.tx,n.ty]=n.path[n.path.length-1];n.returnAt=now+30000;}
+function comeBack(n){ // a refuted sophist wanders back in, still sweating, fuming or skittish
+  n.returnAt=0;n.hidden=false;n.state='wander';
   const c=nearestCell(n.x<W/2?0:W-1,Math.round(H*.7));if(c>=0)[n.x,n.y]=cellXY(c);n.x+=n.x<W/2?-14:14;n.pauseUntil=0;pickTarget(n);
 }
 const DIG={0:['xxx','x.x','x.x','x.x','xxx'],1:['.x.','xx.','.x.','.x.','xxx'],2:['xx.','..x','.x.','x..','xxx'],3:['xx.','..x','.x.','..x','xx.'],4:['x.x','x.x','xxx','..x','..x'],
@@ -1399,7 +1403,7 @@ function applyRule(rule,occ){
     ${unl.length?`<div class="unl">${unl.map(u=>`<p>${u}</p>`).join('')}</div>`:''}`;
   narrate(L(`비문에 '${rule.kw}'가 새겨졌어요.`,`'${tr(rule.kw)}' is carved on the stele.`));
   openModal(html,[{label:L('도감 보기','Open codex'),fn:()=>setTimeout(()=>openCodex(rule.kw),0)},{label:L('계속','Continue'),primary:true}],()=>{
-    if(pendingExit){const {n,exit}=pendingExit;pendingExit=null;startExit(n,exit);}
+    if(pendingExit){const {n}=pendingExit;pendingExit=null;startExit(n);}
     if(chapterCleared()&&ending===0)startEnding();else if(!tutDone&&stage>=1&&chapter===1)startTour();else checkDay();
   });
 }
@@ -1795,9 +1799,9 @@ if(window.ResizeObserver)new ResizeObserver(narrH).observe($('narr'));
 /* ---------------- HUD ---------------- */
 // the Pythia under the red awning gives hints for an offering
 const ORACLE_COST=2;
+let oracleAt=-1; // solved count at the last paid oracle: until something new is won, asking again is free
 function askOracle(){
   if(modalOpen||fighting)return;
-  if(obols<ORACLE_COST){showOracle(L('신탁에는 공물이 필요하오.','An oracle needs an offering.'));narrate(L('오볼로스가 모자라요. 콩밭에서 조금 벌 수 있어요.','Not enough obols. You can earn a few in the bean field.'));return;}
   const avail=id=>({R5:stage>=2,R6:stage>=2,R8:born,C2:stage>=1,C3:stage>=1,C8:solved.has('C6'),C4:stage>=2,C5:stage>=2,C6:stage>=3,C7:met.has('democritus'),C9:met.has('democritus')}[id]??true);
   const here=k=>k.every(id=>{const o=LINE_OWNER[id];return npcs.some(m=>m.pid===o&&!m.hidden)&&unlocked(o).some(l=>canon(l)===id);});
   const can=id=>{const r=RULE_BY_ID[id];if(chapter!==3)return avail(id);
@@ -1805,7 +1809,9 @@ function askOracle(){
     return r.keys.some(k=>here(k)&&k.length<=slotsAvail());};
   const r=CHAP[chapter].hints.map(id=>RULE_BY_ID[id]).find(r=>!solved.has(r.id)&&can(r.id));
   if(!r){showOracle(L('그대 자신을 알라. (γνώθι σεαυτόν)','Know thyself. (γνώθι σεαυτόν)'));narrate(L('신녀는 더 내릴 신탁이 없대요.','The Pythia has no more oracles to give.'));return;}
-  obols-=ORACLE_COST;const o=PROPS.find(q=>q.oracle);if(o)floatText('-'+ob(ORACLE_COST),o.x+21,o.y+12,GOLD);
+  if(oracleAt===solved.size){showOracle(tr(r.hint));narrate(L('같은 물음에는 공물을 다시 받지 않아요.','The same question costs no second offering.'));return;}
+  if(obols<ORACLE_COST){showOracle(L('신탁에는 공물이 필요하오.','An oracle needs an offering.'));narrate(L('오볼로스가 모자라요. 콩밭에서 조금 벌 수 있어요.','Not enough obols. You can earn a few in the bean field.'));return;}
+  obols-=ORACLE_COST;oracleAt=solved.size;const o=PROPS.find(q=>q.oracle);if(o)floatText('-'+ob(ORACLE_COST),o.x+21,o.y+12,GOLD);
   showOracle(tr(r.hint));narrate(L('피티아가 연기 속에서 신탁을 중얼거려요.','The Pythia murmurs an oracle through the smoke.'));updateAll();
 }
 // the water seller refills the klepsydra
@@ -1908,9 +1914,10 @@ function drawNPC(n,ox=0,oy=0){
   if(n.flip){ctx.save();ctx.translate(x+8,0);ctx.scale(-1,1);ctx.drawImage(spr,0,y-20+lift+bob);ctx.restore();}
   else ctx.drawImage(spr,x-8,y-20+lift+bob);
   ctx.restore();
-  if(n.emote&&n.state==='leave'){const k=Math.floor(now/140)%2; // how a refuted sophist leaves
-    if(n.emote==='angry'){R(x-6,y-27-k,2,2,'#e0563b');R(x+5,y-28+k,2,2,'#e0563b');R(x-1,y-30+k,2,1,'#f08a6a');}
-    else if(n.emote==='sweat'){R(x+6,y-21+k,2,2,'#7cc4ec');R(x+7,y-23+k,1,2,'#7cc4ec');R(x-7,y-19-k,1,2,'#7cc4ec');}}
+  const em=refuted(n);
+  if(em&&n.state!=='mob'&&n.state!=='march'){const k=Math.floor(now/140)%2; // how a refuted sophist leaves, and goes on looking afterwards
+    if(em==='angry'){R(x-6,y-27-k,2,2,'#e0563b');R(x+5,y-28+k,2,2,'#e0563b');R(x-1,y-30+k,2,1,'#f08a6a');}
+    else if(em==='sweat'){R(x+6,y-21+k,2,2,'#7cc4ec');R(x+7,y-23+k,1,2,'#7cc4ec');R(x-7,y-19-k,1,2,'#7cc4ec');}}
   if(n.writing){const k=Math.floor(now/160)%4; // Plato's wax tablet and stylus; now and then a tear
     R(x-1,y-9,8,6,'#6b4a2a');R(x,y-8,6,4,'#3a2a1c');R(x+1+k,y-7,1,1,'#c9a86a');R(x+2+k,y-12,1,4,'#e6dcc4');
     if(Math.floor(now/1700)%3===0)R(x-3,y-13+Math.floor(now/250)%3,1,2,'#7cc4ec');}
@@ -2020,7 +2027,7 @@ function update(dt){ // (the klepsydra also waits out the chapter-3 tutorial bou
     if(d<1){if(n.state==='leave'||n.state==='march'){n.hidden=true;continue;}if(n.state==='mob'){n.frame=0;if(arrest&&arrest.so)n.flip=n.x>arrest.so.x;continue;}n.pauseUntil=now+500+Math.random()*2200;pickTarget(n);n.frame=0;continue;}
     const sp=(n.state==='leave'?42:n.state==='mob'?34:n.state==='march'?30:13)*dt;n.x+=dx/d*Math.min(sp,d);n.y+=dy/d*Math.min(sp,d);
     if(Math.abs(dx)>.3)n.flip=dx<0;
-    if(n.emote==='flee'&&n.state==='leave'&&Math.random()<dt*14)puff(n.x-(dx>0?5:-5),n.y,1,2);
+    if(refuted(n)==='flee'&&Math.random()<dt*(n.state==='leave'?14:5))puff(n.x-(dx>0?5:-5),n.y,1,2);
     n.ft+=dt;if(n.ft>.22){n.ft=0;n.frame^=1;if(now-SND.lastStep>110&&n.x>0&&n.x<W){SND.lastStep=now;sndStep();}}
     if((n.state==='leave'||n.state==='march')&&(n.x<-16||n.x>W+16))n.hidden=true;
   }
@@ -2059,7 +2066,7 @@ function update(dt){ // (the klepsydra also waits out the chapter-3 tutorial bou
 /* ---------------- bubbles (DOM) ---------------- */
 const pool=[];
 function syncBubbles(){
-  const vis=npcs.filter(n=>!n.hidden&&n.shown&&(n.state==='held'||now<n.bubbleUntil)&&!(fighting&&n.state==='ring'));
+  const vis=npcs.filter(n=>!n.hidden&&n.shown&&(n.state==='held'||n.state==='ring'&&!fighting||now<n.bubbleUntil));
   while(pool.length<vis.length){const d=document.createElement('div');d.className='bubble';$('bubbles').appendChild(d);pool.push(d);}
   pool.forEach((d,i)=>{const n=vis[i];if(!n){d.hidden=true;d._k='';return;}
     d.hidden=false;
@@ -2075,6 +2082,13 @@ function syncBubbles(){
     d.style.left=Math.round(left)+'px';d.style.top=Math.round(below?(RING.y1+22)*SCALE+10:(n.y-22-lift)*SCALE-d.offsetHeight)+'px'; // whole pixels keep the pixel font crisp
     d.style.setProperty('--tail',Math.max(8,Math.min(92,(px-left)/w*100))+'%');
   });
+  // nobody walks behind a ring bubble: its box (plus a body's height under it) leaves the walk grid
+  const zs=pool.filter(d=>!d.hidden&&d._n.state==='ring').map(d=>{const r=d.getBoundingClientRect();return [r.left/SCALE-10,r.top/SCALE-4,r.right/SCALE+10,r.bottom/SCALE+24].map(Math.round);}),k=zs.join('|');
+  if(k!==bubZoneKey){bubZoneKey=k;BUB_ZONES=zs;bubZonesChanged();}
+}
+function bubZonesChanged(){if(!WALK.length)return;buildWalk(); // anyone under a bubble walks out; routes through one are re-planned
+  for(const n of npcs){if(n.state!=='wander'||FIXED(n))continue;const pts=[[n.x,n.y],...(n.path||[])];
+    if(pts.some((q,i)=>!walkable(q[0],q[1])||i&&!los(pts[i-1][0],pts[i-1][1],q[0],q[1])))pickTarget(n);}
 }
 
 /* ---------------- klepsydra ---------------- */
@@ -2118,7 +2132,7 @@ function snapshotRound(){const d=saveData();d.water=100;d.ending=0;roundSnap=JSO
 function saveData(){
   const sets=o=>Object.fromEntries(Object.entries(o).map(([k,s])=>[k,[...s]]));
   const data={v:1,stage,water:Math.round(water*10)/10,day,obols,got:[...got],solved:[...solved],interps:sets(interps),
-    born,chapter,met:[...met],heard:[...heard],heardLines:[...heardLines],farmed:[...farmed],tutDone,ending,seen:Object.fromEntries(npcs.map(n=>[n.pid,n.seen]))};
+    born,chapter,met:[...met],heard:[...heard],heardLines:[...heardLines],farmed:[...farmed],oracleAt,tutDone,ending,seen:Object.fromEntries(npcs.map(n=>[n.pid,n.seen]))};
   return data;
 }
 function saveGame(){
@@ -2136,7 +2150,7 @@ function restore(s){
     for(const k of ['경건','아름다움','덕','척도','설득','상기','불의','절제','법'])if(s.interps)delete s.interps[k];
     if(s.interps&&s.interps['정의'])s.interps['정의']=s.interps['정의'].filter(p=>!['cephalus','polemarchus','thrasymachus','callicles','protagoras','sokrates'].includes(p));
     if(s.interps&&s.interps['영혼'])s.interps['영혼']=s.interps['영혼'].filter(p=>p!=='sokrates');}
-  if(got.delete('나눔'))got.add('무한분할');heard=new Set(s.heard);farmed=new Set(s.farmed);heardLines=new Set(s.heardLines);tutDone=!!s.tutDone;born=!!s.born;
+  if(got.delete('나눔'))got.add('무한분할');heard=new Set(s.heard);farmed=new Set(s.farmed);heardLines=new Set(s.heardLines);tutDone=!!s.tutDone;born=!!s.born;oracleAt=s.oracleAt??-1;
   interps={};for(const [k,a] of Object.entries(s.interps||{}))interps[k==='사랑과 미움'?'사랑과 투쟁':k]=new Set(a); // renamed keyword
   if(got.delete('사랑과 미움'))got.add('사랑과 투쟁');
   if(interps['나눔']){const old=interps['나눔'];delete interps['나눔'];
@@ -2196,7 +2210,7 @@ function loop(ts){requestAnimationFrame(loop);if(!bg.width)return;const dt=Math.
 function init(fresh){
   if(fresh)clearSave();
   const saved=fresh?null:loadSave();loading=true;
-  npcs=[];ring=[null,null,null,null];stage=0;water=100;day=1;obols=2;got=new Set();interps={};solved=new Set();born=false;chapter=1;met=new Set();
+  npcs=[];ring=[null,null,null,null];stage=0;water=100;day=1;obols=2;got=new Set();interps={};solved=new Set();born=false;chapter=1;met=new Set();oracleAt=-1;
   ending=0;endT=0;skyT=0;endModal=false;dayOver=false;fighting=null;debate=null;pendingExit=null;arrest=null;particles=[];texts=[];dust=[];heard=new Set();heardLines=new Set();farmed=new Set();tutDone=false;setTip(null);
   owl={state:'perch',turnUntil:0,nextTurn:performance.now()+6000,ft:0};tourStep=-1;tutCur=null;
   updateAll();layout();
@@ -2204,7 +2218,7 @@ function init(fresh){
   roundSnap=null;
   if(saved){try{restore(saved);ok=true;roundSnap=saved.roundSnap||null;}catch(e){npcs=[];}}
   if(!ok){
-    stage=0;water=100;day=1;obols=2;got=new Set();interps={};solved=new Set();born=false;chapter=1;met=new Set();heard=new Set();ending=0;skyT=0;endModal=false;owl.state='perch';
+    stage=0;water=100;day=1;obols=2;got=new Set();interps={};solved=new Set();born=false;chapter=1;met=new Set();oracleAt=-1;heard=new Set();ending=0;skyT=0;endModal=false;owl.state='perch';
     const a=spawn('thales'),b=spawn('heraclitus');
     a.x=RING.cx-78;a.y=RING.y1+40;b.x=RING.cx+78;b.y=RING.y1+52;snap(a);snap(b);a.pauseUntil=b.pauseUntil=now+5000;pickTarget(a);pickTarget(b); // either side of the tutorial card
     narrate(L('아고라에 두 사람이 서성이고 있어요. 눌러서 무슨 말을 하는지 들어 보세요.','Two people are wandering the agora. Tap them to hear what they say.'));
