@@ -21,4 +21,6 @@ python3 build.py
 
 폰트: [Galmuri](https://github.com/quiple/galmuri) (SIL Open Font License 1.1, [FONT-LICENSE.md](FONT-LICENSE.md))
 
+영어 폰트: [Handjet](https://github.com/rosettatype/Handjet) (SIL Open Font License 1.1, [fonts/Handjet-OFL.txt](fonts/Handjet-OFL.txt)). `fonts/`의 라틴·그리스 문자 부분만 넣는다.
+
 효과음: 종소리와 펀치 소리는 Pixabay의 효과음("opening bell" #421471, "punch" #95294)을 잘라 `index.html` 안에 넣었다. 원본 파일(`sounds/`)은 저장소에 올리지 않으므로, 직접 빌드하려면 같은 파일을 `sounds/bell.mp3`, `sounds/punches.wav`로 두어야 한다. 나머지 소리(군중, 발소리, 부엉이)는 Web Audio로 합성한다.
