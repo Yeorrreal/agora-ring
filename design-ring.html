@@ -39,9 +39,11 @@ body.mies .btn:not(.ghost){color:#fff}body.mies .bell{filter:grayscale(1)}
 .btn.ghost{background:var(--panel2);color:var(--ink);font-weight:400;font-size:11.5px;padding:4px 8px}
 .btn.icon{display:flex;align-items:center;justify-content:center;padding:3px 5px}.hicon{display:block;width:16px;height:16px;image-rendering:pixelated}body.mies .hicon{filter:invert(1)}
 .btn:active{transform:translate(1px,1px)}
-.narr{position:fixed;left:var(--gl);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:6;width:min(340px,calc(100vw - 24px));padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.dock{position:fixed;left:var(--gl);right:var(--gr);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:6;display:flex;justify-content:space-between;align-items:flex-end;gap:14px;pointer-events:none}
+.dock>*{pointer-events:auto}
+.narr{flex:0 1 340px;min-width:0;padding:10px 12px;display:flex;flex-direction:column;gap:3px}
 .narr b{color:var(--gold);font-size:13.5px}.narr .y{font-size:11px;color:var(--muted)}
-.stelebox{position:fixed;right:var(--gr);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:6;width:190px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.stelebox{flex:0 0 190px;padding:10px;display:flex;flex-direction:column;gap:6px}
 .stele{list-style:none;padding:6px;background:#cfc7b4;box-shadow:inset 0 0 0 2px #a59d89,inset 0 0 0 4px #ded7c6}
 .kwbtn{font:inherit;font-size:11.5px;width:100%;border:0;background:transparent;padding:3px 4px;color:#6f6656;text-align:left;cursor:default}
 .kwbtn.got{color:#2a2117;cursor:pointer;font-weight:700}
@@ -71,8 +73,8 @@ body.mies .card .side{background:#fff}
 .card .side b{font-size:12.5px}.card .acts{display:flex;justify-content:flex-end;gap:8px}
 @media(max-width:699px){
   .bell{width:48px;height:52px}.bub{max-width:168px;font-size:11.5px;line-height:16px}
-  .narr{width:calc(100vw - 24px);bottom:calc(env(safe-area-inset-bottom,0px) + 56px)}
-  .stelebox{width:auto;left:var(--gl);padding:6px 8px}.stelebox .stele{display:flex;flex-wrap:wrap;gap:0 4px;padding:3px}.stelebox>.lbl{display:none}.kwbtn{white-space:nowrap;padding:2px 3px;font-size:11px}
+  .dock{flex-direction:column;align-items:stretch;gap:14px}.narr{flex:none}
+  .stelebox{flex:none;padding:6px 8px}.stelebox .stele{display:flex;flex-wrap:wrap;gap:0 4px;padding:3px}.stelebox>.lbl{display:none}.kwbtn{white-space:nowrap;padding:2px 3px;font-size:11px}
 }
 </style></head><body>
 <div class="screen"><canvas id="scene" aria-label="위에서 내려다본 복싱 체육관과 링"></canvas></div>
@@ -85,8 +87,8 @@ body.mies .card .side{background:#fff}
     <div class="rc c1" id="rn1"></div>
   </div>
 </header>
-<section class="narr panel" id="narr" aria-live="polite"><b id="nt"></b><span class="y" id="ny"></span><p id="nb"></p></section>
-<aside class="stelebox panel"><span class="lbl">도감 · 모은 키워드</span><ul class="stele" id="stele"></ul></aside>
+<div class="dock"><section class="narr panel" id="narr" aria-live="polite"><b id="nt"></b><span class="y" id="ny"></span><p id="nb"></p></section>
+<aside class="stelebox panel"><span class="lbl">도감 · 모은 키워드</span><ul class="stele" id="stele"></ul></aside></div>
 <div class="bubbles" id="bubbles"></div>
 <div class="hl" id="hl" hidden></div>
 <div class="tut" id="tut" hidden role="status"><span class="tk" id="tutk"></span><p id="tutt"></p><div class="row"><span class="n" id="tutn"></span><button class="btn" id="tutbtn" type="button" hidden>다음</button></div></div>
@@ -570,7 +572,7 @@ function layout(){
   const y0=top+(mob?16:18),rh=mob?75:Math.min(150,Math.max(110,Math.round(H-y0-96)));
   const x0=Math.round((W-rw)/2);
   RING={x0,x1:x0+rw,y0,y1:y0+rh,cx:x0+rw/2,cy:y0+rh/2};
-  bakeBg();placeCoaches();
+  hudNow=hudRects();bakeBg();placeCoaches();
   for(const e of ents){if(e.side)clampHalf(e);else{e.x=Math.max(14,Math.min(W-14,e.x));e.y=Math.max(wallH+10,Math.min(H-8,e.y));if(forbidden(e.x,e.y,e))spawnPos(e);}e.tx=e.x;e.ty=e.y;}
 }
 function bakeBg(){
@@ -620,9 +622,11 @@ const zones=()=>{const o=['red','blue'],{x0,x1}=RING,w=(x1-x0)/o.length;return o
 const halfRect=e=>{const hw=OBJ[e.id].w/2+1,{y0,y1}=RING,z=zones().find(q=>q.s===e.side),a=z.a+hw+3,b=z.b-hw-3,m=(z.a+z.b)/2;return {a:Math.min(a,m),b:Math.max(b,m),c:y0+Math.min(24,OBJ[e.id].h*.7),d:y1-4};};
 function clampHalf(e){const r=halfRect(e);e.x=Math.max(r.a,Math.min(r.b,e.x));e.y=Math.max(r.c,Math.min(r.d,e.y));}
 const hudRects=()=>[...document.querySelectorAll('.narr,.stelebox,.tut')].filter(n=>!n.hidden).map(n=>{const b=n.getBoundingClientRect();return {a:b.left/SCALE,b:b.right/SCALE,c:b.top/SCALE,d:b.bottom/SCALE+6};});
+let hudNow=[];
 function forbidden(x,y,e){
   const d=OBJ[e.id],hw=d.w/2+2,{x0,x1,y0,y1}=RING;
   if(x+hw>x0-4&&x-hw<x1+4&&y>y0-6&&y-d.h<y1+24)return true;
+  for(const r of hudNow)if(x+hw>r.a&&x-hw<r.b&&y+2>r.c&&y-d.h-10<r.d)return true;
   for(const c of coachE)if(Math.abs(x-c.x)<hw+8*CS()&&y>c.y-10&&y-d.h<c.y)return true;
   return false;
 }
@@ -803,6 +807,7 @@ $('tutbtn').onclick=()=>{tutF.read=true;};
 /* ---- update ---- */
 function update(dt){
   if(paused)return;
+  hudNow=hudRects();
   for(const e of ents){
     if(e===drag)continue;
     if(fight)continue;
