@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>디자인 링</title>
+<style>
+@font-face{font-family:"Galmuri11";src:url(data:font/woff2;base64,__FONT_REG__) format("woff2");font-weight:400;font-display:block}
+@font-face{font-family:"Galmuri11";src:url(data:font/woff2;base64,__FONT_BOLD__) format("woff2");font-weight:700;font-display:block}
+:root{color-scheme:dark;
+  --bg:#16121b;--panel:rgba(30,23,37,.92);--panel2:#2e2537;--edge:#0b090e;--hi:#4b3e59;
+  --ink:#f2ead9;--muted:#a89cb3;--gold:#e8c35a;--red:#e0563b;--blue:#4d7fd6;--parch:#fbf5e6;--dark:#1a1418;
+  --pix:"Galmuri11","DungGeunMo","Apple SD Gothic Neo","Malgun Gothic",monospace;
+  --gl:max(12px,env(safe-area-inset-left,0px));--gr:max(12px,env(safe-area-inset-right,0px))}
+body.mies{--bg:#fff;--panel:rgba(255,255,255,.96);--panel2:#e6e6e6;--edge:#111;--hi:#fff;--ink:#111;--muted:#666;--gold:#111;--red:#666;--blue:#999;--parch:#fff}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--pix);font-size:12.5px;line-height:1.5;margin:0;overflow:hidden;-webkit-font-smoothing:none}
+p,h1,h2,ul{margin:0;padding:0}
+[hidden]{display:none!important}
+.screen{position:fixed;inset:0;overflow:hidden}
+canvas#scene{position:absolute;left:0;top:0;display:block;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none;cursor:pointer}
+canvas#scene.grab{cursor:grab}canvas#scene.grabbing{cursor:grabbing}
+.panel{background:var(--panel);box-shadow:0 0 0 2px var(--edge),inset 0 0 0 2px var(--hi),4px 4px 0 2px rgba(0,0,0,.3)}
+.lbl{font-size:11px;color:var(--muted);letter-spacing:.05em}
+.hdr{position:fixed;left:0;right:0;top:0;z-index:10;padding:calc(env(safe-area-inset-top,0px) + 8px) var(--gr) 0 var(--gl);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.hdr>*{pointer-events:auto}
+.bar{width:100%;max-width:560px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 6px 4px 12px}
+.bar h1{font-size:13.5px;font-weight:700;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.bar .acts{display:flex;gap:6px;flex:none}
+.center{display:flex;align-items:flex-start;justify-content:center;gap:10px;width:100%;max-width:560px;pointer-events:none}
+.center>*{pointer-events:auto}
+.rc{flex:1 1 0;min-width:0;padding:8px 10px;text-align:center;font-weight:700;font-size:13px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 0 0 2px var(--edge),4px 4px 0 2px rgba(0,0,0,.3)}
+.c0{background:var(--red);color:var(--dark)}.c1{background:var(--blue);color:#fff}
+.bell{flex:none;width:58px;height:62px;padding:0;border:0;cursor:pointer;background:transparent center/100% 100% no-repeat;image-rendering:pixelated;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.3));transform-origin:50% 8%}
+.bell.ding{animation:ding .45s steps(6)}
+@keyframes ding{0%,100%{rotate:0deg}20%{rotate:-14deg}40%{rotate:11deg}60%{rotate:-7deg}80%{rotate:4deg}}
+.bell:focus-visible,.btn:focus-visible,.kwbtn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.btn{font:inherit;font-weight:700;font-size:12.5px;border:0;cursor:pointer;padding:7px 12px;background:var(--gold);color:var(--dark);white-space:nowrap;box-shadow:0 0 0 2px var(--dark),inset -2px -3px 0 rgba(0,0,0,.25),inset 2px 2px 0 rgba(255,255,255,.35)}
+body.mies .btn:not(.ghost){color:#fff}body.mies .bell{filter:grayscale(1)}
+.btn.ghost{background:var(--panel2);color:var(--ink);font-weight:400;font-size:11.5px;padding:4px 8px}
+.btn.icon{display:flex;align-items:center;justify-content:center;padding:3px 5px}.hicon{display:block;width:16px;height:16px;image-rendering:pixelated}body.mies .hicon{filter:invert(1)}
+.btn:active{transform:translate(1px,1px)}
+.narr{position:fixed;left:var(--gl);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:6;width:min(340px,calc(100vw - 24px));padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.narr b{color:var(--gold);font-size:13.5px}.narr .y{font-size:11px;color:var(--muted)}
+.stelebox{position:fixed;right:var(--gr);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:6;width:190px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.stele{list-style:none;padding:6px;background:#cfc7b4;box-shadow:inset 0 0 0 2px #a59d89,inset 0 0 0 4px #ded7c6}
+.kwbtn{font:inherit;font-size:11.5px;width:100%;border:0;background:transparent;padding:3px 4px;color:#6f6656;text-align:left;cursor:default}
+.kwbtn.got{color:#2a2117;cursor:pointer;font-weight:700}
+.bubbles{position:fixed;inset:0;z-index:11;pointer-events:none}
+.bub{position:absolute;background:var(--parch);color:var(--dark);font-size:12px;line-height:17px;padding:5px 8px 6px;width:max-content;max-width:190px;box-shadow:0 0 0 2px #1a1418,3px 3px 0 2px rgba(0,0,0,.35);transform:translate(-50%,-100%);word-break:keep-all}
+.bub::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-5px;border:5px solid transparent;border-top:6px solid #1a1418;border-bottom:0}
+.bub.shout{font-weight:700;background:#fff0a8}body.mies .bub.shout{background:#fff}
+.ptip{position:fixed;background:var(--parch);color:var(--dark);font-size:12px;font-weight:700;padding:4px 8px 5px;white-space:nowrap;box-shadow:0 0 0 2px #1a1418,3px 3px 0 2px rgba(0,0,0,.35);pointer-events:none;z-index:12;transform:translate(-50%,-100%)}
+.tut{position:fixed;z-index:13;width:min(300px,calc(100vw - 32px));background:#fbf5e6;color:#1a1418;padding:12px 14px 10px;font-size:13px;line-height:20px;word-break:keep-all;box-shadow:0 0 0 2px #1a1418,5px 5px 0 2px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.tut .tk{font-size:10.5px;font-weight:700;color:#8a6a1c;letter-spacing:.08em}
+.tut .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tut .n{font-size:11px;color:#7d6a85}
+.tut .btn{pointer-events:auto;font-size:12px;padding:5px 12px}
+.tut::before,.tut::after{content:"";position:absolute;left:var(--ax,50%);transform:translateX(-50%);border:solid transparent}
+.tut.up::before{bottom:calc(100% + 2px);border-width:0 9px 9px;border-bottom-color:#1a1418}
+.tut.up::after{bottom:100%;border-width:0 7px 7px;border-bottom-color:#fbf5e6}
+.hl{position:fixed;z-index:7;pointer-events:none;border:2px dashed #e8c35a;box-shadow:0 0 0 2px rgba(26,20,24,.6);animation:hlpulse 1s steps(2) infinite}
+.hl.person{box-shadow:none}
+@keyframes hlpulse{50%{border-color:rgba(232,195,90,.25)}}
+@media (prefers-reduced-motion:reduce){.hl{animation:none}}
+.banner{position:fixed;left:50%;top:46%;transform:translate(-50%,-50%);z-index:9;padding:10px 16px;text-align:center;font-weight:700;font-size:14px;line-height:1.5;white-space:pre-line;pointer-events:none;max-width:calc(100vw - 24px);word-break:keep-all}
+.modal{position:fixed;inset:0;z-index:30;background:rgba(10,8,14,.72);display:flex;align-items:center;justify-content:center;padding:16px}
+.card{background:var(--panel2);box-shadow:0 0 0 2px var(--edge),inset 0 0 0 2px var(--hi),6px 6px 0 2px rgba(0,0,0,.35);padding:20px;width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;display:flex;flex-direction:column;gap:12px;word-break:keep-all}
+.card h2{font-size:18px;color:var(--gold)}
+.card .side{padding:8px 10px;background:rgba(0,0,0,.18);display:flex;flex-direction:column;gap:2px}
+body.mies .card .side{background:#fff}
+.card .side b{font-size:12.5px}.card .acts{display:flex;justify-content:flex-end;gap:8px}
+@media(max-width:699px){
+  .bell{width:48px;height:52px}.bub{max-width:168px;font-size:11.5px;line-height:16px}
+  .narr{width:calc(100vw - 24px);bottom:calc(env(safe-area-inset-bottom,0px) + 56px)}
+  .stelebox{width:auto;left:var(--gl);padding:6px 8px}.stelebox .stele{display:flex;flex-wrap:wrap;gap:0 4px;padding:3px}.stelebox>.lbl{display:none}.kwbtn{white-space:nowrap;padding:2px 3px;font-size:11px}
+}
+</style></head><body>
+<div class="screen"><canvas id="scene" aria-label="위에서 내려다본 복싱 체육관과 링"></canvas></div>
+<div class="ptip" id="ptip" hidden></div>
+<header class="hdr" id="hdr">
+  <div class="bar panel"><h1 id="title">디자인 링</h1><span class="acts"><button class="btn ghost icon" id="snd" type="button" aria-pressed="true" aria-label="소리 켜고 끄기" title="소리 켜고 끄기"><img class="hicon" id="sndicon" alt=""></button><button class="btn ghost icon" id="reset" type="button" aria-label="처음으로" title="처음으로"><img class="hicon" id="reseticon" alt=""></button></span></div>
+  <div class="center" id="center">
+    <div class="rc c0" id="rn0"></div>
+    <button class="bell" id="bell" type="button" aria-label="종 치기" title="종 치기"></button>
+    <div class="rc c1" id="rn1"></div>
+  </div>
+</header>
+<section class="narr panel" id="narr" aria-live="polite"><b id="nt"></b><span class="y" id="ny"></span><p id="nb"></p></section>
+<aside class="stelebox panel"><span class="lbl">도감 · 모은 키워드</span><ul class="stele" id="stele"></ul></aside>
+<div class="bubbles" id="bubbles"></div>
+<div class="hl" id="hl" hidden></div>
+<div class="tut" id="tut" hidden role="status"><span class="tk" id="tutk"></span><p id="tutt"></p><div class="row"><span class="n" id="tutn"></span><button class="btn" id="tutbtn" type="button" hidden>다음</button></div></div>
+<div class="banner panel" id="banner" hidden></div>
+<div class="modal" id="modal" hidden><div class="card" role="dialog" aria-modal="true"><div id="mbody" style="display:flex;flex-direction:column;gap:10px"></div><div class="acts"><button class="btn" id="mbtn" type="button"></button></div></div></div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const cv=$('scene'),ctx=cv.getContext('2d');
+let W=384,H=240,SCALE=3;
+const SKIN='#d9a070',EYE='#2a1c18',SHOE='#2b2024',OUT='#1a1418',GOLD='#e8c35a',BLUSH='#f0a088';
+
+/* ---- sprites: the same 2-head chibi generator as Agora Ring ---- */
+function tmpl(p,f){
+  const r=[];
+  if(p.bald)r.push('....ssssss....','..hssssssssh..','.hhsssssssshh.');
+  else if(p.messy)r.push('...h.hhhh.h...','..hhhhhhhhhh..','.hhhhhhhhhhhh.');
+  else if(p.parted)r.push('....hhhhhh....','..hhhhhhhhhh..','.hhhhhhhsshhh.');
+  else r.push('....hhhhhh....','..hhhhhhhhhh..','.hhhhhhhhhhhh.');
+  r.push('.hhsssssssshh.','.hssssssssssh.');
+  const eyes=p.glasses?'.hkkkkkkkkkkh.':'.hssessssessh.';
+  if(f===2&&!p.glasses)r.push('.hssssssssssh.',eyes);else r.push(p.glasses?'.hkekkkkkkekh.':eyes,eyes);
+  r.push('.hpssssssssph.');
+  if(p.beard)r.push('..sbbbbbbbbs..','...bbbbbbbb...');
+  else if(p.moustache)r.push('..ssbbbbbbss..','...ssssssss...');
+  else r.push('..ssssssssss..','...ssssssss...');
+  r.push(p.beard?'...cbbbbbbc...':p.suit?'...cxxxxxxc...':'...cccccccc...');
+  if(p.suit)r.push('.sccxxttxxccs.','.sccccttccccs.','..ccccttcccd..','..cccccccccd..','...cccccccd...');
+  else r.push('.sxcccccccccs.','.scccxcccccds.','..ccccccxccd..','..ccccccccxd..','...cccccccd...');
+  if(f===1)r.push('...ll....ll...','...ll....ll...');else r.push('....ll..ll....','....ll..ll....');
+  return r;
+}
+function bake(rows,cmap,w,h){
+  const c=document.createElement('canvas');c.width=w+2;c.height=h+2;const g=c.getContext('2d');
+  const filled=(x,y)=>y>=0&&y<h&&x>=0&&x<w&&rows[y][x]!=='.';
+  g.fillStyle=OUT;
+  for(let y=-1;y<=h;y++)for(let x=-1;x<=w;x++){if(filled(x,y))continue;if(filled(x-1,y)||filled(x+1,y)||filled(x,y-1)||filled(x,y+1))g.fillRect(x+1,y+1,1,1);}
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const ch=rows[y][x];if(ch==='.')continue;g.fillStyle=cmap[ch]||'#f0f';g.fillRect(x+1,y+1,1,1);}
+  return c;
+}
+function mk(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');fn((x,y,w,h,col)=>{g.fillStyle=col;g.fillRect(x,y,w,h);},g);return c;}
+function outlined(src,col){
+  const w=src.width,h=src.height,d=src.getContext('2d').getImageData(0,0,w,h).data;
+  const op=(x,y)=>x>=0&&y>=0&&x<w&&y<h&&d[(y*w+x)*4+3]>40;
+  return mk(w+2,h+2,(R,g)=>{for(let y=-1;y<=h;y++)for(let x=-1;x<=w;x++)if(!op(x,y)&&(op(x-1,y)||op(x+1,y)||op(x,y-1)||op(x,y+1)))R(x+1,y+1,1,1,col);g.drawImage(src,1,1);});
+}
+function disc(R,cx,cy,rx,ry,col){for(let dy=-ry;dy<=ry;dy++){const w=Math.round(rx*Math.sqrt(Math.max(0,1-dy*dy/(ry*ry))));R(cx-w,cy+dy,w*2+1,1,col);}}
+function mono(src){ // Mies mode: every sprite collapses to white, two greys and black
+  const c=mk(src.width,src.height,(R,g)=>g.drawImage(src,0,0)),g=c.getContext('2d'),im=g.getImageData(0,0,c.width,c.height),d=im.data;
+  for(let i=0;i<d.length;i+=4){if(!d[i+3])continue;const l=.3*d[i]+.59*d[i+1]+.11*d[i+2],v=l<55?17:l<125?130:l<195?200:255;d[i]=d[i+1]=d[i+2]=v;}
+  g.putImageData(im,0,0);return c;
+}
+function coachSpr(p){
+  const cm={h:p.hair,s:SKIN,e:EYE,b:p.beard||p.moustache,c:p.cloth,d:p.dark,x:p.trim,t:p.tie,l:p.shoe||SHOE,p:BLUSH,k:'#141014'};
+  const col=[0,1,2].map(f=>bake(tmpl(p,f),cm,14,18));
+  return {col,bw:col.map(mono)};
+}
+
+/* ---- design objects: each drawn after the real thing; legs are added when walking ---- */
+const ART={
+strawberry(R){ // Strawberry Thief: indigo discharge print, mirrored thrushes and strawberries
+  const I='#1e3566',I2='#2d4c86',T='#b98d4f',W='#efe6cf',S='#c23a34',G='#5c8f5a',Y='#e0b84f';
+  R(0,0,30,2,'#7a5230');R(2,2,26,30,I);
+  for(let y=4;y<32;y+=4)for(let x=3;x<27;x+=4)R(x+(y%8?2:0),y,1,1,I2);
+  for(const m of [0,1]){const X=(x,w=1)=>m?30-x-w:x;
+    for(const oy of [3,18]){
+      R(X(4,5),oy+3,5,3,T);R(X(4,2),oy+1,2,2,T);R(X(3),oy+2,1,1,Y);R(X(5,3),oy+4,3,2,W);R(X(5),oy+1,1,1,OUT);R(X(9,3),oy+5,3,1,T); // bird
+      R(X(11,2),oy+1,2,2,S);R(X(11),oy,1,1,G); // berry
+      R(X(4,2),oy+8,2,2,S);R(X(5),oy+7,1,1,G);R(X(8,3),oy+9,3,1,G);R(X(10,2),oy+10,2,1,G);R(X(12,2),oy+8,2,3,W);R(X(12),oy+9,1,1,Y);
+    }}
+  R(14,8,2,18,G);R(13,13,4,3,W);R(14,14,2,1,S);R(2,31,26,1,'#132445');
+},
+kelmscott(R){ // Kelmscott Chaucer: heavy vine border, black-letter columns, Burne-Jones roundel
+  const V='#f6efdc',B='#191413',M='#e8dfc6';
+  R(0,0,30,36,V);R(28,0,2,36,M);R(0,35,30,1,'#bfb394');
+  R(2,2,25,32,B);
+  for(let y=3;y<33;y+=2){R(3+(y%4?1:0),y,1,1,V);R(25-(y%4?1:0),y,1,1,V);}
+  for(let x=4;x<25;x+=2){R(x,3+(x%4?1:0),1,1,V);R(x,32-(x%4?1:0),1,1,V);}
+  R(6,6,17,24,V);
+  R(7,7,15,9,B);R(8,8,13,7,V);R(13,9,3,3,'#8d8a7f');R(12,12,5,3,'#55504a');R(9,13,2,2,'#8d8a7f');R(18,13,2,2,'#8d8a7f');
+  for(let y=18;y<29;y+=2){R(8,y,6,1,B);R(16,y,6,1,B);}
+  R(8,17,3,3,'#b22f22');R(9,18,1,1,V);
+},
+redhouse(R){ // Red House: red brick, steep tile roof, oversized chimney, Gothic porch arch, conical well
+  const B='#b4472f',B2='#8e3423',T='#7a3f2a',T2='#5f2e1f',W='#efe4c8',D='#2f2a2a';
+  R(24,1,5,12,B);R(24,1,5,1,B2);R(23,0,7,1,B2);
+  for(let y=0;y<12;y++){const i=y;R(14-i,4+y,4+i*2,1,y%2?T:T2);}
+  for(let y=0;y<11;y++){R(20,6+y,16-Math.max(0,y-1),0,T);R(19+0,5+y,15,1,y%2?T:T2);}
+  R(2,16,32,20,B);for(let y=18;y<36;y+=3)for(let x=2+(y%2)*2;x<34;x+=4)R(x,y,2,1,B2);
+  R(8,19,6,8,D);R(9,20,4,6,'#7fa6c4');R(10,20,1,6,W);R(9,23,4,1,W);R(9,18,4,1,W);
+  R(22,20,4,4,D);R(23,21,2,2,'#7fa6c4');R(29,20,3,4,D);R(30,21,1,2,'#7fa6c4');
+  R(17,26,8,10,W);R(18,25,6,1,W);R(19,24,4,1,W);R(18,27,6,9,'#402a20');R(19,26,4,1,'#402a20');R(20,29,3,7,'#6b3a23');
+  R(3,31,2,5,'#d0c6aa');
+},
+looshaus(R){ // Looshaus (Goldman & Salatsch): green marble base, bare white upper floors with frameless windows
+  const G='#4f7a62',G2='#2f5a48',G3='#8fb5a0',P='#f1eee6',P2='#cfcabf',D='#39404a',Cu='#6b8f7f';
+  R(1,0,28,4,Cu);R(1,0,28,1,'#88aa9a');R(0,4,30,1,'#b9b4a8');
+  R(1,5,28,16,P);R(26,5,3,16,P2);
+  for(let y=7;y<20;y+=4)for(let x=4;x<27;x+=5)R(x,y,3,3,D);
+  R(0,21,30,2,'#9b9385');
+  R(1,23,28,15,G);for(let i=0;i<14;i++)R(2+i*2,24+(i*5)%12,3,1,G3);R(1,37,28,1,G2);
+  for(const x of [7,20]){R(x,23,3,15,G3);R(x,23,1,15,'#d3e4da');R(x+2,23,1,15,G2);}
+  R(11,26,8,12,'#22262b');R(14,26,1,12,G3);R(2,26,4,8,'#22262b');R(24,26,4,8,'#22262b');
+},
+essay(R){ // Ornament und Verbrechen: plain pamphlet, ornament struck through in red
+  const P='#efe7d3',P2='#cdc3aa',K='#1d1818',C='#a8854a';
+  R(0,0,26,34,P);R(24,0,2,34,P2);R(0,33,26,1,P2);R(3,3,18,3,K);R(3,8,12,2,K);
+  disc(R,12,19,7,7,C);disc(R,12,19,5,5,P);disc(R,12,19,3,3,C);disc(R,12,19,1,1,P);
+  for(const [x,y] of [[4,12],[20,12],[4,25],[20,25]]){R(x,y,2,2,C);}
+  for(let i=0;i<15;i++){R(5+i,12+i,2,2,'#cf2b1f');R(19-i,12+i,2,2,'#cf2b1f');}
+  R(3,29,18,1,K);R(3,31,12,1,K);
+},
+muller(R){ // Villa Müller: white cube, irregular windows with yellow frames, roof-terrace parapet
+  const W='#f4f1e8',S='#cfc9b8',Y='#e0b52f',D='#27333d';
+  R(4,0,16,2,W);R(4,2,1,5,W);R(19,2,1,5,W);R(6,3,10,5,D);R(7,4,8,3,'#7ea7c0');R(6,3,10,1,Y);R(6,7,10,1,Y);
+  R(0,7,34,27,W);R(31,7,3,27,S);R(0,7,34,1,'#fffdf5');
+  const win=(x,y,w,h)=>{R(x-1,y-1,w+2,h+2,Y);R(x,y,w,h,D);R(x,y,w,1,'#7ea7c0');};
+  win(4,12,4,4);win(11,12,2,6);win(18,11,10,4);win(5,22,3,3);win(14,21,6,4);win(25,20,3,7);
+  R(9,27,7,7,Y);R(10,28,5,6,'#5a4021');R(7,26,11,1,S);R(0,34,34,2,'#a99f8a');
+},
+fagus(R){ // Fagus-Werk: brick plinth, glass curtain wall that turns the corner with no column
+  const B='#d0b56f',B2='#a08648',G='#6fa6c4',G2='#26465c',H='#c5e1ee';
+  R(0,3,36,2,B);R(0,3,36,1,'#e8d38f');
+  R(0,5,36,21,G);for(let x=0;x<36;x+=4)R(x,5,1,21,G2);for(let y=5;y<26;y+=3)R(0,y,36,1,G2);
+  for(let i=0;i<8;i++)R(5+i*4,7+(i%3)*3,2,1,H);
+  R(26,5,1,21,G);R(22,0,14,3,B2);
+  R(0,26,36,8,B);for(let y=27;y<34;y+=2)for(let x=(y%4?0:2);x<36;x+=4)R(x,y,3,1,B2);
+  R(14,27,8,7,G2);R(15,28,6,6,G);R(18,28,1,6,G2);
+},
+dessau(R){ // Bauhaus Dessau: white block, black curtain wall, BAUHAUS down the side
+  const W='#f4f2ec',S='#c9c6bc',K='#14171b',G='#5c7a8c';
+  R(0,0,38,3,W);R(0,3,38,1,S);
+  R(0,4,38,24,W);R(14,6,24,20,K);
+  for(let x=15;x<38;x+=3)for(let y=7;y<25;y+=3)R(x,y,2,2,G);
+  for(let i=0;i<5;i++)R(16+i*4,8+((i*2)%3)*3,1,1,'#cfe3ee');
+  for(let i=0;i<7;i++){R(7,6+i*3,4,2,K);R(8,6+i*3,1,1,W);}
+  R(2,6,2,20,S);R(0,28,38,6,S);R(1,29,12,5,W);R(4,30,6,4,K);R(16,29,20,3,W);
+},
+manifesto(R){ // 1919 Bauhaus programme: Feininger's woodcut cathedral with rays and three stars
+  const P='#ece7da',K='#141212',G='#9a968a';
+  R(0,0,28,36,P);R(1,1,26,34,K);
+  for(let i=0;i<9;i++){R(13-i,2+i*3,1,1,P);R(14+i,2+i*3,1,1,P);R(2+i*3,8+i,1,1,G);R(25-i*3,8+i,1,1,G);}
+  const star=(x,y)=>{R(x-2,y,5,1,P);R(x,y-2,1,5,P);R(x-1,y-1,3,3,P);};star(14,4);star(7,7);star(21,7);
+  R(13,8,2,4,P);
+  for(let y=10;y<31;y++){const w=Math.round((y-10)*.42)+1;R(14-w,y,w*2+1,1,P);}
+  R(6,24,3,8,P);R(19,24,3,8,P);R(7,20,1,4,P);R(20,20,1,4,P);
+  for(let x=9;x<19;x+=3)R(x,23,1,8,K);R(13,14,2,4,K);R(11,31,6,1,K);
+  for(let y=19;y<31;y+=4)R(8,y,12,1,K);
+},
+bloemenwerf(R){ // Bloemenwerf chair: curved pale beech, one flowing line, rush seat
+  const A='#d4a766',B='#a97c3e',C='#efcd93',S='#b7a25d',S2='#8d7a3d';
+  for(let i=0;i<8;i++){R(4+i,4-Math.round(Math.sin(i/8*3.14)*0)-Math.min(i,3)+3,1,3,A);R(21-i,4-Math.min(i,3)+3,1,3,A);}
+  R(8,1,10,3,A);R(8,1,10,1,C);
+  R(4,6,3,14,A);R(4,6,1,14,C);R(19,6,3,14,B);
+  for(let i=0;i<3;i++)R(10+i*3,4,2,12,i==1?C:A);
+  R(7,10,12,1,B);
+  disc(R,13,21,11,3,S);disc(R,13,20,9,2,'#d1bb72');for(let x=4;x<23;x+=3)R(x,20,1,3,S2);
+  R(3,24,3,11,A);R(2,32,3,3,A);R(20,24,3,11,B);R(21,32,3,3,B);R(6,28,14,2,B);R(10,24,2,6,A);R(15,24,2,6,B);
+},
+theater(R){ // Werkbund Theatre, Cologne 1914: white rendered, curved tripartite roof, no straight corners
+  const W='#ece6d8',S='#c3bba7',D='#3b3a3c',R2='#8a8c8a';
+  disc(R,18,9,8,8,R2);disc(R,18,9,7,7,W);R(10,9,16,10,W);
+  disc(R,7,16,6,6,R2);disc(R,7,16,5,5,W);disc(R,29,16,6,6,R2);disc(R,29,16,5,5,S);
+  R(1,16,34,15,W);R(29,16,6,15,S);
+  R(13,8,10,1,S);R(15,5,6,1,'#ffffff');
+  disc(R,18,20,4,4,D);R(14,20,9,11,D);R(16,20,5,11,'#6a4b2d');R(18,20,1,11,D);
+  R(5,21,4,5,D);R(6,20,2,1,D);R(27,21,4,5,D);R(28,20,2,1,D);
+  R(0,31,36,3,S);R(0,33,36,1,'#8f8875');
+},
+weimar(R){ // Weimar School of Applied Arts (1906): mansard roof, huge studio windows, ochre render
+  const O='#e4d4a8',O2='#bda978',Rf='#55606a',Rf2='#3d4750',D='#2d3540',G='#8db0c4';
+  for(let y=0;y<8;y++)R(5-Math.min(y,5),y,24+Math.min(y,5)*2,1,y%2?Rf:Rf2);
+  R(6,1,4,6,O);R(7,2,2,5,G);R(24,1,4,6,O);R(25,2,2,5,G);
+  R(0,8,34,26,O);R(31,8,3,26,O2);R(0,8,34,1,'#f4e8c6');
+  R(4,11,26,12,D);disc(R,17,12,13,2,D);for(let x=5;x<30;x+=3)R(x,11,2,11,G);R(4,16,26,1,D);
+  for(const x of [3,12,21]){R(x,26,6,8,D);R(x+1,27,4,7,G);R(x+3,27,1,7,D);}
+},
+barcelona(R){ // Barcelona Pavilion: hovering slab, chrome cross columns, green marble, onyx, reflecting pool
+  const T='#efe9da',T2='#c9c2ae',M='#3e7a5e',M2='#79ad90',O='#caa24a',O2='#e8cf89',G='#a8d0da',C='#d9dde0',P='#5fa8c9';
+  R(0,0,42,3,'#fbfaf5');R(0,3,42,1,'#b5b0a0');
+  R(4,4,16,18,G);for(let x=8;x<20;x+=4)R(x,4,1,18,'#6e8d97');
+  R(20,4,14,18,O);for(let i=0;i<6;i++)R(20+i*2,6+(i*7)%15,3,1,O2);
+  R(34,4,5,18,M);for(let i=0;i<4;i++)R(34+i,6+i*4,2,1,M2);R(1,6,3,16,M);R(1,9,3,1,M2);R(1,15,3,1,M2);
+  R(12,4,1,18,C);R(11,4,3,1,C);R(27,4,1,18,C);
+  R(0,22,42,6,T);R(0,22,42,1,'#fffdf4');for(let x=6;x<42;x+=7)R(x,23,1,5,T2);R(0,27,42,1,T2);
+  R(2,24,14,3,P);R(4,25,6,1,'#a9d7ea');
+},
+farnsworth(R){ // Farnsworth House: two white slabs hung from white I-columns, glass all round, raised off the meadow
+  const W='#fbfbf8',S='#c8c8c2',G='#a8d0d8',G2='#6f97a2',Cu='#b8a68d';
+  R(0,0,42,3,W);R(0,3,42,1,S);
+  R(5,4,32,10,G);for(let x=13;x<37;x+=8)R(x,4,1,10,G2);R(9,6,5,1,'#e2f2f6');R(24,6,5,1,'#e2f2f6');
+  R(17,5,8,9,Cu);
+  R(0,14,42,3,W);R(0,17,42,1,S);
+  for(const x of [3,14,27,38]){R(x,0,2,28,W);R(x+1,0,1,28,S);}
+  R(6,22,16,2,W);R(6,24,16,1,S);R(12,25,5,3,'#e8e8e2');R(0,28,42,2,'#6d9a50');for(let x=1;x<42;x+=3)R(x,27,1,1,'#6d9a50');
+},
+seagram(R){ // Seagram Building: bronze I-beam mullions, amber glass, tall plaza plinth
+  const B='#4a3220',B2='#2e1e13',A='#b58a4f',A2='#e1bd7c',P='#b9b1a0';
+  R(2,0,24,3,B2);R(2,3,24,36,B);
+  for(let x=3;x<26;x+=3)for(let y=4;y<36;y+=2){R(x,y,2,1,(x*7+y*3)%17<4?A2:A);}
+  R(2,34,24,6,B2);for(let x=4;x<25;x+=4)R(x,34,2,6,'#d9cdb0');
+  R(0,40,28,2,P);R(0,41,28,1,'#8d8678');
+},
+vanna(R){ // Vanna Venturi House: split gable, stubby chimney in the gap, applied broken arch, ribbon window
+  const F='#a9b39a',F2='#808b74',D='#2e3431',W='#e9e6d6';
+  for(let y=0;y<14;y++){const w=Math.max(0,y*1.45|0);R(17-w-1,5+y,w,1,F);R(19,5+y,w,1,F);}
+  R(14,1,8,12,F2);R(14,1,8,1,F);R(16,7,4,12,D);
+  R(0,19,36,17,F);R(0,19,36,1,W);R(0,35,36,1,F2);
+  R(16,19,4,8,D);
+  for(let i=0;i<9;i++){const dy=Math.round(Math.sin(i/8*3.14)*3);R(11+i*.9|0,24-dy,2,1,W);R(20+i*.6|0,24-(3-dy>0?dy:dy),1,1,W);}
+  R(11,24,14,1,W);R(14,25,8,11,D);R(16,26,4,10,F2);
+  R(2,23,8,5,D);for(let x=3;x<10;x+=2)R(x,24,1,3,'#8db0c0');R(26,23,3,4,D);R(31,23,3,4,D);R(27,24,1,2,'#8db0c0');R(32,24,1,2,'#8db0c0');R(28,30,6,3,D);
+},
+complexity(R){ // Complexity and Contradiction (1966): a paperback whose cover diagrams a gable it won't resolve
+  const C='#e9e2cf',K='#1c1a1a',A='#d8562f';
+  R(2,0,26,36,C);R(0,0,3,36,K);R(27,0,1,36,'#bdb49c');R(2,35,26,1,'#bdb49c');
+  R(6,3,18,2,K);R(6,7,12,1,K);R(6,9,16,1,K);
+  for(let i=0;i<8;i++){R(14-i,16+i,1,1,K);R(16+i,16+i,1,1,K);}
+  R(13,14,4,8,A);R(7,24,16,8,A);R(8,25,14,6,C);R(12,27,6,4,K);R(9,26,2,2,K);R(19,26,2,2,K);
+},
+stones(R){ // The Stones of Venice: dark cloth, gilt Venetian arch
+  const G='#2c4a3a',D='#1b3026',A='#d9b65a';
+  R(0,0,28,36,G);R(0,0,3,36,D);R(27,0,1,36,D);R(0,35,28,1,D);R(5,3,20,1,A);R(5,32,20,1,A);R(5,3,1,30,A);R(24,3,1,30,A);
+  R(8,6,14,2,A);for(let i=0;i<5;i++){R(14-i,12+i,1,1,A);R(15+i,12+i,1,1,A);}R(10,17,1,12,A);R(19,17,1,12,A);R(14,12,2,17,A);disc(R,14,20,1,1,G);R(9,29,12,1,A);
+},
+oxford(R){ // Oxford University Museum: Ruskinian Gothic, steep slate roof, central tower, pointed windows
+  const S='#d8c9a4',S2='#ae9c74',T='#4d5560',D='#39424d',G='#9cc0cf';
+  for(let y=0;y<9;y++)R(16-y/2|0,y,6+(y/2|0)*2,1,y%2?T:D);R(14,9,10,25,S);R(23,9,1,25,S2);R(17,11,4,7,D);R(18,10,2,1,D);
+  for(let y=0;y<8;y++)R(1,10+y,36,1,y%2?T:D);R(0,18,38,16,S);R(36,18,2,16,S2);R(14,18,10,16,S);
+  for(const x of [3,8,27,32]){R(x,23,3,8,D);R(x+1,22,1,1,D);R(x+1,24,1,7,G);}
+  for(const x of [3,8,27,32])R(x,20,3,1,'#a9574a');
+  R(16,24,6,10,D);R(17,23,4,1,D);R(18,22,2,1,D);R(17,25,4,9,'#6a4c30');R(0,33,38,1,S2);
+},
+cadoro(R){ // a Venetian Gothic window from Ruskin's plates: ogee arches and quatrefoils in pink stone
+  const P='#e6c4b0',P2='#b88c7a',K='#2e2a33',Q='#f4e4d6';
+  R(0,0,24,36,P);R(22,0,2,36,P2);R(0,34,24,2,P2);
+  for(const q of [[6,6],[12,4],[18,6]]){disc(R,q[0],q[1],3,3,P2);R(q[0]-1,q[1]-3,2,6,K);R(q[0]-3,q[1]-1,6,2,K);R(q[0],q[1],1,1,Q);}
+  for(const x of [2,9,16]){R(x,16,5,16,K);R(x+1,14,3,2,K);R(x+2,12,1,2,K);R(x+1,18,1,12,'#6f8aa0');}
+  R(0,32,24,1,Q);R(0,10,24,1,Q);
+},
+crystal(R){ // Crystal Palace 1851: iron and glass, vaulted transept, tiered galleries
+  const G='#bfe0ec',L='#e6f5fa',F='#40647a';
+  disc(R,21,12,11,12,F);disc(R,21,12,10,11,G);for(let x=12;x<31;x+=3)R(x,2,1,12,F);R(0,13,42,17,G);
+  for(let y=13;y<30;y+=4)R(0,y,42,1,F);for(let x=0;x<42;x+=3)R(x,13,1,17,F);
+  R(0,12,42,1,F);R(0,19,5,1,F);for(let i=0;i<7;i++)R(3+i*6,15+(i%3)*4,2,2,L);
+  R(16,20,10,10,F);disc(R,21,20,5,4,F);R(18,20,6,10,L);R(21,17,1,13,F);R(0,29,42,1,'#6d6a66');R(20,0,2,2,'#c9402f');
+},
+teaset(R){ // Felix Summerly tea service for Minton, 1846: plain white earthenware
+  const W='#f7f3e6',S='#cfc8b4',B='#3b6fa0';
+  disc(R,13,14,10,9,W);disc(R,16,17,6,5,'#ece6d4');R(1,10,5,2,W);R(0,8,3,3,W);R(22,10,5,2,S);R(26,10,2,8,S);R(22,16,5,2,S);
+  disc(R,13,4,5,2,W);R(12,0,3,2,S);R(5,22,16,2,S);R(6,13,14,1,B);
+  R(27,20,9,1,S);disc(R,31,17,4,3,W);R(27,14,9,1,B);
+},
+journal(R){ // Journal of Design and Manufactures: buff wrapper, real fabric swatches tipped in
+  const B='#d9c79a',K='#2b2320';
+  R(0,0,26,34,B);R(24,0,2,34,'#ab9970');R(0,33,26,1,'#ab9970');R(3,3,18,2,K);R(3,7,14,1,K);R(3,9,18,1,K);
+  R(4,13,8,8,'#a23d33');for(let i=0;i<4;i++)R(5+i*2,14+i*2,1,1,'#f0dcc0');R(14,13,8,8,'#3f6a8f');R(15,15,6,1,'#dfe9f2');R(15,18,6,1,'#dfe9f2');R(4,23,8,6,'#5c8f5a');R(14,23,8,6,'#e0b84f');R(3,31,10,1,K);
+},
+theses(R){ // Muthesius's ten theses, Cologne 1914: numbered like a work order
+  const P='#e8e6dc',K='#222';
+  R(0,0,26,34,P);R(24,0,2,34,'#bdbaae');R(0,33,26,1,'#bdbaae');R(3,3,20,3,K);
+  for(let i=0;i<10;i++){R(3,8+i*2.4|0,1,1,'#b7372a');R(6,8+i*2.4|0,8+(i*7)%10,1,K);}
+},
+englishhaus(R){ // Das englische Haus, 1904: a report on English homes
+  const T='#a98b5e',D='#7d6540',H='#efe4c8',K='#3a2d1d';
+  R(0,0,28,36,T);R(0,0,3,36,D);R(27,0,1,36,D);R(0,35,28,1,D);R(7,4,16,2,K);R(9,8,12,1,K);
+  for(let i=0;i<7;i++)R(15-i,14+i,i*2+1,1,'#8a3f2c');R(9,21,13,10,H);R(11,23,3,3,K);R(17,23,3,3,K);R(14,26,3,5,K);R(19,12,2,5,'#8a3f2c');
+},
+freudenberg(R){ // Haus Freudenberg, Berlin 1908: English country-house manners, half-timber gables
+  const W='#efe8d6',T='#8a4a33',T2='#6f3a27',B='#3a2a20',G='#7fa6c4';
+  for(let y=0;y<10;y++){R(10-y,y+1,y*2+1,1,y%2?T:T2);R(27-y,y+1,y*2+1,1,y%2?T:T2);}R(12,6,14,5,T);
+  R(2,11,32,23,W);R(32,11,2,23,'#c8c0ac');for(const x of [6,10,14,23,27,31])R(x,11,1,8,B);R(2,18,32,1,B);R(2,11,16,1,B);R(20,11,14,1,B);
+  for(const x of [5,23]){R(x,22,8,6,B);R(x+1,23,6,4,G);R(x+4,23,1,4,B);}R(16,24,5,10,B);R(17,25,3,9,'#6b4a2a');R(0,33,36,1,'#7f7768');
+},
+adgb(R){ // ADGB Trade Union School, Bernau 1930: yellow brick blocks stepping in echelon, glass corridor
+  const Y='#d6b872',Y2='#ad8f4e',K='#2e3640',G='#a4c7d6';
+  for(const [x,y,w] of [[0,4,12],[10,8,12],[20,12,12]]){R(x,y,w,20-(y-4)+4,Y);R(x,y,w,1,'#ecd493');R(x+w-1,y,1,24-(y-4),Y2);for(let yy=y+3;yy<27;yy+=4)R(x+2,yy,w-4,2,K);}
+  R(30,14,10,14,Y);R(0,27,40,1,Y2);R(26,18,14,4,G);for(let x=27;x<40;x+=3)R(x,18,1,4,K);R(34,4,2,10,'#6d6a66');R(36,4,1,4,'#6d6a66');
+},
+laubengang(R){ // Laubenganghäuser, Dessau-Törten 1930: cheap brick flats reached by open access decks
+  const B='#a86a48',B2='#7d4c32',W='#f1eee6',K='#27272b';
+  R(0,0,38,3,'#e0dbcf');R(0,3,38,25,B);for(let y=5;y<28;y+=2)for(let x=(y%4?0:2);x<38;x+=4)R(x,y,3,1,B2);
+  for(const y of [10,18,26]){R(0,y,38,2,W);for(let x=0;x<38;x+=2)R(x,y-3,1,3,K);R(0,y-4,38,1,K);}
+  for(const y of [4,12,20])for(const x of [3,13,23,33])R(x,y,3,3,K);R(36,3,2,25,'#50545c');
+},
+bauen(R){ // "bauen", 1928: Meyer's manifesto, function x economy set like a sum
+  const P='#efece2',K='#111',X='#c9302a';
+  R(0,0,26,34,P);R(24,0,2,34,'#bdbaae');R(0,33,26,1,'#bdbaae');R(3,3,20,5,K);for(let i=0;i<9;i++){R(8+i,12+i,2,2,X);R(16-i,12+i,2,2,X);}
+  R(3,24,20,1,K);R(3,27,20,1,K);R(3,30,12,1,K);
+},
+wainwright(R){ // Wainwright Building, St. Louis 1891: red brick piers shoot up to a foliate frieze
+  const B='#a84f35',B2='#7f3825',F='#c97a56',K='#2a2428',S='#c4b393';
+  R(0,0,28,7,F);for(let x=1;x<28;x+=3){R(x,2,2,3,B2);R(x+1,1,1,1,'#e6a884');}R(0,7,28,1,B2);
+  R(0,8,28,27,B);for(let x=2;x<27;x+=4)R(x,9,1,26,'#c26547');for(let x=4;x<26;x+=4)for(let y=10;y<34;y+=5){R(x,y,2,3,K);R(x,y+3,2,1,F);}
+  R(0,35,28,7,S);R(0,41,28,1,'#8c7c62');R(3,36,8,6,K);R(17,36,8,6,K);R(12,36,4,6,'#6a4c30');
+},
+guaranty(R){ // Guaranty Building, Buffalo 1896: terracotta skin, arches, round oculi under a curved cornice
+  const T='#d59a6c',T2='#ab7144',K='#2a2428',G='#e8b58c';
+  R(0,0,28,2,T2);R(1,2,26,6,T);for(let x=3;x<27;x+=4)disc(R,x,5,1,1,K);
+  R(1,8,26,28,T);for(let x=1;x<27;x+=2)for(let y=9;y<36;y+=2)if((x+y)%4==0)R(x,y,1,1,G);
+  for(let x=4;x<25;x+=5){R(x,10,3,1,K);R(x-1,11,5,1,K);R(x,12,3,22,K);for(let y=15;y<33;y+=5)R(x,y,3,1,T);}
+  R(1,36,26,6,'#b7a184');R(4,37,8,5,K);R(16,37,8,5,K);R(0,41,28,1,'#7d6c54');
+},
+carson(R){ // Carson Pirie Scott, Chicago 1904: wide Chicago windows over a cast-iron rotunda entrance
+  const W='#ede7d6',K='#2a3038',G='#9fc1d2',I='#2f5a48',I2='#7fa18f';
+  R(0,0,38,3,'#c8c0ac');R(0,3,38,16,W);for(const y of [5,10,15])for(const x of [1,10,19,28])R(x,y,8,3,K),R(x+1,y,6,3,G);
+  R(0,19,38,11,I);for(let x=0;x<38;x+=2)for(let y=19;y<24;y+=2)R(x+(y%4?1:0),y,1,1,I2);R(2,24,9,6,G);R(14,24,9,6,G);R(28,21,10,9,K);disc(R,33,21,5,2,I2);R(30,23,6,7,'#6a4c30');
+},
+sk4(R){ // Braun SK 4, 1956: white steel box, elm ends, perspex lid, platter and dials
+  const W='#f2f0e8',S='#c9c7bd',E='#b58a55',K='#222',C='#d8eaf0',G='#8b8b86';
+  R(0,4,3,18,E);R(35,4,3,18,E);R(3,4,32,18,W);R(3,21,32,1,S);
+  R(3,0,32,4,C);R(3,0,32,1,'#fff');R(5,1,20,2,'#b0d0dc');
+  disc(R,14,10,8,4,G);disc(R,14,10,7,3,'#3a3a3a');disc(R,14,10,1,1,'#e0c04a');R(21,6,5,1,K);
+  for(let i=0;i<3;i++){disc(R,29,8+i*4,1,1,K);}for(let x=5;x<25;x+=2)R(x,17,1,3,S);
+},
+t3(R){ // Braun T 3 pocket radio, 1958: grid of holes, one disc
+  const W='#f4f2ea',S='#c9c7bd',K='#26262a';
+  R(0,0,22,32,W);R(20,0,2,32,S);R(0,31,22,1,S);for(let y=3;y<17;y+=2)for(let x=3;x<19;x+=2)R(x,y,1,1,K);
+  disc(R,10,24,5,5,S);disc(R,10,24,4,4,'#e9e6db');R(10,20,1,4,K);R(18,20,1,8,K);
+},
+shelf606(R){ // Vitsoe 606, 1960: aluminium track and shelves, nothing else
+  const A='#c8cbcd',D='#8e9193',W='#f1f0ea',K='#2a2a2c';
+  R(3,0,2,36,D);R(25,0,2,36,D);R(0,10,30,2,A);R(0,22,30,2,A);R(0,34,30,2,A);R(0,11,30,1,D);R(0,23,30,1,D);R(0,35,30,1,D);
+  for(let i=0;i<5;i++)R(7+i*3,2+(i%2),2,8-(i%2),[K,'#b7372a',W,'#8e9193',K][i]);R(9,14,12,8,W);R(11,16,8,4,D);R(7,26,4,8,K);R(14,28,8,6,W);
+},
+carlton(R){ // Carlton bookcase, Memphis 1981: laminate zig-zags in clashing colours
+  const K='#1a1a1e',Y='#f2c230',P='#e8559a',Bl='#2f6fd0',G='#3ea86a',O='#e8622f',C='#f1e7cf';
+  R(14,0,8,4,P);R(8,4,2,8,G);R(26,4,2,8,G);R(0,0,8,3,Y);R(28,0,8,3,Bl);for(let i=0;i<6;i++){R(8+i,4-i/2|0,1,1,Y);R(27-i,4-i/2|0,1,1,Y);}
+  R(0,12,36,3,Bl);R(4,15,3,9,O);R(29,15,3,9,O);R(16,15,4,9,Y);
+  R(0,24,36,3,P);for(let y=0;y<4;y++)for(let x=(y%2)*2;x<36;x+=4)R(x,y+27,1,1,K);
+  R(8,27,3,12,G);R(25,27,3,12,G);R(0,39,36,3,C);for(let x=1;x<36;x+=3)R(x,40,1,1,K);
+},
+valentine(R){ // Olivetti Valentine, 1969: lipstick-red plastic, black keys, orange spool caps
+  const Rd='#d3211d',D='#a0120f',K='#1c1c20',P='#f6f2e6',O='#f09a2c';
+  R(7,0,16,8,P);R(9,2,10,1,K);R(9,4,7,1,K);
+  R(0,8,30,5,Rd);R(0,8,30,1,'#ef5a52');R(1,8,4,3,O);R(25,8,4,3,O);R(8,7,14,2,K);
+  R(0,13,30,13,Rd);R(0,25,30,1,D);for(let y=14;y<22;y+=2)for(let x=3+(y%4?1:0);x<27;x+=2)R(x,y,1,1,K);R(8,22,14,2,K);
+},
+tahiti(R){ // Tahiti lamp, Memphis 1981: a laminate duck on a speckled base
+  const P='#ee6fa8',Y='#f2c230',K='#1a1a1e',Rd='#d3211d',W='#f4efe4';
+  disc(R,10,5,4,4,Y);R(13,4,8,2,Rd);R(9,4,2,2,K);R(8,9,4,12,P);R(5,14,4,3,K);
+  R(2,21,16,5,W);for(let i=0;i<9;i++)R(3+i*2-(i%2),22+(i%3),1,1,K);R(9,26,2,5,'#2f6fd0');R(1,31,18,5,K);R(2,32,16,2,W);for(let i=0;i<6;i++)R(3+i*3,32+(i%2),1,1,K);
+},
+guild(R){ // Guild House: brown brick, white glazed bands, big arched window, sign, gold antenna on top
+  const B='#8a5a42',B2='#6c4331',W='#f0ece0',K='#29262a',G='#e8c35a',S='#d1cab9';
+  R(15,0,2,7,G);R(10,1,12,1,G);R(11,3,10,1,G);R(12,5,8,1,G);
+  R(1,7,30,31,B);for(let y=9;y<38;y+=3)for(let x=1+(y%2)*2;x<31;x+=4)R(x,y,2,1,B2);
+  R(10,10,12,8,K);disc(R,16,10,6,3,K);R(11,11,10,7,S);disc(R,16,11,5,2,S);R(16,8,1,10,K);R(11,14,10,1,K);
+  for(const x of [3,25])for(const y of [10,17])R(x,y,4,4,K),R(x+1,y+1,2,2,S);
+  R(1,21,30,2,W);R(1,31,30,3,W);
+  for(const x of [3,10,18,25])R(x,24,4,5,K),R(x+1,25,2,3,S);
+  R(9,32,14,1,K);R(11,34,10,4,K);R(13,34,1,4,W);R(18,34,1,4,W);
+}};
+const objSpr={};
+function sprOf(id){if(objSpr[id])return objSpr[id];const d=OBJ[id],col=outlined(mk(d.w,d.h,R=>ART[id](R)),OUT);return objSpr[id]={col,bw:mono(col)};}
+
+/* ---- data: real designers, real objects. Clues never name the coach ---- */
+const OBJ={
+ strawberry:{name:'딸기 도둑',w:30,h:32,year:'직물, 1883',clue:'자기 정원에서 딸기를 훔쳐 먹던 개똥지빠귀를 그렸다. 인디고 염색통에 며칠씩 담갔다 빼며 손으로 찍어낸, 당시 가장 비싼 축에 드는 천.'},
+ kelmscott:{name:'켈름스콧 초서',w:30,h:36,year:'책, 1896',clue:'번-존스는 이 책을 "주머니 속 대성당"이라 불렀다. 활자, 종이, 덩굴 테두리까지 전부 중세 필사본을 되살리려 직접 만들었다.'},
+ redhouse:{name:'레드 하우스',w:36,h:36,year:'주택, 1859',clue:'로세티: "집이라기보다 시에 가깝다." 신혼집을 친구들과 손수 꾸미다가 공예 회사까지 차리게 된 벽돌집.'},
+ looshaus:{name:'로스하우스',w:30,h:38,year:'건물, 1910',clue:'별명은 "눈썹 없는 집". 빈 황궁 코앞에 창틀 장식 하나 없는 흰 벽을 세워, 프란츠 요제프 황제가 그쪽 창문을 안 열었다는 소문까지 돌았다.'},
+ essay:{name:'장식과 범죄',w:26,h:34,year:'글, 1908 무렵',clue:'문화의 진화란 일용품에서 장식을 없애 가는 과정이라고 쓴 글. 장식은 노동과 돈의 낭비라고 몰아붙였다.'},
+ muller:{name:'뮐러 주택',w:34,h:36,year:'주택, 1930',clue:'프라하의 흰 상자. 겉은 말이 없고, 안에서는 방마다 바닥 높이가 달라 공간이 입체로 맞물린다. 이른바 라움플란(Raumplan).'},
+ fagus:{name:'파구스 공장',w:36,h:34,year:'공장, 1911',clue:'모서리에 기둥이 없다. 유리가 그대로 꺾여 돌아가는, 구두골 공장에서 먼저 나온 근대 건축의 얼굴.'},
+ dessau:{name:'데사우 교사',w:38,h:34,year:'학교, 1926',clue:'공장처럼 생긴 학교. 유리 커튼월 공방 옆으로 일곱 글자가 세로로 박혀 있다.'},
+ manifesto:{name:'1919 선언문',w:28,h:36,year:'인쇄물, 1919',clue:'표지는 파이닝어의 목판화, 별빛 받는 대성당. "모든 조형 활동의 최종 목표는 건축이다."'},
+ bloemenwerf:{name:'블로멘베르프 의자',w:26,h:35,year:'의자, 1895',clue:'자기 집을 위해 그린 의자. 너도밤나무 한 줄기가 흐르듯 휘어진다. 화가 출신답게 손의 곡선이 그대로 남았다.'},
+ theater:{name:'베르크분트 극장',w:36,h:34,year:'건물, 1914',clue:'규격화 논쟁이 벌어진 바로 그 쾰른 박람회장에 선 극장. 직선의 모서리가 없고, 지붕은 셋으로 부풀어 있다. 박람회가 끝나고 철거됐다.'},
+ weimar:{name:'바이마르 공예학교',w:34,h:34,year:'학교, 1906',clue:'거대한 아틀리에 창의 학교. 설계자가 떠난 뒤 이 건물은 다른 사람 손에서 전혀 다른 학교로 다시 태어난다.'},
+ barcelona:{name:'바르셀로나 파빌리온',w:42,h:28,year:'전시관, 1929',clue:'전시품이 거의 없는 전시관. 얇은 지붕을 십자 크롬 기둥이 받치고, 녹색 대리석과 오닉스 벽이 공간을 흘려보낸다.'},
+ farnsworth:{name:'판스워스 주택',w:42,h:30,year:'주택, 1951',clue:'사방이 유리. 건축주 이디스 판스워스는 살기 어렵다며 불평했고, 설계자와 소송까지 갔다.'},
+ seagram:{name:'시그램 빌딩',w:28,h:42,year:'고층 건물, 1958',clue:'구조에 필요 없는 청동 I형 멀리언을 겉에 붙였다. 파크 애비뉴에서 뒤로 물러나 비싼 땅을 광장으로 비워 뒀다.'},
+ vanna:{name:'바나 벤투리 주택',w:36,h:36,year:'주택, 1964',clue:'박공이 가운데서 갈라지고 굴뚝이 그 틈에 뭉툭하게 앉았다. 어머니를 위해 지은 집. 일부러 어수룩한 장식 아치까지 붙였다.'},
+ complexity:{name:'건축의 복합성과 대립성',w:28,h:36,year:'책, 1966',clue:'빈센트 스컬리는 서문에서, 르 코르뷔지에의 『건축을 향하여』 이후 건축에 대한 가장 중요한 글일 것이라고 썼다.'},
+ stones:{name:'베네치아의 돌',w:28,h:36,year:'책, 1851–53',clue:'"불완전함은 우리가 아는 모든 생명에 어떤 의미에서 본질적이다." 고딕 장인의 삐뚤빼뚤한 손을 예찬한 세 권짜리 책.'},
+ oxford:{name:'옥스퍼드 자연사박물관',w:38,h:34,year:'건물, 1855–60',clue:'이 책의 고딕론을 따라 지은 건물. 아일랜드 석공들이 기둥머리마다 실제 식물을 저마다 다르게 새겼다.'},
+ cadoro:{name:'베네치아 고딕 창',w:24,h:36,year:'스케치, 1850년대',clue:'직접 비계에 올라가 재고 그린 창. 똑같은 돌이 둘도 없다는 걸 증명하려고 수천 장의 메모를 남겼다.'},
+ crystal:{name:'수정궁',w:42,h:30,year:'전시관, 1851',clue:'조립식 철과 유리로 몇 달 만에 올린 만국박람회장. 설계는 팩스턴. 박람회를 밀어붙인 이는 공무원 출신 기획자였다. 반대파는 "이제껏 없던 큰 온실"이라 비웃었다.'},
+ teaset:{name:'서머리 티세트',w:36,h:26,year:'도자기, 1846',clue:'펠릭스 서머리라는 가명으로 디자인해 민턴에서 양산한 찻주전자. 좋은 디자인을 공장에서 싸게 뽑아 보자는 시도.'},
+ journal:{name:'디자인·제조 저널',w:26,h:34,year:'잡지, 1849–52',clue:'진짜 직물 샘플을 붙여 찍은 잡지. 제조업자의 취향을 고치는 것이 목적이었다.'},
+ theses:{name:'베르크분트 10개 테제',w:26,h:34,year:'문서, 1914',clue:'쾰른 총회에서 내놓은 열 개 조항. 건축과 공예가 나아갈 길은 전형(Typisierung)이라고 못 박았고, 바로 격렬한 반박을 불렀다.'},
+ englishhaus:{name:'영국 주택',w:28,h:36,year:'책, 1904–05',clue:'런던 주재 독일 대사관에서 일하며 영국 집을 조사해 쓴 세 권. 양식보다 합리적 생활에서 답을 찾았다.'},
+ freudenberg:{name:'프로이덴베르크 저택',w:36,h:34,year:'주택, 1908',clue:'베를린 교외에 지은 영국풍 집. 영국 조사관이 직접 설계해 본 결론 같은 건물.'},
+ adgb:{name:'ADGB 노조학교',w:40,h:28,year:'학교, 1930',clue:'베르나우 숲속의 노동조합 학교. 기숙 동을 계단처럼 어긋나게 놓아 햇빛을 재서 배치했다.'},
+ laubengang:{name:'퇴르텐 복도형 주택',w:38,h:28,year:'공동주택, 1930',clue:'데사우의 값싼 노동자 주택. 바깥 복도로 현관을 잇고 학교 공방 학생들이 함께 설계했다. 지금도 사람이 산다.'},
+ bauen:{name:'글 〈건축〉',w:26,h:34,year:'글, 1928',clue:'"이 세상의 모든 것은 기능 곱하기 경제다." 건축은 미적 과정이 아니라 생물학적 과정이라고 쓴 바우하우스 잡지의 글.'},
+ wainwright:{name:'웨인라이트 빌딩',w:28,h:42,year:'고층 건물, 1891',clue:'세인트루이스. 철골 위 벽돌 기둥이 위로 솟구치게 처리해, 라이트가 고층 건물이 처음으로 고층 건물다워졌다고 평했다.'},
+ guaranty:{name:'개런티 빌딩',w:28,h:42,year:'고층 건물, 1896',clue:'버펄로. 전면이 테라코타 무늬로 덮여 있다. "기능을 따른다"고 쓴 그 해의 건물인데 장식은 전혀 적지 않다.'},
+ carson:{name:'카슨 피리 스콧',w:38,h:30,year:'백화점, 1904',clue:'위층은 길게 뽑은 시카고 창으로 담백한데, 입구만은 주철 덩굴이 뒤덮는다.'},
+ sk4:{name:'SK 4 전축',w:38,h:22,year:'오디오, 1956',clue:'철판 상자에 투명 뚜껑. 나무 일색이던 시절이라 "백설공주의 관"이란 별명이 붙었다. 울름의 구겔로트와 함께 만들었다.'},
+ t3:{name:'T 3 포켓 라디오',w:22,h:32,year:'라디오, 1958',clue:'구멍 격자와 둥근 다이얼 하나가 전부. 훗날 아이팟과 닮았다는 말을 듣는다.'},
+ shelf606:{name:'606 선반',w:30,h:36,year:'가구, 1960',clue:'알루미늄 레일에 선반을 끼울 뿐. 쓰는 사람이 바뀌면 같이 바뀌도록, 눈에 띄지 않는 것을 목표로 했다.'},
+ carlton:{name:'칼턴 책장',w:36,h:42,year:'가구, 1981',clue:'책보다 비스듬한 칸이 더 많다. 플라스틱 라미네이트, 어울리지 않는 색. 밀라노의 멤피스 그룹 첫 전시작.'},
+ valentine:{name:'발렌타인 타자기',w:30,h:26,year:'타자기, 1969',clue:'립스틱처럼 빨간 플라스틱 올리베티. 사무실 아닌 어디서든 쓰라는 광고가 붙었다. 정작 만든 이는 사람들이 이것 얘기만 한다고 투덜댔다.'},
+ tahiti:{name:'타히티 램프',w:22,h:36,year:'조명, 1981',clue:'쓸모없이 오리처럼 생긴 램프. 멤피스의 땡땡이 라미네이트 위에 앉아 있다.'},
+ guild:{name:'길드 하우스',w:32,h:38,year:'노인 주택, 1963',clue:'갈색 벽돌 위 흰 띠, 아치 창, 간판 같은 글자. 지붕 꼭대기에는 금색 TV 안테나가 조각처럼 서 있다.'}
+};
+const C={
+ morris:{name:'모리스',full:'William Morris',hair:'#6d5a48',beard:'#6d5a48',messy:true,cloth:'#3f5e96',dark:'#2c4470',trim:'#9db4d6',
+  quotes:['쓸모를 모르거나 아름답다고 믿지 않는 것은 집에 두지 마라!','소수만을 위한 예술은 원하지 않는다!','일하는 기쁨이 곧 예술이다!']},
+ loos:{name:'루스',full:'Adolf Loos',hair:'#2b2622',parted:true,suit:true,cloth:'#2b2d36',dark:'#1a1b22',trim:'#f1eee6',tie:'#141418',
+  quotes:['장식은 범죄다!','문화의 진화는 일용품에서 장식을 없애는 것!','장식은 낭비된 노동이다!']},
+ gropius:{name:'그로피우스',full:'Walter Gropius',hair:'#2a2528',parted:true,moustache:'#2a2528',suit:true,cloth:'#20222a',dark:'#14151b',trim:'#f1eee6',tie:'#b7372a',
+  quotes:['예술과 기술, 새로운 통일!','건축가, 화가, 조각가여, 공예로 돌아가라!','모든 조형의 최종 목표는 건축이다!']},
+ velde:{name:'반 데 벨데',full:'Henry van de Velde',hair:'#8a7558',beard:'#8a7558',cloth:'#8e6b4a',dark:'#6a4e34',trim:'#d8bf94',
+  quotes:['예술가는 뼛속까지 개인주의자다!','규범을 강요하는 규율에 스스로 복종하는 예술가는 없다!','규격이 아니라 창조!']},
+ mies:{name:'미스',full:'Ludwig Mies van der Rohe',hair:'#c9c5bc',bald:true,glasses:true,suit:true,cloth:'#50545c',dark:'#373a41',trim:'#f4f4f0',tie:'#1a1a1e',
+  quotes:['Less is more.','신은 디테일에 있다.','더 적게.']},
+ ruskin:{name:'러스킨',full:'John Ruskin',hair:'#a8894f',beard:'#b9a374',cloth:'#3c5a8e',dark:'#2a4068',trim:'#e8e2d0',
+  quotes:['불완전함은 생명에 본질적이다!','사람을 도구로 만들 수도, 사람으로 만들 수도 있다. 둘 다는 안 돼!','기계는 영혼을 찍어내지 못한다!']},
+ cole:{name:'콜',full:'Henry Cole',hair:'#8a8378',moustache:'#6b655c',bald:true,suit:true,cloth:'#3c3530',dark:'#28231f',trim:'#f1eee6',tie:'#7a2a24',
+  quotes:['예술을 기계 생산과 결합하라!','대중의 취향은 가르칠 수 있다!','모두 수정궁으로 오시오!']},
+ muthesius:{name:'무테지우스',full:'Hermann Muthesius',hair:'#3a3430',parted:true,moustache:'#3a3430',glasses:true,suit:true,cloth:'#3f4650',dark:'#2b3038',trim:'#f1eee6',tie:'#1a1a1e',
+  quotes:['전형을 세워라!','표준화만이 좋은 취향을 낳는다!','양식이 아니라 전형이다!']},
+ meyer:{name:'마이어',full:'Hannes Meyer',hair:'#6a4c30',parted:true,cloth:'#a23a2c',dark:'#7a2a20',trim:'#e8d9b8',
+  quotes:['기능 곱하기 경제!','사치의 필요가 아니라 민중의 필요를!','건축은 미적 과정이 아니다!']},
+ sullivan:{name:'설리번',full:'Louis Sullivan',hair:'#3a2c26',moustache:'#3a2c26',suit:true,cloth:'#5a3f2c',dark:'#3f2c1e',trim:'#f1eee6',tie:'#2f5a48',
+  quotes:['형태는 언제나 기능을 따른다!','자연이 그렇게 말한다!','고층 건물은 높아야 한다. 모든 치수가 높아야!']},
+ rams:{name:'람스',full:'Dieter Rams',hair:'#a9a9a4',parted:true,glasses:true,suit:true,cloth:'#55595f',dark:'#3b3e43',trim:'#f4f4f0',tie:'#1a1a1e',
+  quotes:['좋은 디자인은 가능한 한 적게 디자인한 것!','적게, 하지만 더 낫게.','좋은 디자인은 눈에 띄지 않는다.']},
+ sottsass:{name:'소트사스',full:'Ettore Sottsass',hair:'#e6e2d8',messy:true,moustache:'#e6e2d8',cloth:'#1f1f24',dark:'#121216',trim:'#ee6fa8',
+  quotes:['형태는 재미다!','디자인은 삶을 논하는 방식이다!','오래 쓰라고? 재미있으면 그만이지!']},
+ venturi:{name:'벤투리',full:'Robert Venturi',hair:'#51392a',parted:true,glasses:true,suit:true,cloth:'#c76a32',dark:'#99481d',trim:'#f7e7b2',tie:'#2f6fa8',
+  quotes:['Less is a bore!','순수보다 혼성, 깔끔함보다 뒤틀림을 좋아한다!','메인 스트리트는 거의 괜찮다!','둘 중 하나보다 둘 다!']}
+};
+for(const k in C)C[k].spr=coachSpr(C[k]);
+const ROUNDS=[
+ {no:1,title:'손과 기계',kw:'수공예',red:'ruskin',blue:'cole',r:['stones','oxford','cadoro'],b:['crystal','teaset','journal'],
+  sum:'1851년 런던. 기계가 만든 물건이 온 세상을 채우기 시작했다. 사람의 손은 어디로 가는가.',
+  sr:'고딕 장인의 불완전함에서 살아 있는 노동을 봤다. 기계에 맞춘 분업은 사람을 도구로 만든다고 했다.',
+  sb:'공무원 출신 기획자. 만국박람회를 성사시키고, 예술과 제조를 묶어 대중의 취향을 끌어올리려 했다. 빅토리아 앨버트 박물관의 초대 관장이기도 하다.'},
+ {no:2,title:'장식 대전쟁',kw:'장식',red:'morris',blue:'loos',r:['strawberry','kelmscott','redhouse'],b:['looshaus','essay','muller'],
+  sum:'장식은 손으로 일하는 기쁨의 흔적인가, 현대인이 버려야 할 낭비인가.',
+  sr:'러스킨을 이어, 기계가 찍어낸 조악한 물건에 맞서 수공의 장식을 되살렸다. 다만 비싸서, 소수만을 위한 예술은 싫다던 자기 말과 끝내 부딪쳤다.',
+  sb:'장식에 들어가는 노동은 낭비이며, 현대인은 장식 없이 산다고 했다. 대신 값비싼 재료의 무늬는 마음껏 썼다.'},
+ {no:3,title:'규격 대전쟁',kw:'표준화',red:'muthesius',blue:'velde',r:['theses','englishhaus','freudenberg'],b:['bloemenwerf','theater','weimar'],
+  sum:'1914년 쾰른 베르크분트 총회. 공장의 전형을 받아들일 것인가, 예술가의 개성을 지킬 것인가.',
+  sr:'독일 산업이 세계와 겨루려면 전형이 있어야 한다고 했다. 영국을 조사한 공무원다운 결론.',
+  sb:'예술가는 규범에 복종하지 않는 자유로운 창조자라고 맞섰다. 그날 젊은 그로피우스도 그의 편에 섰다.'},
+ {no:4,title:'바우하우스 내전',kw:'통일',red:'gropius',blue:'meyer',r:['fagus','dessau','manifesto'],b:['adgb','laubengang','bauen'],
+  sum:'같은 학교의 1대와 2대 교장. 조형을 살릴 것인가, 조형까지 버릴 것인가.',
+  sr:'1923년 "예술과 기술, 새로운 통일"로 돌아섰다. 벨데의 추천으로 맡은 바이마르 자리에서, 쾰른 때 자기가 편들지 않은 쪽으로 간 셈이다.',
+  sb:'1928년 교장이 되어 "민중의 필요"를 외쳤고, 학교의 수입을 늘렸지만 정치 문제로 1930년 해임됐다. 후임은 미스였다.'},
+ {no:5,no2:6,title:'모더니즘 독주',title2:'Less is a bore',kw:'복잡성',red:'mies',blue:'venturi',r:['barcelona','farnsworth','seagram'],b:['vanna','complexity','guild'],solo:true,
+  sum:'한 세대 동안 상대가 없던 코너에, 1966년 한 사람이 올라왔다.',
+  sr:'덜어내고 덜어내어 구조와 재료만 남겼다. 전후 도시의 유리 상자들은 그의 문법을 따라 하며 온 세상으로 퍼졌다.',
+  sb:'"Less is a bore." 삶은 원래 어수선하니 건축도 모순을 끌어안아야 한다고 했다. 이 싸움 뒤로 건축은 다시 색과 간판, 농담을 쓸 수 있게 됐다.'},
+ {no:7,title:'형태 대전쟁',kw:'형태',red:'rams',blue:'sottsass',r:['sk4','t3','shelf606'],b:['carlton','valentine','tahiti'],
+  sum:'1896년 설리번은 "형태는 언제나 기능을 따른다"고 썼다. 80여 년 뒤 그 말의 후예와 반역자가 만났다.',
+  sr:'브라운에서 "좋은 디자인은 가능한 한 적게 디자인한 것"이라 했다. 기능주의를 가장 엄격하게 물려받은 쪽.',
+  sb:'1981년 멤피스를 꾸려 웃기고 야한 물건을 내놓았다. 기능주의가 삶의 절반을 빠뜨렸다고 대든 것이다.'}
+];
+
+/* ---- state ---- */
+const SAVE='design-ring:v2';
+let tutDone=false,tutCur=null,tutF={c0:false,c1:false,obj:false,read:false};
+let round=0,got=[],ents=[],coachE=[],dust=[],fight=null,drag=null,hover=null,mies=false,soloOpen=false,soundOn=true,now=0,last=0,shoutT=2,shoutI=0,paused=false;
+try{const s=JSON.parse(localStorage.getItem(SAVE)||'{}');if(s.round>=0&&s.round<ROUNDS.length)round=s.round;got=s.got||[];tutDone=!!s.tutDone||round>0||got.length>0;}catch(e){}
+const save=()=>{try{localStorage.setItem(SAVE,JSON.stringify({round,got,tutDone}));}catch(e){}};
+let RING={x0:0,x1:0,y0:0,y1:0,cx:0,cy:0},wallH=40,bgC=null,bgM=null;
+
+/* ---- audio ---- */
+let ac=null;
+function tone(f,d,type='square',v=.05,slide=0){if(!soundOn)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;if(slide)o.frequency.exponentialRampToValueAtTime(slide,ac.currentTime+d);g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+d);}catch(e){}}
+const sBell=()=>{tone(1320,.7,'triangle',.12);tone(1980,.5,'sine',.06);};
+const sPunch=()=>tone(150,.12,'square',.09,50);
+const sBad=()=>tone(150,.3,'sawtooth',.05,90);
+const sDrop=()=>tone(420,.06,'square',.03);
+
+/* ---- layout ---- */
+const isMobile=()=>innerWidth<700;
+const CS=()=>isMobile()?2:1; // on phones coaches are drawn double size
+function computeScale(){const vw=innerWidth,vh=innerHeight;if(isMobile())return Math.max(1,vw/240);return Math.max(1,Math.min(vh/300,vw/470));}
+function layout(){
+  SCALE=computeScale();W=Math.ceil(innerWidth/SCALE);H=Math.ceil(innerHeight/SCALE);
+  cv.width=W;cv.height=H;cv.style.width=W*SCALE+'px';cv.style.height=H*SCALE+'px';ctx.imageSmoothingEnabled=false;
+  const top=Math.ceil($('hdr').getBoundingClientRect().bottom/SCALE),mob=isMobile();
+  wallH=Math.max(34,top-6);
+  const rw=mob?W-20:Math.min(W-170,Math.round(H*1.05),420);
+  const y0=top+(mob?16:18),rh=mob?75:Math.min(150,Math.max(110,Math.round(H-y0-96)));
+  const x0=Math.round((W-rw)/2);
+  RING={x0,x1:x0+rw,y0,y1:y0+rh,cx:x0+rw/2,cy:y0+rh/2};
+  bakeBg();placeCoaches();
+  for(const e of ents){if(e.side)clampHalf(e);else{e.x=Math.max(14,Math.min(W-14,e.x));e.y=Math.max(wallH+10,Math.min(H-8,e.y));if(forbidden(e.x,e.y,e))spawnPos(e);}e.tx=e.x;e.ty=e.y;}
+}
+function bakeBg(){
+  const {x0,x1,y0,y1,cx,cy}=RING;
+  bgC=mk(W,H,(R,g)=>{
+    // blue gym floor: boards with slightly different tones
+    for(let y=wallH,i=0;y<H;y+=9,i++){R(0,y,W,9,i%2?'#2f5ca8':'#2a549c');R(0,y+8,W,1,'#234684');for(let x=(i*37)%46;x<W;x+=46)R(x,y,1,8,'#234684');}
+    for(let i=0;i<40;i++){const x=(i*97)%W,y=wallH+(i*53)%(H-wallH);R(x,y,3,1,'#3a6bbb');}
+    // brick wall and skirting
+    R(0,0,W,wallH,'#6d4a3c');
+    for(let y=0,i=0;y<wallH-4;y+=5,i++){R(0,y+4,W,1,'#54382e');for(let x=(i%2)*7;x<W;x+=14)R(x,y,1,4,'#54382e');}
+    R(0,wallH-4,W,4,'#c4b89c');R(0,wallH-1,W,1,'#16121b');
+    // fight posters and high windows on the wall
+    for(let i=0;i<Math.floor(W/90);i++){const x=20+i*90,y=wallH-26;if(y<2)break;R(x-1,y-1,16,22,OUT);R(x,y,14,20,i%2?'#e8c35a':'#e9e4d2');R(x+2,y+2,10,3,'#d84a3a');R(x+2,y+7,4,6,'#1a1418');R(x+8,y+7,4,6,'#3b6fd6');R(x+2,y+15,10,1,'#1a1418');R(x+2,y+17,7,1,'#1a1418');}
+    // ring: same canvas, skirt and steps as Agora Ring, only bigger
+    R(x0-2,y0-2,x1-x0+4,y1-y0+4,OUT);R(x0,y0,x1-x0,y1-y0,'#f1f1ee');R(x0+4,y0+4,x1-x0-8,y1-y0-8,'#dfe4ea');
+    for(let y=y0+8;y<y1-4;y+=8)R(x0+4,y,x1-x0-8,1,'#d6dce3');
+    const ZC={red:'rgba(216,74,58,.42)',blue:'rgba(59,111,214,.42)'};zones().forEach((z,i)=>{const a=Math.max(z.a,x0+4),b=Math.min(z.b,x1-4);R(a,y0+4,b-a,y1-y0-8,ZC[z.s]);if(i)R(Math.round(z.a)-1,y0+4,2,y1-y0-8,'#f1f1ee');});
+    const rx=Math.round((y1-y0)*.3),ry=Math.round(rx*.72),half=(a,b,dy)=>Math.abs(dy)>b?-1:Math.floor((a+.5)*Math.sqrt(Math.max(0,1-(dy/(b+.5))**2)));
+    for(let dy=-ry;dy<=ry;dy++){const wo=half(rx,ry,dy),wi=half(rx-2,ry-2,dy),mx=Math.round(cx),my=Math.round(cy);if(wi<0)R(mx-wo,my+dy,wo*2+1,1,'#bcc4ce');else{R(mx-wo,my+dy,wo-wi,1,'#bcc4ce');R(mx+wi+1,my+dy,wo-wi,1,'#bcc4ce');}}
+    R(x0-2,y1+2,x1-x0+4,10,OUT);R(x0,y1+2,x1-x0,8,'#8d2a22');R(x0,y1+8,x1-x0,2,'#651c17');for(let x=x0+6;x<x1-6;x+=14)R(x,y1+4,7,1,'#b34438');
+    R(cx-14,y1+12,28,4,'#d4cab1');R(cx-14,y1+12,28,1,'#efe8d6');
+    // sandbags, bench, dumbbells
+    const bag=(x,y)=>{R(x,wallH-6,1,y-wallH+6,'#8d8a84');R(x-4,y-1,9,2,'#55504a');R(x-7,y,15,27,OUT);R(x-6,y+1,13,25,'#9c3b2e');R(x-6,y+1,3,25,'#c25a48');R(x+4,y+1,3,25,'#752a20');R(x-6,y+6,13,1,'#e8d9b8');R(x-6,y+20,13,1,'#e8d9b8');R(x-5,y+27,11,2,'rgba(10,20,50,.3)');};
+    if(!isMobile()){bag(16,wallH+8);bag(W-17,wallH+8);bag(38,wallH+24);
+      R(W-58,wallH+6,36,5,OUT);R(W-57,wallH+6,34,3,'#a8743f');R(W-55,wallH+11,2,4,OUT);R(W-27,wallH+11,2,4,OUT);
+      R(52,wallH+8,3,8,OUT);R(60,wallH+8,3,8,OUT);R(52,wallH+11,11,2,'#6d6a66');}
+  });
+  bgM=mk(W,H,(R,g)=>{
+    R(0,0,W,H,'#ffffff');
+    for(let x=0;x<W;x+=24)R(x,0,1,H,'#ececec');for(let y=0;y<H;y+=24)R(0,y,W,1,'#ececec');
+    R(0,wallH-1,W,1,'#111');
+    R(x0,y0,x1-x0,y1-y0,'#d9d9d9');R(x0,y0,x1-x0,1,'#111');R(x0,y1,x1-x0+1,1,'#111');R(x0,y0,1,y1-y0,'#111');R(x1,y0,1,y1-y0,'#111');
+    R(Math.round(cx),y0,1,y1-y0,'#888');R(x0,y1+12,x1-x0,1,'#111');R(x0,y1,1,12,'#111');R(x1,y1,1,12,'#111');
+    if(!isMobile())for(const [x,y] of [[16,wallH+8],[W-17,wallH+8],[38,wallH+24]]){R(x,wallH,1,y-wallH,'#111');R(x-6,y,13,1,'#111');R(x-6,y+26,13,1,'#111');R(x-6,y,1,27,'#111');R(x+6,y,1,27,'#111');}
+  });
+}
+function placeCoaches(){
+  const mob=isMobile(),{x0,x1,y1,cy}=RING;
+  for(const c of coachE){const left=c.corner===0;
+    c.hx=mob?(left?x0+18:x1-18):(left?x0-24:x1+24);c.hy=mob?y1+32:cy+18;
+    if(!c.walkIn){c.x=c.hx;c.y=c.hy;}}
+}
+
+/* ---- round setup ---- */
+const zones=()=>{const o=['red','blue'],{x0,x1}=RING,w=(x1-x0)/o.length;return o.map((s,i)=>({s,a:x0+i*w,b:x0+(i+1)*w}));};
+const halfRect=e=>{const hw=OBJ[e.id].w/2+1,{y0,y1}=RING,z=zones().find(q=>q.s===e.side),a=z.a+hw+3,b=z.b-hw-3,m=(z.a+z.b)/2;return {a:Math.min(a,m),b:Math.max(b,m),c:y0+Math.min(24,OBJ[e.id].h*.7),d:y1-4};};
+function clampHalf(e){const r=halfRect(e);e.x=Math.max(r.a,Math.min(r.b,e.x));e.y=Math.max(r.c,Math.min(r.d,e.y));}
+const hudRects=()=>[...document.querySelectorAll('.narr,.stelebox,.tut')].filter(n=>!n.hidden).map(n=>{const b=n.getBoundingClientRect();return {a:b.left/SCALE,b:b.right/SCALE,c:b.top/SCALE,d:b.bottom/SCALE+6};});
+function forbidden(x,y,e){
+  const d=OBJ[e.id],hw=d.w/2+2,{x0,x1,y0,y1}=RING;
+  if(x+hw>x0-4&&x-hw<x1+4&&y>y0-6&&y-d.h<y1+24)return true;
+  for(const c of coachE)if(Math.abs(x-c.x)<hw+8*CS()&&y>c.y-10&&y-d.h<c.y)return true;
+  return false;
+}
+function spawnPos(e){const hw=OBJ[e.id].w/2+2,hh=OBJ[e.id].h+6;for(let i=0;i<80;i++){const x=hw+Math.random()*(W-hw*2),y=wallH+hh+Math.random()*(H-wallH-hh-6);if(!forbidden(x,y,e)&&!hudRects().some(r=>x+hw>r.a&&x-hw<r.b&&y>r.c&&y-hh<r.d)&&!ents.some(o=>o!==e&&Math.abs(o.x-x)<hw+OBJ[o.id].w/2&&Math.abs(o.y-y)<14)){e.x=x;e.y=y;return;}}e.x=W/2;e.y=H-10;}
+function pickTarget(e){
+  if(e.side){const r=halfRect(e);e.tx=r.a+Math.random()*(r.b-r.a);e.ty=r.c+Math.random()*(r.d-r.c);return;}
+  const hud=hudRects(),hw=OBJ[e.id].w/2+2,hh=OBJ[e.id].h+6;
+  for(let i=0;i<30;i++){const a=Math.random()*6.28,l=30+Math.random()*90,x=e.x+Math.cos(a)*l,y=e.y+Math.sin(a)*l*.8;
+    if(x<14||x>W-14||y<wallH+hh||y>H-5||forbidden(x,y,e)||hud.some(r=>x+hw>r.a&&x-hw<r.b&&y>r.c&&y-hh<r.d))continue;e.tx=x;e.ty=y;return;}
+  e.tx=e.x;e.ty=e.y;
+}
+function addEnt(id,home){const e={id,home,side:null,x:0,y:0,tx:0,ty:0,frame:0,ft:Math.random()*200,wait:Math.random()*1.5,sp:13+Math.random()*7,flip:false};spawnPos(e);e.tx=e.x;e.ty=e.y;ents.push(e);return e;}
+function startRound(i){
+  round=i;const r=ROUNDS[i];ents=[];dust=[];fight=null;drag=null;soloOpen=!r.solo;mies=false;document.body.classList.remove('mies');
+  coachE=[{key:r.red,corner:0,q:0,jump:0,rage:0}];
+  if(!r.solo)coachE.push({key:r.blue,corner:1,q:0,jump:0,rage:0});
+  bakeBg();placeCoaches();
+  r.r.forEach(id=>addEnt(id,'red'));
+  if(!r.solo)r.b.forEach(id=>addEnt(id,'blue'));
+  $('bubbles').innerHTML='';
+  $('title').textContent=`디자인 링 · ${r.no}라운드 · ${r.title}`;
+  info(r.title,r.solo?'코너가 하나뿐이다':'디자인물을 코너로 끌어다 놓고 종을 쳐',r.sum);
+  shoutT=.6;updateHud();save();
+}
+function openVenturi(){
+  soloOpen=true;const r=ROUNDS[round];$('title').textContent=`디자인 링 · ${r.no2}라운드 · ${r.title2}`;
+  const c={key:r.blue,corner:1,q:0,jump:30,rage:0,walkIn:true,x:W+14,y:RING.cy+18};coachE.push(c);placeCoaches();
+  r.b.forEach(id=>{addEnt(id,'blue').wait=0;});
+  banner('누군가 빈 코너로 올라온다…\n색을 잃지 않은 채로.',2600);
+  bubble(c,'Less is a bore!',true);
+  info('상대가 왔다','1966','세 건물이 코너를 채우자 벤투리와 디자인물들이 들어왔다. 이 세계에서 색이 남은 건 이들뿐이다.');
+  updateHud();
+}
+
+/* ---- HUD ---- */
+function info(t,y,b){$('nt').textContent=t;$('ny').textContent=y;$('nb').textContent=b;}
+function updateHud(){
+  const r=ROUNDS[round];
+  $('rn0').textContent=C[r.red].name;$('rn1').textContent=soloOpen?C[r.blue].name:'비어 있음';
+  $('stele').innerHTML=ROUNDS.map((x,i)=>got.includes(i)?`<li><button class="kwbtn got" type="button" data-i="${i}">${x.kw}</button></li>`:`<li><span class="kwbtn">${'▒'.repeat(x.kw.length+1)}</span></li>`).join('')+(got.length>=5?'<li><button class="kwbtn got" type="button" data-map="1">계보 ▶</button></li>':'<li><span class="kwbtn">? ? ?</span></li>');
+}
+let banT=0;
+function banner(t,ms=1800){const b=$('banner');b.textContent=t;b.hidden=false;clearTimeout(banT);banT=setTimeout(()=>b.hidden=true,ms);}
+function bubble(c,text,shout){
+  if(isMobile())for(const o of coachE)if(o!==c&&o.bub){o.bub.remove();o.bub=null;}
+  if(c.bub)c.bub.remove();
+  const el=document.createElement('div');el.className='bub'+(shout?' shout':'');el.textContent=text;$('bubbles').appendChild(el);
+  c.bub=el;c.bubT=shout?1.6:3.2;posBubble(c);
+}
+function posBubble(c){if(!c.bub)return;const w=c.bub.offsetWidth/2+6;c.bub.style.left=Math.max(w,Math.min(innerWidth-w,c.x*SCALE))+'px';c.bub.style.top=Math.max(c.bub.offsetHeight+10,(c.y-24*CS()-4)*SCALE)+'px';}
+function modal(html,label,cb){$('mbody').innerHTML=html;$('mbtn').textContent=label;$('modal').hidden=false;paused=true;$('mbtn').onclick=()=>{$('modal').hidden=true;paused=false;cb&&cb();};$('mbtn').focus();}
+const esc=s=>s;
+function kwHTML(i){const r=ROUNDS[i];return `<h2>${r.kw}</h2><span class="lbl">${r.no}라운드 · ${r.title}</span><p>${r.sum}</p>
+  <div class="side"><b style="color:var(--red)">홍 · ${C[r.red].name} (${C[r.red].full})</b><span>${r.sr}</span></div>
+  <div class="side"><b style="color:var(--blue)">청 · ${C[r.blue].name} (${C[r.blue].full})</b><span>${r.sb}</span></div>`;}
+const MAPN={ruskin:[110,30],cole:[300,30],morris:[60,90],loos:[210,120],sullivan:[390,105],muthesius:[120,170],velde:[300,170],gropius:[150,235],meyer:[330,235],mies:[210,300],rams:[60,350],venturi:[300,350],sottsass:[210,410]};
+const MAPE=[['ruskin','morris',0,'러스킨의 노동론을 잇다'],['cole','ruskin',1,'수정궁을 두고 맞서다'],['morris','loos',1,'장식을 두고 맞서다'],['morris','muthesius',0,'영국 공예 운동을 독일로 가져가다'],['morris','velde',0,'공예 운동에서 자라다'],['sullivan','loos',0,'시카고를 다녀온 루스'],['muthesius','velde',1,'1914 쾰른'],['velde','gropius',0,'바이마르 후임으로 추천'],['muthesius','gropius',0,'나중에 표준 쪽으로'],['gropius','meyer',0,'2대 교장으로 지명, 곧 내전'],['meyer','mies',0,'해임된 자리에 3대 교장으로'],['loos','mies',0,'장식 없는 벽의 후예'],['mies','rams',0,'적을수록 좋다는 문법'],['mies','venturi',1,'Less is a bore'],['venturi','sottsass',0,'포스트모던의 웃음'],['rams','sottsass',1,'적을수록 vs 재미']];
+function mapHTML(){
+  const e=MAPE.map(([a,b,d])=>{const A=MAPN[a],B=MAPN[b];return `<line x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${d?'#e0563b':'#a89cb3'}" stroke-width="2"${d?' stroke-dasharray="5 4"':''}/>`;}).join('');
+  const n=Object.entries(MAPN).map(([k,[x,y]])=>{const t=C[k].name,w=t.length*12+12;return `<rect x="${x-w/2}" y="${y-11}" width="${w}" height="22" fill="#fbf5e6" stroke="#1a1418" stroke-width="2"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1418">${t}</text>`;}).join('');
+  const l=MAPE.map(([a,b,d,t])=>`<li>${C[a].name} ${d?'⚔':'→'} ${C[b].name} · <span style="color:var(--muted)">${t}</span></li>`).join('');
+  return `<h2>계보</h2><span class="lbl">위에서 아래로 시간순. 실선은 이어짐, 빨간 점선은 맞섬</span><svg viewBox="0 0 450 430" style="width:100%;height:auto;font-family:var(--pix)" role="img" aria-label="디자이너들의 영향과 대립 지도">${e}${n}</svg><ul style="list-style:none;display:flex;flex-direction:column;gap:2px;font-size:11.5px">${l}</ul>`;
+}
+
+/* ---- fight ---- */
+function ringBell(){
+  if(fight||paused)return;
+  const b=$('bell');b.classList.remove('ding');void b.offsetWidth;b.classList.add('ding');sBell();
+  const r=ROUNDS[round];
+  if(r.solo&&!soloOpen){banner(`상대가 없다.\n홍코너에 ${3-ents.filter(e=>e.side==='red').length}개 더 올려 봐.`);return;}
+  const out=ents.filter(e=>!e.side).length;
+  if(out){banner(`아직 링 밖에 ${out}개 남았다.`);return;}
+  const wrong=ents.filter(e=>e.side!==e.home).length;
+  if(wrong){sBad();banner(`싸움 불성립!\n남의 코너에 선 디자인이 있다.`,2200);
+    for(const c of coachE){c.rage=2;c.jump=.5;bubble(c,'우리 편 아니야!',true);}
+    return;}
+  tutDone=true;save();$('banner').hidden=true;fight={t:0,dur:4.4,hit:0};
+  for(const e of ents){e.hx=e.x;e.hy=e.y;e.ang=Math.random()*6.28;e.orb=(e.side==='red'?1:-1)*(1.6+Math.random());}
+}
+function endFight(){
+  const r=ROUNDS[round],i=round;fight=null;dust=[];
+  if(!got.includes(i))got.push(i);
+  if(mies){mies=false;document.body.classList.remove('mies');}
+  for(const c of coachE){c.rage=0;if(c.bub){c.bub.remove();c.bub=null;}}
+  const before=got.length;updateHud();save();
+  const next=i+1<ROUNDS.length;if(got.length===5&&next)setTimeout(()=>banner('키워드 다섯 개. 도감에 계보가 열렸다.',2800),100);
+  modal(kwHTML(i)+(r.solo?'<p style="color:var(--gold)">색이 돌아왔다.</p>':''),next?'다음 라운드':'끝까지 봤다',()=>{
+    if(next)startRound(i+1);
+    else modal(mapHTML()+'<p style="color:var(--gold)">디자인사는 한쪽이 이겨서 끝난 적이 없다. 다음 세대가 진 쪽의 말을 다시 꺼내 들 뿐.</p>','처음부터',()=>{got=[];startRound(0);});
+  });
+}
+
+/* ---- input ---- */
+const toW=e=>[e.clientX/SCALE,e.clientY/SCALE];
+function hitEnt(mx,my){const o=[...ents].sort((a,b)=>b.y-a.y);for(const e of o){const d=OBJ[e.id];if(mx>e.x-d.w/2-3&&mx<e.x+d.w/2+3&&my>e.y-d.h-10&&my<e.y+2)return e;}return null;}
+function hitCoach(mx,my){const k=CS();return coachE.find(c=>Math.abs(mx-c.x)<10*k&&my>c.y-22*k&&my<c.y+3);}
+let down=null;
+cv.addEventListener('pointerdown',ev=>{if(fight||paused)return;const [mx,my]=toW(ev);cv.setPointerCapture(ev.pointerId);const e=hitEnt(mx,my);down={mx,my,e,moved:false,ox:e?e.x-mx:0,oy:e?e.y-my:0};});
+cv.addEventListener('pointermove',ev=>{
+  const [mx,my]=toW(ev);
+  if(down&&down.e){if(!down.moved&&Math.hypot(mx-down.mx,my-down.my)*SCALE>3){down.moved=true;drag=down.e;drag.prevSide=drag.side;drag.side=null;$('ptip').hidden=true;updateHud();showObj(drag);}
+    if(drag){drag.x=mx+down.ox;drag.y=my+down.oy+3;cv.className='grabbing';return;}}
+  if(down)return;
+  const e=hitEnt(mx,my);hover=e||null;cv.className=e?'grab':'';
+  const p=$('ptip');if(e&&!fight&&!paused){p.textContent=OBJ[e.id].name;p.hidden=false;p.style.left=e.x*SCALE+'px';p.style.top=(e.y-OBJ[e.id].h-10)*SCALE+'px';}
+  else p.hidden=true;
+});
+function showObj(e){tutF.obj=true;const d=OBJ[e.id];info(d.name,d.year,d.clue);}
+function placeInRing(e){
+  const {x0,x1,y0,y1,cx}=RING;
+  if(e.x>x0&&e.x<x1&&e.y>y0-6&&e.y<y1+14){
+    const side=zones().find(z=>e.x<z.b).s;
+    if(side==='blue'&&!soloOpen){e.side=null;e.y=y1+30;e.x=Math.max(x0+10,Math.min(x1-10,e.x));banner('청코너에는 아직 아무도 없다.');sBad();return;}
+    e.side=side;clampHalf(e);e.tx=e.x;e.ty=e.y;e.wait=.8;sDrop();
+    if(!mies&&ents.some(o=>o.side==='red'||o.side==='blue')&&ROUNDS[round].solo&&!soloOpen&&ROUNDS[round].r.includes(e.id)){
+      mies=true;document.body.classList.add('mies');tone(880,.8,'sine',.05);banner('Less is more.',1800);
+    }
+    if(ROUNDS[round].solo&&!soloOpen&&ents.filter(o=>o.side==='red').length===3)setTimeout(openVenturi,700);
+  }else{e.side=null;e.tx=e.x;e.ty=e.y;e.wait=.5;if(forbidden(e.x,e.y,e))spawnNear(e);}
+}
+function spawnNear(e){for(let l=10;l<200;l+=8)for(let a=0;a<6.28;a+=.6){const x=e.x+Math.cos(a)*l,y=e.y+Math.sin(a)*l;if(x>14&&x<W-14&&y>wallH+OBJ[e.id].h*.55&&y<H-5&&!forbidden(x,y,e)){e.tx=x;e.ty=y;return;}}}
+cv.addEventListener('pointerup',ev=>{
+  const [mx,my]=toW(ev);
+  if(drag){placeInRing(drag);drag=null;cv.className='';updateHud();}
+  else if(down&&down.e){tutF.obj=true;showObj(down.e);down.e.wait=1.5;down.e.tx=down.e.x;down.e.ty=down.e.y;}
+  else if(down){const c=hitCoach(mx,my);if(c){tutF['c'+c.corner]=true;c.q=(c.q+1)%C[c.key].quotes.length;bubble(c,C[c.key].quotes[c.q]);tone(600,.05);}}
+  down=null;
+});
+cv.addEventListener('pointercancel',()=>{if(drag){placeInRing(drag);drag=null;}down=null;});
+$('bell').onclick=ringBell;
+$('stele').onclick=ev=>{const b=ev.target.closest('.got');if(b&&!fight)modal(b.dataset.map?mapHTML():kwHTML(+b.dataset.i),'닫기');};
+$('snd').onclick=()=>{soundOn=!soundOn;$('snd').setAttribute('aria-pressed',soundOn);$('sndicon').src=soundOn?ICON_ON:ICON_OFF;};
+$('reset').onclick=()=>{if(fight)return;modal('<h2>처음으로 돌아갈까?</h2><p>모은 키워드가 사라져.</p>','처음으로',()=>{got=[];tutDone=false;tutF={c0:false,c1:false,obj:false,read:false};startRound(0);});};
+addEventListener('resize',()=>{layout();placeTut();});
+
+/* ---- tutorial: the step is derived from the game state, as in Agora Ring ---- */
+function tutStep(){
+  if(tutDone||round!==0||fight||paused||!coachE.length)return null;
+  const floor=ents.filter(e=>!e.side).length,placed=ents.length-floor,r=ROUNDS[0];
+  if(!floor)return {k:'종 치기',t:'다 올렸어요! 위의 종을 쳐서 싸움을 붙이세요. 편을 잘못 갈랐다면 싸움이 성립하지 않아요.',hl:'#bell',n:'6 / 6'};
+  if(placed)return {k:'나머지도 올리기',t:`좋아요. 남은 ${floor}개도 알맞은 코너로 끌어다 놓으세요. 잘못 놓았으면 다시 끌어 옮기면 돼요.`,hl:'ring',n:'5 / 6'};
+  if(tutF.read)return {k:'링에 올리기',t:'이 디자인물은 어느 감독 편일까요? 끌어다 링에 놓으세요. 왼쪽 절반은 홍코너, 오른쪽 절반은 청코너예요.',hl:'ring',n:'4 / 6'};
+  if(tutF.obj)return {k:'단서 읽기',t:'디자인물을 누르면 여기에 정체와 단서가 나와요. 감독들이 외치는 말과 맞춰 보세요.',hl:'#narr',n:'3 / 6',btn:'다음'};
+  if(tutF.c0&&tutF.c1)return {k:'디자인물 살피기',t:'바닥을 돌아다니는 건 선수들이에요. 하나를 눌러 보세요.',hl:'@'+r.r[0],n:'2 / 6'};
+  const c=tutF.c0?1:0;
+  return {k:tutF.c0||tutF.c1?'감독의 말':'처음 오셨군요',t:tutF.c0||tutF.c1?'다른 감독도 눌러서 무슨 말을 하는지 들어 보세요.':'디자이너들은 감독이라 코너에서 자기 말만 외쳐요. 감독을 눌러서 무슨 말을 하는지 들어 보세요.',hl:'#'+c,hlc:c,n:'1 / 6'};
+}
+function tutRect(c){
+  if(c.hlc!=null){const m=coachE[c.hlc];const k=CS();return m&&{x:(m.x-9*k)*SCALE,y:(m.y-22*k)*SCALE,w:18*k*SCALE,h:24*k*SCALE,p:1};}
+  if(c.hl==='ring')return {x:(RING.x0-6)*SCALE,y:(RING.y0-12)*SCALE,w:(RING.x1-RING.x0+12)*SCALE,h:(RING.y1-RING.y0+24)*SCALE};
+  if(c.hl[0]==='@'){const e=ents.find(o=>o.id===c.hl.slice(1));if(!e)return null;const d=OBJ[e.id];return {x:(e.x-d.w/2-2)*SCALE,y:(e.y-d.h-11)*SCALE,w:(d.w+4)*SCALE,h:(d.h+13)*SCALE,p:1};}
+  const b=$(c.hl.slice(1)).getBoundingClientRect();return {x:b.left,y:b.top,w:b.width,h:b.height};
+}
+function posHl(){
+  const c=tutCur,hl=$('hl'),r=c&&tutRect(c);if(!r){hl.hidden=true;return;}
+  const pad=r.p?2:5;hl.hidden=false;hl.classList.toggle('person',!!r.p);
+  hl.style.left=Math.round(r.x-pad)+'px';hl.style.top=Math.round(r.y-pad)+'px';hl.style.width=Math.round(r.w+pad*2)+'px';hl.style.height=Math.round(r.h+pad*2)+'px';
+  hl.style.zIndex=c.hl==='#bell'?12:c.hl==='#narr'?12:7;
+}
+function placeTut(){
+  const c=tutCur,el=$('tut');
+  if(!c){el.hidden=true;$('hl').hidden=true;return;}
+  $('tutk').textContent=c.k;$('tutt').textContent=c.t;$('tutn').textContent=c.n;$('tutbtn').hidden=!c.btn;
+  el.hidden=false;
+  const w=el.offsetWidth,h=el.offsetHeight,cx=RING.cx*SCALE,left=Math.max(12,Math.min(innerWidth-12-w,cx-w/2));
+  let top=(RING.y1+(isMobile()?36:18))*SCALE; // phones: below the coaches, never over their bubbles
+  if(c.hl==='#narr')top=Math.min(top,$('narr').getBoundingClientRect().top-h-14);
+  top=Math.max(8,Math.min(innerHeight-h-8,top));
+  el.style.left=Math.round(left)+'px';el.style.top=Math.round(top)+'px';el.className='tut'+(c.hl==='#narr'?'':' up');
+  el.style.setProperty('--ax',Math.max(16,Math.min(w-16,cx-left))+'px');
+}
+function updateTut(){
+  const c=tutStep(),k=c?c.k+c.t:'',o=tutCur?tutCur.k+tutCur.t:'';
+  tutCur=c;if(k!==o)placeTut();if(c)posHl();
+}
+$('tutbtn').onclick=()=>{tutF.read=true;};
+
+/* ---- update ---- */
+function update(dt){
+  if(paused)return;
+  for(const e of ents){
+    if(e===drag)continue;
+    if(fight)continue;
+    if(e.wait>0){e.wait-=dt;e.frame=0;if(e.wait<=0)pickTarget(e);continue;}
+    const dx=e.tx-e.x,dy=e.ty-e.y,l=Math.hypot(dx,dy);
+    if(l<1.5){e.wait=.4+Math.random()*2.2;e.frame=0;continue;}
+    const nx=e.x+dx/l*e.sp*dt,ny=e.y+dy/l*e.sp*dt;
+    if(!e.side&&forbidden(nx,ny,e)&&!forbidden(e.x,e.y,e)){e.wait=.2;continue;}
+    e.x=nx;e.y=ny;
+    e.ft+=dt*1000;if(e.ft>170){e.ft=0;e.frame^=1;}
+  }
+  for(const c of coachE){
+    if(c.walkIn){const dx=c.hx-c.x,dy=c.hy-c.y,l=Math.hypot(dx,dy);if(l<1){c.walkIn=false;c.x=c.hx;c.y=c.hy;}else{c.x+=dx/l*40*dt;c.y+=dy/l*40*dt;}}
+    c.jump=Math.max(0,c.jump-dt);c.rage=Math.max(0,c.rage-dt);
+    if(c.bub){posBubble(c);c.bubT-=dt;if(c.bubT<=0){c.bub.remove();c.bub=null;}}
+  }
+  if(!fight){shoutT-=dt;if(shoutT<=0&&coachE.length){const c=coachE[shoutI++%coachE.length];const q=C[c.key].quotes;bubble(c,q[c.q]);c.q=(c.q+1)%q.length;shoutT=3.4;}}
+  for(const d of dust){d.x+=d.vx*dt;d.y+=d.vy*dt;d.life-=dt;}
+  dust=dust.filter(d=>d.life>0);
+  if(fight){
+    fight.t+=dt;const {cx,cy}=RING;
+    const n=fight.t<.5?9:4;for(let i=0;i<n;i++){const a=Math.random()*6.28,rr=Math.random();dust.push({x:cx+Math.cos(a)*rr*(RING.x1-RING.x0)*.36,y:cy+6+Math.sin(a)*rr*(RING.y1-RING.y0)*.38,vx:Math.cos(a)*14,vy:-6+Math.sin(a)*9,r:6+Math.random()*9|0,life:.5+Math.random()*.5});}
+    fight.hit-=dt;if(fight.hit<=0){fight.hit=.17+Math.random()*.2;sPunch();
+      const c=coachE[Math.random()*coachE.length|0];c.jump=.45;c.rage=.9;if(Math.random()<.45){const q=C[c.key].quotes;bubble(c,q[Math.random()*q.length|0],true);}
+      (fight.stars=fight.stars||[]).push({x:cx+(Math.random()-.5)*(RING.x1-RING.x0)*.7,y:cy+(Math.random()-.5)*(RING.y1-RING.y0)*.7,t:.3});}
+    if(fight.stars){for(const s of fight.stars)s.t-=dt;fight.stars=fight.stars.filter(s=>s.t>0);}
+    if(fight.t>=fight.dur)endFight();
+  }
+}
+
+/* ---- draw ---- */
+const R=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,w,h);};
+function line(x0,y0,x1,y1,c){x0|=0;y0|=0;x1|=0;y1|=0;const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy;ctx.fillStyle=c;for(;;){ctx.fillRect(x0,y0,1,1);if(x0===x1&&y0===y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx;}if(e2<=dx){e+=dx;y0+=sy;}}}
+const RC=['#d84a3a','#f4f4f4','#3b6fd6'],RH=[4,8,12];
+const POST=[['#ece9e2','#b9b6ad'],['#ebc85e','#b9952e'],['#d23a2a','#922318'],['#2f5fc8','#1e3f8c']];
+const POSTM=[['#fff','#999'],['#fff','#999'],['#fff','#999'],['#fff','#999']];
+function post(x,y,c){R(x-4,y-19,8,20,OUT);R(x-3,y-15,6,15,c[0]);R(x+1,y-15,2,15,c[1]);R(x-3,y-18,6,3,c[1]);R(x-3,y-18,4,1,c[0]);}
+function ringBack(){const {x0,x1,y0,y1}=RING,P=mies?POSTM:POST;
+  post(x0+2,y0+2,P[0]);post(x1-2,y0+2,P[1]);
+  for(let i=0;i<3;i++){const h=RH[i],c=mies?(i==1?'#fff':'#111'):RC[i];if(mies&&i==1)continue;line(x0+3,y0+2-h,x1-3,y0+2-h,c);line(x0+2,y0+3-h,x0+2,y1-2-h,c);line(x1-2,y0+3-h,x1-2,y1-2-h,c);}}
+function ringFront(){const {x0,x1,y1}=RING,P=mies?POSTM:POST;
+  for(let i=0;i<3;i++){const h=RH[i];if(mies&&i==1)continue;line(x0+3,y1-2-h,x1-3,y1-2-h,mies?'#111':RC[i]);}
+  post(x0+2,y1-2,P[2]);post(x1-2,y1-2,P[3]);}
+function drawEnt(e){
+  const d=OBJ[e.id],s=sprOf(e.id),colored=!mies||ROUNDS[round].b.includes(e.id);
+  let x=e.x,y=e.y,held=e===drag,fr=e.frame,jx=0,lift=0;
+  if(fight){const sign=e.side==='red'?-1:1;e.ang+=.14*e.orb;const big=.5+.5*Math.sin(fight.t*2.3+e.ang);
+    x=RING.cx+Math.cos(e.ang)*(RING.x1-RING.x0)*.34*big+sign*6;y=RING.cy+14+Math.sin(e.ang)*(RING.y1-RING.y0)*.26*big;fr=Math.floor(now/70)%2;}
+  if(held){fr=Math.floor(now/70)%2;jx=Math.round(Math.sin(now/38)*1.6);lift=-4+(Math.floor(now/95)%2?-1:0);}
+  x=Math.round(x+jx);y=Math.round(y);
+  const shadow=mies?'rgba(0,0,0,.14)':'rgba(10,20,50,.32)';
+  if(!held){R(x-d.w/2+2,y-1,d.w-4,2,shadow);}
+  // feet only, tucked right under the body; the raised foot swaps with the frame
+  const lx=Math.round(d.w*.22),len=7,sh=colored?'#c9402f':'#fff';
+  for(const [o,up] of [[-lx,fr],[lx,1-fr]]){const fy=y-1-(up?1:0)+lift;R(x+o-3,fy-2,7,4,OUT);R(x+o-2,fy-1,5,2,sh);}
+  const bob=Math.round(Math.sin(now/380+e.sp)),top=y-len-d.h-1+lift+bob;
+  ctx.drawImage(colored?s.col:s.bw,x-Math.round(d.w/2)-1,top);
+  if(held){const k=Math.floor(now/120)%2,c=mies?'#111':'#fff';R(x-d.w/2-5,top+6+k*3,2,1,c);R(x-d.w/2-6,top+10+k*3,1,1,c);R(x+d.w/2+4,top+8-k*3,2,1,c);R(x+d.w/2+5,top+4-k*3,1,1,c);R(x+d.w/2+2,top-1+k,2,2,mies?'#999':'#7cc4ec');}
+  if(hover===e&&!drag&&!fight)R(x-d.w/2,y+2,d.w,1,mies?'#111':'rgba(255,255,255,.7)');
+}
+function drawCoach(c){
+  const p=C[c.key],isColored=!mies||ROUNDS[round].blue===c.key;
+  const hop=c.jump>0?Math.round(Math.abs(Math.sin(c.jump*14))*7):0;
+  const blink=((now+c.corner*900)%3400)<140;
+  const moving=c.walkIn||c.jump>0;const f=moving?Math.floor(now/110)%2:blink?2:0;
+  const spr=(isColored?p.spr.col:p.spr.bw)[f],x=0,y=0,k=CS();
+  ctx.save();ctx.translate(Math.round(c.x),Math.round(c.y));ctx.scale(k,k);
+  ctx.fillStyle=mies?'rgba(0,0,0,.14)':'rgba(10,20,50,.32)';ctx.fillRect(x-5,y-1,10,2);
+  if(c.corner===1){ctx.save();ctx.translate(x+8,0);ctx.scale(-1,1);ctx.drawImage(spr,0,y-20-hop);ctx.restore();}else ctx.drawImage(spr,x-8,y-20-hop);
+  if(c.rage>0){const m=Math.floor(now/140)%2,cc=mies?'#111':'#e0563b';R(x-7,y-28-hop-m,2,2,cc);R(x+6,y-29-hop+m,2,2,cc);R(x-1,y-31-hop+m,2,1,cc);R(x-9,y-16-hop+m,2,1,'#fff');R(x+9,y-14-hop-m,2,1,'#fff');}
+  ctx.restore();
+}
+function drawDust(){for(const d of dust){const a=Math.min(1,d.life*2.5),rr=d.r,x=Math.round(d.x),y=Math.round(d.y);ctx.globalAlpha=a;
+  const P=(rx,ry,c)=>{for(let dy=-ry;dy<=ry;dy++){const w=Math.round(rx*Math.sqrt(Math.max(0,1-dy*dy/(ry*ry))));R(x-w,y+dy,w*2+1,1,c);}};
+  P(rr+1,Math.round(rr*.8)+1,mies?'#333':'#a08f70');P(rr,Math.round(rr*.8),mies?'#d4d4d4':'#e9dfc6');P(Math.max(1,rr-3),Math.max(1,Math.round(rr*.5)),mies?'#fff':'#fbf5e6');ctx.globalAlpha=1;}}
+function drawStars(){if(!fight||!fight.stars)return;for(const s of fight.stars){const x=Math.round(s.x),y=Math.round(s.y),c=mies?'#111':GOLD;R(x-5,y-1,11,3,OUT);R(x-1,y-5,3,11,OUT);R(x-4,y,9,1,c);R(x,y-4,1,9,c);R(x-1,y-1,3,3,'#fff');}}
+function draw(){
+  ctx.drawImage(mies?bgM:bgC,0,0);
+  ringBack();
+  const inRing=[],outer=[];
+  for(const e of ents){if(e===drag)continue;(e.side?inRing:outer).push(e);}
+  [...outer,...coachE.map(c=>({c,y:c.y}))].filter(o=>o.y<RING.y0).sort((a,b)=>a.y-b.y).forEach(o=>o.c?drawCoach(o.c):drawEnt(o));
+  inRing.sort((a,b)=>a.y-b.y).forEach(drawEnt);
+  ringFront();
+  [...outer,...coachE.map(c=>({c,y:c.y}))].filter(o=>o.y>=RING.y0).sort((a,b)=>a.y-b.y).forEach(o=>o.c?drawCoach(o.c):drawEnt(o));
+  drawDust();drawStars();
+  if(drag)drawEnt(drag);
+}
+function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;now=t;update(dt);draw();updateTut();requestAnimationFrame(loop);}
+
+/* ---- boot ---- */
+function bellURL(){return outlined(mk(24,26,R=>{
+  const B=['#fffbe6','#f7e08e','#e5c058','#bf952f','#86621d','#563e12'],PL='#2a2530',PL2='#454050',SC='#e2ded4',SD='#86827a',cx=10,cy=14;
+  R(3,2,15,8,PL);R(3,2,15,1,PL2);
+  disc(R,cx,cy,9,9,B[4]);disc(R,cx,cy,8,8,B[3]);disc(R,cx+1,cy,7,8,B[2]);disc(R,cx-2,cy-3,4,3,B[1]);R(cx-4,cy-5,3,1,B[0]);R(cx-5,cy-4,1,2,B[0]);
+  for(let y=cy-4;y<=cy+4;y++)R(cx+7,y,1,1,B[1]);R(cx+8,cy-1,1,3,B[2]);
+  disc(R,cx,cy+1,3,3,B[4]);disc(R,cx,cy+1,2,2,B[2]);R(cx-1,cy,3,3,B[1]);R(cx,cy+1,1,1,SC);R(cx-1,cy,1,1,B[0]);
+  R(cx-6,cy+7,13,1,B[4]);R(cx-4,cy+8,9,1,B[5]);
+  R(2,1,19,2,B[3]);R(2,1,19,1,B[1]);R(20,1,3,3,B[3]);R(21,2,1,1,B[0]);
+  R(3,3,2,2,SC);R(4,4,1,1,SD);R(12,3,2,2,SC);R(13,4,1,1,SD);
+  for(let y=4;y<21;y++)R(21,y,1,1,y%2?B[3]:B[1]);
+  R(20,21,3,1,B[2]);R(19,22,1,2,B[2]);R(23,22,1,2,B[2]);R(20,24,3,1,B[3]);R(20,22,3,2,B[5]);
+}),'#1a1418').toDataURL();}
+function iconURL(rows,col){return mk(rows[0].length,rows.length,R=>rows.forEach((r,y)=>[...r].forEach((c,x)=>{if(c==='x')R(x,y,1,1,col);}))).toDataURL();}
+const ICON_ON=iconURL(['....x......','...xx......','..xxx...x..','xxxxx.x..x.','xxxxx..x..x','xxxxx..x..x','xxxxx..x..x','xxxxx.x..x.','..xxx...x..','...xx......','....x......'],'#f2ead9');
+const ICON_OFF=iconURL(['....x......','...xx......','..xxx......','xxxxx.x...x','xxxxx..x.x.','xxxxx...x..','xxxxx..x.x.','xxxxx.x...x','..xxx......','...xx......','....x......'],'#f2ead9');
+$('sndicon').src=ICON_ON;$('reseticon').src=iconURL(['.......x...','.......xx..','.xxxxxxxxx.','x......xx..','x......x...','x.........x','...x......x','..xx......x','.xxxxxxxxx.','..xx.......','...x.......'],'#f2ead9');
+$('bell').style.backgroundImage=`url(${bellURL()})`;
+layout();startRound(round);layout();
+if(location.hash==='#debug')window.DR={get ents(){return ents},get RING(){return RING},get SCALE(){return SCALE},get mies(){return mies},get round(){return round},get coachE(){return coachE},get fight(){return fight},place(id,side){const e=ents.find(o=>o.id===id),z=zones().find(q=>q.s===side);e.x=(z.a+z.b)/2;e.y=RING.cy;placeInRing(e);updateHud();},ringBell,startRound};
+requestAnimationFrame(loop);
+})();
+</script></body></html>
