@@ -400,12 +400,22 @@ carson(R){ // Carson Pirie Scott, Chicago 1904: wide Chicago windows over a cast
   R(0,0,38,3,'#c8c0ac');R(0,3,38,16,W);for(const y of [5,10,15])for(const x of [1,10,19,28])R(x,y,8,3,K),R(x+1,y,6,3,G);
   R(0,19,38,11,I);for(let x=0;x<38;x+=2)for(let y=19;y<24;y+=2)R(x+(y%4?1:0),y,1,1,I2);R(2,24,9,6,G);R(14,24,9,6,G);R(28,21,10,9,K);disc(R,33,21,5,2,I2);R(30,23,6,7,'#6a4c30');
 },
-sk4(R){ // Braun SK 4, 1956: white steel box, elm ends, perspex lid, platter and dials
-  const W='#f2f0e8',S='#c9c7bd',E='#b58a55',K='#222',C='#d8eaf0',G='#8b8b86';
-  R(0,4,3,18,E);R(35,4,3,18,E);R(3,4,32,18,W);R(3,21,32,1,S);
-  R(3,0,32,4,C);R(3,0,32,1,'#fff');R(5,1,20,2,'#b0d0dc');
-  disc(R,14,10,8,4,G);disc(R,14,10,7,3,'#3a3a3a');disc(R,14,10,1,1,'#e0c04a');R(21,6,5,1,K);
-  for(let i=0;i<3;i++){disc(R,29,8+i*4,1,1,K);}for(let x=5;x<25;x+=2)R(x,17,1,3,S);
+sk4(R){ // Braun SK 4, 1956: impossible view, top face and front both visible
+  const T='#f4f3ee',H='#fbfbf8',S='#d9d8d1',F='#e4e3dc',F2='#c6c5bd',P='#b4bdbd',P2='#8f9999',D='#fdfdfb',K='#3a3c3e',W='#d09a58',W2='#a87438',Y='#d8cfae',G='#a3a9a9';
+  R(3,0,36,25,T);R(3,0,36,1,H);R(3,1,36,1,S); // top face under the perspex lid
+  R(0,0,3,25,W);R(39,0,3,25,W);R(2,0,1,25,W2);R(39,0,1,25,W2); // elm ends
+  R(5,3,20,19,P2);R(6,4,18,17,P); // grey recessed deck
+  disc(R,14,12,8,8,G);disc(R,14,12,7,7,D); // white platter
+  R(14,5,1,2,G);R(14,17,1,2,G);R(8,12,2,1,G);R(19,12,2,1,G); // strobe marks
+  R(14,11,1,3,K);R(13,10,1,1,K);R(15,10,1,1,K);R(14,12,1,1,'#fff'); // three-armed spindle
+  R(23,4,2,12,D);R(25,5,1,11,P2);R(22,16,2,2,D);R(21,18,2,2,D);R(20,20,2,1,D);R(20,21,2,1,K); // tonearm
+  R(30,3,4,1,K); // logo
+  for(const y of [6,10,14]){R(31,y,3,3,G);R(31,y,2,2,'#e9ebea');}
+  R(36,3,2,13,Y);for(let y=4;y<15;y+=2)R(36,y,1,1,'#8d8567');R(37,9,1,1,'#b7372a'); // tuning scale
+  for(let i=0;i<4;i++){R(29+i*2,19,1,2,G);}R(36,18,3,3,G);R(36,18,2,2,'#e9ebea');
+  R(3,24,36,2,F2);
+  R(3,26,36,9,F);R(3,34,36,1,F2);R(0,26,3,9,W2);R(39,26,3,9,W2);R(0,26,2,9,W);R(40,26,2,9,W); // front face
+  for(let y=28;y<33;y+=2){R(6,y,15,1,F2);R(26,y,10,1,F2);}
 },
 t3(R){ // Braun T 3 pocket radio, 1958: grid of holes, one disc
   const W='#f4f2ea',S='#c9c7bd',K='#26262a';
@@ -482,7 +492,7 @@ const OBJ={
  wainwright:{name:'웨인라이트 빌딩',w:28,h:42,year:'고층 건물, 1891',clue:'세인트루이스. 철골 위 벽돌 기둥이 위로 솟구치게 처리해, 라이트가 고층 건물이 처음으로 고층 건물다워졌다고 평했다.'},
  guaranty:{name:'개런티 빌딩',w:28,h:42,year:'고층 건물, 1896',clue:'버펄로. 전면이 테라코타 무늬로 덮여 있다. "기능을 따른다"고 쓴 그 해의 건물인데 장식은 전혀 적지 않다.'},
  carson:{name:'카슨 피리 스콧',w:38,h:30,year:'백화점, 1904',clue:'위층은 길게 뽑은 시카고 창으로 담백한데, 입구만은 주철 덩굴이 뒤덮는다.'},
- sk4:{name:'SK 4 전축',w:38,h:22,year:'오디오, 1956',clue:'단정한 철판 상자 위에 올려진 투명 플라스틱 뚜껑. 투박한 나무 오디오 일색이던 시절이라 "백설공주의 관"이라는 별명이 붙었다.'},
+ sk4:{name:'SK 4 전축',w:42,h:35,year:'오디오, 1956',clue:'단정한 철판 상자 위에 올려진 투명 플라스틱 뚜껑. 투박한 나무 오디오 일색이던 시절이라 "백설공주의 관"이라는 별명이 붙었다.'},
  t3:{name:'T 3 포켓 라디오',w:22,h:32,year:'라디오, 1958',clue:'규칙적인 타공 구멍과 둥근 다이얼 하나가 디자인의 전부. 훗날 아이팟과 닮았다는 말을 듣는다.'},
  shelf606:{name:'606 선반',w:30,h:36,year:'가구, 1960',clue:'알루미늄 레일에 선반을 쓱 끼워 넣는 구조. 사용하는 사람의 환경에 맞춰 얼마든지 형태가 변하도록, 철저히 자신을 숨기는 디자인을 목표로 삼았다.'},
  carlton:{name:'칼턴 책장',w:36,h:42,year:'가구, 1981',clue:'정작 책을 꽂을 칸보다 비스듬히 기울어진 칸이 더 많다. 값싼 플라스틱 라미네이트와 불협화음의 원색 조합. 밀라노 멤피스 그룹의 충격적인 첫 등장.'},
