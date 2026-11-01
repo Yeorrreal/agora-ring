@@ -762,13 +762,12 @@ addEventListener('resize',()=>{layout();placeTut();});
 function tutStep(){
   if(tutDone||round!==0||fight||paused||!coachE.length)return null;
   const floor=ents.filter(e=>!e.side).length,placed=ents.length-floor,r=ROUNDS[0];
-  if(!floor)return {k:'종 치기',t:'다 올렸어요! 위의 종을 쳐서 싸움을 붙이세요. 편을 잘못 갈랐다면 싸움이 성립하지 않아요.',hl:'#bell',n:'6 / 6'};
-  if(placed)return {k:'나머지도 올리기',t:`좋아요. 남은 ${floor}개도 알맞은 코너로 끌어다 놓으세요. 잘못 놓았으면 다시 끌어 옮기면 돼요.`,hl:'ring',n:'5 / 6'};
-  if(tutF.read)return {k:'링에 올리기',t:'이 디자인물은 어느 감독 편일까요? 끌어다 링에 놓으세요. 왼쪽 절반은 홍코너, 오른쪽 절반은 청코너예요.',hl:'ring',n:'4 / 6'};
-  if(tutF.obj)return {k:'단서 읽기',t:'디자인물을 누르면 여기에 정체와 단서가 나와요. 감독들이 외치는 말과 맞춰 보세요.',hl:'#narr',n:'3 / 6',btn:'다음'};
-  if(tutF.c0&&tutF.c1)return {k:'디자인물 살피기',t:'바닥을 돌아다니는 건 선수들이에요. 하나를 눌러 보세요.',hl:'@'+r.r[0],n:'2 / 6'};
+  if(!floor)return {k:'종 치기',t:'다 올렸어요! 위의 종을 쳐서 싸움을 붙이세요. 편을 잘못 갈랐다면 싸움이 성립하지 않아요.',hl:'#bell',n:'4 / 4'};
+  if(placed||tutF.read)return {k:'끌어놓기',t:'',hl:'ring',nocard:true};
+  if(tutF.obj)return {k:'단서 읽기',t:'디자인물을 누르면 여기에 정체와 단서가 나와요. 감독들의 말과 맞춰 보고, 여섯 개 모두 링의 왼쪽(홍)이나 오른쪽(청)으로 끌어다 놓으세요.',hl:'#narr',n:'3 / 4',btn:'다음'};
+  if(tutF.c0&&tutF.c1)return {k:'디자인물 살피기',t:'바닥을 돌아다니는 건 선수들이에요. 하나를 눌러 보세요.',hl:'@'+r.r[0],n:'2 / 4'};
   const c=tutF.c0?1:0;
-  return {k:tutF.c0||tutF.c1?'감독의 말':'처음 오셨군요',t:tutF.c0||tutF.c1?'다른 감독도 눌러서 무슨 말을 하는지 들어 보세요.':'디자이너들은 감독이라 코너에서 자기 말만 외쳐요. 감독을 눌러서 무슨 말을 하는지 들어 보세요.',hl:'#'+c,hlc:c,n:'1 / 6'};
+  return {k:tutF.c0||tutF.c1?'감독의 말':'처음 오셨군요',t:tutF.c0||tutF.c1?'다른 감독도 눌러서 무슨 말을 하는지 들어 보세요.':'디자이너들은 감독이라 코너에서 자기 말만 외쳐요. 감독을 눌러서 무슨 말을 하는지 들어 보세요.',hl:'#'+c,hlc:c,n:'1 / 4'};
 }
 function tutRect(c){
   if(c.hlc!=null){const m=coachE[c.hlc];const k=CS();return m&&{x:(m.x-9*k)*SCALE,y:(m.y-22*k)*SCALE,w:18*k*SCALE,h:24*k*SCALE,p:1};}
@@ -785,6 +784,7 @@ function posHl(){
 function placeTut(){
   const c=tutCur,el=$('tut');
   if(!c){el.hidden=true;$('hl').hidden=true;return;}
+  if(c.nocard){el.hidden=true;posHl();return;}
   $('tutk').textContent=c.k;$('tutt').textContent=c.t;$('tutn').textContent=c.n;$('tutbtn').hidden=!c.btn;
   el.hidden=false;
   const w=el.offsetWidth,h=el.offsetHeight,cx=RING.cx*SCALE,left=Math.max(12,Math.min(innerWidth-12-w,cx-w/2));
