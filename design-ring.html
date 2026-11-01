@@ -109,14 +109,17 @@ function tmpl(p,f){
   else if(p.parted)r.push('....hhhhhh....','..hhhhhhhhhh..','.hhhhhhhsshhh.');
   else r.push('....hhhhhh....','..hhhhhhhhhh..','.hhhhhhhhhhhh.');
   r.push('.hhsssssssshh.','.hssssssssssh.');
-  const eyes=p.glasses?'.hkkkkkkkkkkh.':'.hssessssessh.';
-  if(f===2&&!p.glasses)r.push('.hssssssssssh.',eyes);else r.push(p.glasses?'.hkekkkkkkekh.':eyes,eyes);
+  const eyes='.hssessssessh.';
+  if(p.glasses)r.push('.hskkkkkkkksh.','.hskeskkseksh.');
+  else if(f===2)r.push('.hssssssssssh.',eyes);else r.push(eyes,eyes);
   r.push('.hpssssssssph.');
   if(p.beard)r.push('..sbbbbbbbbs..','...bbbbbbbb...');
   else if(p.moustache)r.push('..ssbbbbbbss..','...ssssssss...');
   else r.push('..ssssssssss..','...ssssssss...');
-  r.push(p.beard?'...cbbbbbbc...':p.suit?'...cxxxxxxc...':'...cccccccc...');
-  if(p.suit)r.push('.sccxxttxxccs.','.sccccttccccs.','..ccccttcccd..','..cccccccccd..','...cccccccd...');
+  r.push(p.beard?'...cbbbbbbc...':p.zip?'..ccccxccccc..':p.suit?'...cxxxxxxc...':'...cccccccc...');
+  if(p.zip)r.push('.sccccxccccds.','.sccccxccccds.','..ccccxccccd..','..ccccxccccd..','...cccxcccd...');
+  else if(p.bow)r.push('.scxxttttxxcs.','.sccxxxxxxccs.','..cccxxxxccd..','..cccccccccd..','...cccccccd...');
+  else if(p.suit)r.push('.sccxxttxxccs.','.sccccttccccs.','..ccccttcccd..','..cccccccccd..','...cccccccd...');
   else r.push('.sxcccccccccs.','.scccxcccccds.','..ccccccxccd..','..ccccccccxd..','...cccccccd...');
   if(f===1)r.push('...ll....ll...','...ll....ll...');else r.push('....ll..ll....','....ll..ll....');
   return r;
@@ -492,11 +495,11 @@ const C={
   quotes:['쓸모를 모르거나 아름답다고 믿지 않는 것은 집에 두지 마라!','소수만을 위한 예술은 원하지 않는다!','일하는 기쁨이 곧 예술이다!']},
  loos:{name:'루스',full:'Adolf Loos',hair:'#2b2622',parted:true,suit:true,cloth:'#2b2d36',dark:'#1a1b22',trim:'#f1eee6',tie:'#141418',
   quotes:['장식은 범죄다!','문화의 진화는 일용품에서 장식을 없애는 것!','장식은 낭비된 노동이다!']},
- gropius:{name:'그로피우스',full:'Walter Gropius',hair:'#2a2528',parted:true,moustache:'#2a2528',suit:true,cloth:'#20222a',dark:'#14151b',trim:'#f1eee6',tie:'#b7372a',
+ gropius:{name:'그로피우스',full:'Walter Gropius',hair:'#2a2528',parted:true,moustache:'#2a2528',suit:true,bow:true,cloth:'#20222a',dark:'#14151b',trim:'#f1eee6',tie:'#b7372a',
   quotes:['예술과 기술, 새로운 통일!','건축가, 화가, 조각가여, 공예로 돌아가라!','모든 조형의 최종 목표는 건축이다!']},
  velde:{name:'반 데 벨데',full:'Henry van de Velde',hair:'#8a7558',beard:'#8a7558',cloth:'#8e6b4a',dark:'#6a4e34',trim:'#d8bf94',
   quotes:['예술가는 뼛속까지 개인주의자다!','규범을 강요하는 규율에 스스로 복종하는 예술가는 없다!','규격이 아니라 창조!']},
- mies:{name:'미스',full:'Ludwig Mies van der Rohe',hair:'#c9c5bc',bald:true,glasses:true,suit:true,cloth:'#50545c',dark:'#373a41',trim:'#f4f4f0',tie:'#1a1a1e',
+ mies:{name:'미스',full:'Ludwig Mies van der Rohe',hair:'#c9c5bc',bald:true,cigar:true,suit:true,cloth:'#2c2e34',dark:'#1c1d22',trim:'#f4f4f0',tie:'#1a1a1e',
   quotes:['Less is more.','신은 디테일에 있다.','더 적게.']},
  ruskin:{name:'러스킨',full:'John Ruskin',hair:'#a8894f',beard:'#b9a374',cloth:'#3c5a8e',dark:'#2a4068',trim:'#e8e2d0',
   quotes:['불완전함은 생명에 본질적이다!','사람을 도구로 만들 수도, 사람으로 만들 수도 있다. 둘 다는 안 돼!','기계는 영혼을 찍어내지 못한다!']},
@@ -504,15 +507,15 @@ const C={
   quotes:['예술을 기계 생산과 결합하라!','대중의 취향은 가르칠 수 있다!','모두 수정궁으로 오시오!']},
  muthesius:{name:'무테지우스',full:'Hermann Muthesius',hair:'#3a3430',parted:true,moustache:'#3a3430',glasses:true,suit:true,cloth:'#3f4650',dark:'#2b3038',trim:'#f1eee6',tie:'#1a1a1e',
   quotes:['전형을 세워라!','표준화만이 좋은 취향을 낳는다!','양식이 아니라 전형이다!']},
- meyer:{name:'마이어',full:'Hannes Meyer',hair:'#6a4c30',parted:true,cloth:'#a23a2c',dark:'#7a2a20',trim:'#e8d9b8',
+ meyer:{name:'마이어',full:'Hannes Meyer',hair:'#7a5c38',parted:true,zip:true,ruler:true,cloth:'#23262e',dark:'#15171c',trim:'#efe9da',
   quotes:['기능 곱하기 경제!','사치의 필요가 아니라 민중의 필요를!','건축은 미적 과정이 아니다!']},
  sullivan:{name:'설리번',full:'Louis Sullivan',hair:'#3a2c26',moustache:'#3a2c26',suit:true,cloth:'#5a3f2c',dark:'#3f2c1e',trim:'#f1eee6',tie:'#2f5a48',
   quotes:['형태는 언제나 기능을 따른다!','자연이 그렇게 말한다!','고층 건물은 높아야 한다. 모든 치수가 높아야!']},
- rams:{name:'람스',full:'Dieter Rams',hair:'#a9a9a4',parted:true,glasses:true,suit:true,cloth:'#55595f',dark:'#3b3e43',trim:'#f4f4f0',tie:'#1a1a1e',
+ rams:{name:'람스',full:'Dieter Rams',hair:'#a9a9a4',parted:true,suit:true,cloth:'#55595f',dark:'#3b3e43',trim:'#f4f4f0',tie:'#1a1a1e',
   quotes:['좋은 디자인은 가능한 한 적게 디자인한 것!','적게, 하지만 더 낫게.','좋은 디자인은 눈에 띄지 않는다.']},
  sottsass:{name:'소트사스',full:'Ettore Sottsass',hair:'#e6e2d8',messy:true,moustache:'#e6e2d8',cloth:'#1f1f24',dark:'#121216',trim:'#ee6fa8',
   quotes:['형태는 재미다!','디자인은 삶을 논하는 방식이다!','오래 쓰라고? 재미있으면 그만이지!']},
- venturi:{name:'벤투리',full:'Robert Venturi',hair:'#51392a',parted:true,glasses:true,suit:true,cloth:'#c76a32',dark:'#99481d',trim:'#f7e7b2',tie:'#2f6fa8',
+ venturi:{name:'벤투리',full:'Robert Venturi',hair:'#51392a',parted:true,glasses:true,suit:true,cloth:'#b89a6a',dark:'#8e7448',trim:'#f7e7b2',tie:'#2f6fa8',
   quotes:['Less is a bore!','순수보다 혼성, 깔끔함보다 뒤틀림을 좋아한다!','메인 스트리트는 거의 괜찮다!','둘 중 하나보다 둘 다!']}
 };
 for(const k in C)C[k].spr=coachSpr(C[k]);
@@ -877,6 +880,8 @@ function drawCoach(c){
   ctx.save();ctx.translate(Math.round(c.x),Math.round(c.y));ctx.scale(k,k);
   ctx.fillStyle=mies?'rgba(0,0,0,.14)':'rgba(10,20,50,.32)';ctx.fillRect(x-5,y-1,10,2);
   if(c.corner===1){ctx.save();ctx.translate(x+8,0);ctx.scale(-1,1);ctx.drawImage(spr,0,y-20-hop);ctx.restore();}else ctx.drawImage(spr,x-8,y-20-hop);
+  if(p.cigar){R(x+1,y-11-hop,6,1,'#6b4a2a');R(x+7,y-11-hop,1,1,'#e0563b');const k=Math.floor(now/300)%3;R(x+7+(k==1?1:0),y-14-hop-k,1,2,mies?'#999':'#d9d5cb');}
+  if(p.ruler){const sx=c.corner===1?-9:8;R(sx-1,y-15-hop,3,12,OUT);R(sx,y-14-hop,1,10,'#c9b684');}
   if(c.rage>0){const m=Math.floor(now/140)%2,cc=mies?'#111':'#e0563b';R(x-7,y-28-hop-m,2,2,cc);R(x+6,y-29-hop+m,2,2,cc);R(x-1,y-31-hop+m,2,1,cc);R(x-9,y-16-hop+m,2,1,'#fff');R(x+9,y-14-hop-m,2,1,'#fff');}
   ctx.restore();
 }
@@ -896,7 +901,8 @@ function draw(){
   drawDust();drawStars();
   if(drag)drawEnt(drag);
 }
-function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;now=t;update(dt);draw();updateTut();requestAnimationFrame(loop);}
+function loop(t){requestAnimationFrame(loop);if(!bgC||!bgC.width)return; // a window of size 0 (hidden at load) must not kill the loop
+  const dt=Math.min(.05,(t-last)/1000||0);last=t;now=t;update(dt);draw();updateTut();}
 
 /* ---- boot ---- */
 function bellURL(){return outlined(mk(24,26,R=>{
